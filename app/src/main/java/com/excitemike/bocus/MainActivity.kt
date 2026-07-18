@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
@@ -16,7 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.excitemike.bocus.ui.theme.BocusTheme
 
@@ -35,62 +35,47 @@ class MainActivity : ComponentActivity() {
 @PreviewScreenSizes
 @Composable
 fun BocusApp() {
-    var currentScreen by rememberSaveable { mutableStateOf(AppScreens.WELCOME) }
+    val currentScreen = rememberSaveable { mutableStateOf(AppScreens.WELCOME) }
+    val alarms = rememberSaveable { mutableStateListOf<Alarm>() }
 
     NavigationSuiteScaffold(
-        navigationSuiteItems = {
-            AppScreens.entries.forEach {
-                item(
+        navigationItems = {
+            AppScreens.entries
+            .filter {it.showInNav}
+            .forEach { screen ->
+                NavigationSuiteItem(
                     icon = {
                         Icon(
-                            painterResource(it.icon),
-                            contentDescription = it.label
+                            painterResource(screen.icon),
+                            contentDescription = stringResource(screen.labelId)
                         )
                     },
-                    label = { Text(it.label) },
-                    selected = it == currentScreen,
-                    onClick = { currentScreen = it }
+                    label = { stringResource(screen.labelId) },
+                    selected = screen == currentScreen.value,
+                    onClick = { currentScreen.value = screen }
                 )
             }
         }
     ) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Greeting(
-                name = "Android",
-                modifier = Modifier.padding(innerPadding)
-            )
+            val paddingMod = Modifier.padding(innerPadding)
+            when (currentScreen.value) {
+                AppScreens.WELCOME -> WelcomeScreen(paddingMod)
+                AppScreens.ABOUT -> AboutScreen(currentScreen, paddingMod)
+                AppScreens.ALARMS -> AlarmScreen(alarms, paddingMod)
+                AppScreens.CREDITS -> CreditsScreen(paddingMod)
+            }
         }
     }
 }
 
 enum class AppScreens(
-    val label: String,
+    val labelId: Int,
     val icon: Int,
     val showInNav: Boolean
 ) {
-    WELCOME("Welcome", R.drawable.ic_about, false),
-    ALARMS("Alarms", R.drawable.ic_alarm, true),
-    ABOUT("Profile", R.drawable.ic_about, true),
-    CREDITS("About", R.drawable.ic_about, false),
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Composable
-fun EntryUI(alarm: Alarm) {
-    //Text(text = "name is $name")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    BocusTheme {
-        Greeting("Android")
-    }
+    WELCOME(R.string.welcome_tab_name, R.drawable.ic_about, false),
+    ALARMS(R.string.alarms_tab_name, R.drawable.ic_alarm, true),
+    ABOUT(R.string.about_tab_name, R.drawable.ic_about, true),
+    CREDITS(R.string.credits_tab_name, R.drawable.ic_about, false),
 }
