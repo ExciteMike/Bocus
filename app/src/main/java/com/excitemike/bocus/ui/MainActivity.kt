@@ -25,7 +25,10 @@ class MainActivity : ComponentActivity() {
             BocusApp(
                 uiState = uiState.value,
                 goToScreen = { viewModel.goToScreen(it) },
-                addAlarm = { name -> viewModel.addAlarm(Alarm(name=name)) }
+                addAlarm = { name -> viewModel.addAlarm(name=name, context=applicationContext) },
+                openAlarmDetails = { selectedAlarm -> viewModel.openAlarmDetails(selectedAlarm) },
+                closeAlarmDetails = { viewModel.closeAlarmDetails() },
+                dismissErrorDlg = { viewModel.dismissErrorDlg() }
             )
         }
     }
@@ -41,7 +44,7 @@ class MainActivity : ComponentActivity() {
 )
 @Composable
 fun BocusAppPreview() {
-    val _uiState = rememberSaveable()  { MutableStateFlow(BocusUiState()) }
+    /*val _uiState = rememberSaveable()  { MutableStateFlow(BocusUiState()) }
     val uiState = _uiState.collectAsState()
     BocusTheme {
         BocusApp (
@@ -49,5 +52,5 @@ fun BocusAppPreview() {
             goToScreen = {  },
             addAlarm = {  }
         )
-    }
+    }*/
 }

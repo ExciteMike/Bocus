@@ -3,6 +3,7 @@ package com.excitemike.bocus.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,11 +27,17 @@ fun AlarmListItem(
 ) {
     Card (modifier=modifier
             .fillMaxWidth()
-            .padding(horizontal = 0.dp, vertical = 4.dp)
+            .padding(horizontal = 4.dp, vertical = 4.dp),
     ) {
-        Surface (modifier = Modifier.fillMaxWidth(),) {
+        Column (modifier = Modifier.fillMaxWidth().padding(20.dp)) {
             Text(
                 text = alarm.name
+            )
+            Text(
+                text = "..."
+            )
+            Text(
+                text = "..."
             )
         }
     }

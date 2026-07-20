@@ -3,9 +3,13 @@
     <string name="app_name">Bocus</string>
     <string name="about_tab_name">About</string>
     <string name="alarms_tab_name">Alarms</string>
+    <string name="alarm_limit">Maximum number of alarms reached</string>
     <string name="credits_button">Credits</string>
     <string name="credits_tab_name">Credits</string>
     <string name="default_alarm_name">Alarm</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="done">Done</string>
+    <string name="error">Error</string>
     <string name="welcome_tab_name">Welcome</string>
     <string name="welcome_message">Welcome! Thank you for downloading Bocus! To get started, tap "alarms" below and start adding randomized reminders!</string>
 </resources>

@@ -34,6 +34,8 @@ const val SATURDAY:UByte = 0x1u
 
 /// Entry for alarms
 data class Alarm(
+    /// LazyColumns wants them to have a unique id
+    var id: Long,
     /// how to label the alarm in the ui
     var name: String,
     /// At what time of day the alarms begin. Minutes since midnight.
