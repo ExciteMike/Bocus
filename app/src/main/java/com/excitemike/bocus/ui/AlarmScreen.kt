@@ -19,8 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
-import java.util.Optional
-import kotlin.jvm.optionals.getOrNull
 
 @Composable
 fun AlarmScreen(

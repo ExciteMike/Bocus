@@ -1,9 +1,5 @@
 package com.excitemike.bocus.ui
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
-import java.util.Calendar
-
 /// what it does when the alarm goes off
 enum class NotifMode(val value:UByte) {
     Bell(0x01u),

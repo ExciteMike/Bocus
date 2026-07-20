@@ -7,12 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.excitemike.bocus.R
 import com.excitemike.bocus.ui.theme.BocusTheme
-import kotlinx.coroutines.flow.MutableStateFlow
 
 class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<BocusViewModel>()
@@ -22,14 +18,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val uiState = viewModel.uiState.collectAsState()
-            BocusApp(
-                uiState = uiState.value,
-                goToScreen = { viewModel.goToScreen(it) },
-                addAlarm = { name -> viewModel.addAlarm(name=name, context=applicationContext) },
-                openAlarmDetails = { selectedAlarm -> viewModel.openAlarmDetails(selectedAlarm) },
-                closeAlarmDetails = { viewModel.closeAlarmDetails() },
-                dismissErrorDlg = { viewModel.dismissErrorDlg() }
-            )
+            BocusTheme {
+                BocusApp(
+                    uiState = uiState.value,
+                    goToScreen = { viewModel.goToScreen(it) },
+                    addAlarm = { name -> viewModel.addAlarm(name=name, context=applicationContext) },
+                    openAlarmDetails = { selectedAlarm -> viewModel.openAlarmDetails(selectedAlarm) },
+                    closeAlarmDetails = { viewModel.closeAlarmDetails() },
+                    dismissErrorDlg = { viewModel.dismissErrorDlg() }
+                )
+            }
         }
     }
 }

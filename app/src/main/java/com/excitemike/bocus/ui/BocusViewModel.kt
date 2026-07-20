@@ -1,7 +1,6 @@
 package com.excitemike.bocus.ui
 
 import android.content.Context
-import android.content.res.Resources
 import androidx.lifecycle.ViewModel
 import com.excitemike.bocus.R
 import kotlinx.coroutines.flow.MutableStateFlow
