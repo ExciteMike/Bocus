@@ -2,7 +2,7 @@ package com.excitemike.bocus.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,7 +16,7 @@ import com.excitemike.bocus.R
 @Composable
 fun WelcomeScreen(modifier: Modifier = Modifier) {
     Column (
-        modifier = modifier.fillMaxWidth(),
+    modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {

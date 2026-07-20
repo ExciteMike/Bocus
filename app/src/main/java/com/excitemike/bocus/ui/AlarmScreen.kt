@@ -3,6 +3,7 @@ package com.excitemike.bocus.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
+import com.excitemike.bocus.data.Alarm
 
 @Composable
 fun AlarmScreen(
@@ -48,21 +50,23 @@ fun AlarmList(
     addAlarm: ()->Unit,
     openAlarmDetails: (UByte)->Unit
 ) {
-    Box (
-        modifier = modifier.fillMaxSize().padding(16.dp),
-    ) {
-        Text(
-            text = "Alarms",
-            textAlign = TextAlign.Center
-        )
-        LazyColumn(modifier.fillMaxSize()) {
-            items(count = alarms.size, key= { alarms[it].id } ) {
-                    i ->
-                AlarmListItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { openAlarmDetails(i.toUByte()) },
-                    alarm = alarms[i],)
+    Box(modifier = modifier.fillMaxSize()) {
+        Column (
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            Text(
+                text = "Alarms",
+                style = MaterialTheme.typography.titleLarge
+            )
+            LazyColumn(Modifier.fillMaxSize().weight(1f)) {
+                items(count = alarms.size, key = { alarms[it].id }) { i ->
+                    AlarmListItem(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { openAlarmDetails(i.toUByte()) },
+                        alarm = alarms[i],
+                    )
+                }
             }
         }
         FloatingActionButton (

@@ -16,8 +16,8 @@ import com.excitemike.bocus.R
 
 @Composable
 fun AboutScreen(
+    modifier: Modifier = Modifier,
     goToScreen: (AppScreens)->Unit,
-    modifier: Modifier = Modifier
 ) {
     Column (
         modifier = modifier.fillMaxWidth(),

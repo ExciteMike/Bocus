@@ -3,6 +3,7 @@ package com.excitemike.bocus.ui
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.excitemike.bocus.R
+import com.excitemike.bocus.data.Alarm
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,7 +11,8 @@ import kotlinx.coroutines.flow.update
 import kotlin.math.max
 
 class BocusViewModel: ViewModel() {
-    private val _uiState = MutableStateFlow(BocusUiState(alarms = listOf(Alarm(id=0, "Test Alarm"))))
+    private val _uiState = MutableStateFlow(BocusUiState(alarms = listOf(
+        Alarm(id=0, "Test Alarm", message = "Example Message"))))
     val uiState: StateFlow<BocusUiState> = _uiState.asStateFlow()
 
     fun addAlarm(name:String, context: Context) {

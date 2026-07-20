@@ -6,13 +6,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.excitemike.bocus.R
 import com.excitemike.bocus.ui.theme.BocusTheme
 
 class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<BocusViewModel>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -22,8 +26,17 @@ class MainActivity : ComponentActivity() {
                 BocusApp(
                     uiState = uiState.value,
                     goToScreen = { viewModel.goToScreen(it) },
-                    addAlarm = { name -> viewModel.addAlarm(name=name, context=applicationContext) },
-                    openAlarmDetails = { selectedAlarm -> viewModel.openAlarmDetails(selectedAlarm) },
+                    addAlarm = { name ->
+                        viewModel.addAlarm(
+                            name = name,
+                            context = applicationContext
+                        )
+                    },
+                    openAlarmDetails = { selectedAlarm ->
+                        viewModel.openAlarmDetails(
+                            selectedAlarm
+                        )
+                    },
                     closeAlarmDetails = { viewModel.closeAlarmDetails() },
                     dismissErrorDlg = { viewModel.dismissErrorDlg() }
                 )

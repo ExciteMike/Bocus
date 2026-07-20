@@ -6,10 +6,24 @@
     <string name="alarm_limit">Maximum number of alarms reached</string>
     <string name="credits_button">Credits</string>
     <string name="credits_tab_name">Credits</string>
+    <string name="day_short_sunday">Su</string>
+    <string name="day_short_monday">Mo</string>
+    <string name="day_short_tuesday">Tu</string>
+    <string name="day_short_wednesday">We</string>
+    <string name="day_short_thursday">Th</string>
+    <string name="day_short_friday">Fr</string>
+    <string name="day_short_saturday">Sa</string>
     <string name="default_alarm_name">Alarm</string>
     <string name="dismiss">Dismiss</string>
     <string name="done">Done</string>
     <string name="error">Error</string>
+    <string name="every_x_to_y_minutes">every %1$s to %2$s minutes</string>
+    <string name="on">on</string>
+    <string name="ring_bell">ring bell</string>
+    <string name="ring_bell_and_vibrate">ring bell and vibrate</string>
+    <string name="show_message_x">show message "%1$s"</string>
+    <string name="time_to_time">%1$s to %2$s</string>
+    <string name="vibrate">vibrate</string>
     <string name="welcome_tab_name">Welcome</string>
     <string name="welcome_message">Welcome! Thank you for downloading Bocus! To get started, tap "alarms" below and start adding randomized reminders!</string>
 </resources>

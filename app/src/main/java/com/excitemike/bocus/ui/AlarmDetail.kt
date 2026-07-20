@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.excitemike.bocus.R
+import com.excitemike.bocus.data.Alarm
 
 @Composable
 fun AlarmDetail(
