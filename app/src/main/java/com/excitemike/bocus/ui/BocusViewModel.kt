@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlin.math.max
 
+const val MAX_ALARMS = 255
 class BocusViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(BocusUiState(alarms = listOf(
         Alarm(id=0, "Test Alarm", message = "Example Message"))))

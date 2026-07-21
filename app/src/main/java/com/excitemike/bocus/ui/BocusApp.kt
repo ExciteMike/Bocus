@@ -18,8 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 
-const val MAX_ALARMS = 1
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BocusApp(
@@ -48,8 +46,8 @@ fun BocusApp(
         )
     }
 
-    Column (modifier = modifier.fillMaxSize()) {
-        val screenMod = Modifier.weight(1f).padding(16.dp)
+    Column (modifier = modifier.fillMaxSize().padding(top=24.dp)) {
+        val screenMod = Modifier.weight(1f)
         when (uiState.currentScreen) {
             AppScreens.WELCOME -> WelcomeScreen(modifier = screenMod)
             AppScreens.ABOUT -> AboutScreen(modifier = screenMod, goToScreen = goToScreen)
@@ -70,6 +68,7 @@ fun BocusApp(
                 .filter { it.showInNav }
                 .forEach { screen ->
                     NavigationBarItem(
+                        modifier = Modifier.padding(top=4.dp),
                         icon = {
                             Icon(
                                 painterResource(screen.icon),
@@ -78,7 +77,7 @@ fun BocusApp(
                         },
                         label = { Text(text=stringResource(screen.labelId)) },
                         selected = screen == uiState.currentScreen,
-                        onClick = { goToScreen(screen) }
+                        onClick = { goToScreen(screen) },
                     )
                 }
         }

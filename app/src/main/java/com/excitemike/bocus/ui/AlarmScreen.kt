@@ -50,7 +50,7 @@ fun AlarmList(
     addAlarm: ()->Unit,
     openAlarmDetails: (UByte)->Unit
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(modifier = modifier.fillMaxSize().padding(horizontal = 16.dp)) {
         Column (
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -70,7 +70,7 @@ fun AlarmList(
             }
         }
         FloatingActionButton (
-            modifier = Modifier.align(Alignment.BottomEnd),
+            modifier = Modifier.align(Alignment.BottomEnd).padding(bottom=16.dp),
             onClick = addAlarm,
             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             contentColor = MaterialTheme.colorScheme.onTertiaryContainer

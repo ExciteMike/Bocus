@@ -13,6 +13,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,19 +47,15 @@ fun checkFlags(bits:UByte, desiredBits:UByte): Boolean {
 fun DayIcon(isOn: Boolean, dayStringId: Int) {
     val colors = if (isOn)  { CardDefaults.outlinedCardColors() } else { CardDefaults.cardColors() }
     val border = if (isOn) { CardDefaults.outlinedCardBorder() } else { null }
-    val shape = RoundedCornerShape(16.dp)
     val textDecoration = if (isOn) { null } else { TextDecoration.LineThrough }
     val fontWeight = if (isOn) { FontWeight.Bold } else { FontWeight.Normal }
-    Card (
-        shape = shape,
-        //colors = colors,
-        //border = border,
-    ) {
+    OutlinedCard (modifier = Modifier.padding(horizontal = 2.dp)) {
         Text(
             modifier = Modifier.padding(4.dp),
             text = stringResource(dayStringId),
             textDecoration = textDecoration,
-            fontWeight = fontWeight
+            fontWeight = fontWeight,
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }
@@ -72,7 +69,7 @@ fun AlarmListItem(
             .fillMaxWidth()
             .padding(horizontal = 4.dp, vertical = 4.dp),
     ) {
-        Column (modifier = Modifier.fillMaxWidth().padding(20.dp)) {
+        Column (modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Text(
                 text = alarm.name,
                 style = MaterialTheme.typography.titleMedium
@@ -82,16 +79,20 @@ fun AlarmListItem(
                     stringResource(R.string.every_x_to_y_minutes),
                     alarm.frequency.first,
                     alarm.frequency.second
-                ))
+                ),
+                style = MaterialTheme.typography.bodyMedium)
 
             Text(text = String.format(
-                stringResource(R.string.time_to_time),
-                timeString(alarm.startTime),
-                timeString(alarm.endTime)
-            ))
+                    stringResource(R.string.time_to_time),
+                    timeString(alarm.startTime),
+                    timeString(alarm.endTime)
+                ),
+                style = MaterialTheme.typography.bodyMedium)
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(modifier = Modifier.padding(end = 4.dp), text = stringResource(R.string.on))
+                Text(modifier = Modifier.padding(end = 4.dp),
+                    text = stringResource(R.string.on),
+                    style = MaterialTheme.typography.bodyMedium)
 
                 DayIcon(
                     isOn = checkFlags(alarm.activeDays, SUNDAY),
@@ -122,19 +123,6 @@ fun AlarmListItem(
                     dayStringId = R.string.day_short_saturday
                 )
             }
-
-            val bellStrId = when (alarm.notifMode) {
-                NotifMode.Bell -> R.string.ring_bell
-                NotifMode.Vibrate -> R.string.vibrate
-                NotifMode.BellAndVibrate -> R.string.ring_bell_and_vibrate
-            }
-
-            Text(text = stringResource(bellStrId))
-
-            Text(text = String.format(
-                stringResource(R.string.show_message_x),
-                alarm.message
-            ))
         }
     }
 }
