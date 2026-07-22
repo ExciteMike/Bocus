@@ -25,10 +25,10 @@ import com.excitemike.bocus.data.Alarm
 @Composable
 fun AlarmScreen(
     alarms: List<Alarm>,
-    selectedAlarm: UByte?,
+    selectedAlarm: Int?,
     modifier: Modifier = Modifier,
     addAlarm: ()->Unit,
-    openAlarmDetails: (UByte)->Unit,
+    openAlarmDetails: (Int)->Unit,
     closeAlarmDetails: () -> Unit
 ) {
     if (selectedAlarm != null) {
@@ -36,7 +36,7 @@ fun AlarmScreen(
             closeAlarmDetails()
         }
         AlarmDetail(
-            alarm = alarms[selectedAlarm.toInt()],
+            alarm = alarms[selectedAlarm],
             close = { closeAlarmDetails() }
         )
     }
@@ -48,7 +48,7 @@ fun AlarmList(
     alarms: List<Alarm>,
     modifier: Modifier = Modifier,
     addAlarm: ()->Unit,
-    openAlarmDetails: (UByte)->Unit
+    openAlarmDetails: (Int)->Unit
 ) {
     Box(modifier = modifier.fillMaxSize().padding(horizontal = 16.dp)) {
         Column (
@@ -63,7 +63,7 @@ fun AlarmList(
                     AlarmListItem(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { openAlarmDetails(i.toUByte()) },
+                            .clickable { openAlarmDetails(i) },
                         alarm = alarms[i],
                     )
                 }

@@ -1,9 +1,13 @@
 package com.excitemike.bocus.ui
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
+import com.excitemike.bocus.data.AlarmDao
+import com.excitemike.bocus.data.AlarmDatabase
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,7 +15,9 @@ import kotlinx.coroutines.flow.update
 import kotlin.math.max
 
 const val MAX_ALARMS = 255
-class BocusViewModel: ViewModel() {
+class BocusViewModel(private val alarmDao: AlarmDao): ViewModel() {
+    private val allAlarms: Flow<List<Alarm>> = alarmDao.getAllAlarms()
+
     private val _uiState = MutableStateFlow(BocusUiState(alarms = listOf(
         Alarm(id=0, "Test Alarm", message = "Example Message"))))
     val uiState: StateFlow<BocusUiState> = _uiState.asStateFlow()
@@ -28,9 +34,9 @@ class BocusViewModel: ViewModel() {
         _uiState.update { it.copy(currentScreen = screen, selectedAlarm = null) }
     }
 
-    /// TODO: I should use some kinda guid and not walk the whole list each time
-    fun getNextAlarmId(): Long {
-        var highest:Long = 0
+    /// TODO: let room generate this id
+    fun getNextAlarmId(): Int {
+        var highest:Int = 0
         for (alarm in _uiState.value.alarms) {
             highest = max(highest, alarm.id)
         }
@@ -45,7 +51,7 @@ class BocusViewModel: ViewModel() {
         _uiState.update { it.copy(errorMessage = null) }
     }
 
-    fun openAlarmDetails(selectedAlarm: UByte) {
+    fun openAlarmDetails(selectedAlarm: Int) {
         _uiState.update { it.copy(selectedAlarm = selectedAlarm) }
     }
 
@@ -60,5 +66,5 @@ data class BocusUiState (
     /// Error Message
     var errorMessage: String? = null,
     /// index of the selected alarm
-    var selectedAlarm: UByte? = null,
+    var selectedAlarm: Int? = null,
 )

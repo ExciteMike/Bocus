@@ -39,7 +39,7 @@ import com.excitemike.bocus.data.TUESDAY
 import com.excitemike.bocus.data.WEDNESDAY
 import com.excitemike.bocus.data.timeString
 
-fun checkFlags(bits:UByte, desiredBits:UByte): Boolean {
+fun checkFlags(bits:Int, desiredBits:Int): Boolean {
     return desiredBits == (bits and desiredBits)
 }
 
@@ -77,8 +77,8 @@ fun AlarmListItem(
 
             Text(text = String.format(
                     stringResource(R.string.every_x_to_y_minutes),
-                    alarm.frequency.first,
-                    alarm.frequency.second
+                    alarm.frequencyMin,
+                    alarm.frequencyMax
                 ),
                 style = MaterialTheme.typography.bodyMedium)
 

@@ -26,7 +26,7 @@ fun BocusApp(
     addAlarm: (String) -> Unit,
     dismissErrorDlg: () -> Unit,
     goToScreen: (AppScreens) -> Unit,
-    openAlarmDetails: (UByte)->Unit,
+    openAlarmDetails: (Int)->Unit,
     closeAlarmDetails: () -> Unit
 ) {
     val defaultAlarmName = stringResource(R.string.default_alarm_name)
