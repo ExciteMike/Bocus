@@ -24,9 +24,6 @@ class BocusViewModel(private val alarmRepo: BocusRepository): ViewModel() {
     private val _uiState = MutableStateFlow(BocusUiState())
     val uiState: StateFlow<BocusUiState> = _uiState.asStateFlow()
 
-    private val _selectedAlarm = MutableStateFlow<Int?>(null)
-    val selectedAlarm = _selectedAlarm.asStateFlow()
-
     fun addAlarm(name:String, context: Context) {
         val size = alarmState.value.size
         if (size < MAX_ALARMS) {

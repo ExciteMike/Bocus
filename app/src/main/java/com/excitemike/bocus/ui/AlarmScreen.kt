@@ -26,21 +26,26 @@ import com.excitemike.bocus.data.Alarm
 fun AlarmScreen(
     modifier: Modifier = Modifier,
     alarms: State<List<Alarm>>,
-    selectedAlarm: State<Int?>,
+    selectedAlarm: Int?,
     addAlarm: ()->Unit,
     openAlarmDetails: (Int)->Unit,
     closeAlarmDetails: () -> Unit
 ) {
-    if (selectedAlarm.value != null) {
+    if (selectedAlarm != null) {
         BackHandler {
             closeAlarmDetails()
         }
         AlarmDetail(
-            alarm =  alarms.value[selectedAlarm.value!!],
+            alarm =  alarms.value[selectedAlarm],
             close = { closeAlarmDetails() }
         )
     }
-    AlarmList(alarms = alarms.value, modifier = modifier, addAlarm=addAlarm, openAlarmDetails=openAlarmDetails)
+    AlarmList(
+        alarms = alarms.value,
+        modifier = modifier,
+        addAlarm = addAlarm,
+        openAlarmDetails = openAlarmDetails
+    )
 }
 
 @Composable

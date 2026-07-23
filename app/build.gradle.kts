@@ -14,8 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.excitemike.bocus"
-        minSdk = 23
-        targetSdk = 36
+        minSdk = 35
         versionCode = 1
         versionName = "1.0"
 

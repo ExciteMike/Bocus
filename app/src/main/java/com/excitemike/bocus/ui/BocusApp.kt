@@ -54,7 +54,7 @@ fun BocusApp(
             AppScreens.ALARMS -> AlarmScreen(
                 modifier = screenMod,
                 alarms = viewModel.alarmState.collectAsState(),
-                selectedAlarm = viewModel.selectedAlarm.collectAsState(),
+                selectedAlarm = uiState.selectedAlarm,
                 addAlarm = { viewModel.addAlarm(defaultAlarmName, context) },
                 openAlarmDetails = { viewModel.openAlarmDetails(it) },
                 closeAlarmDetails = { viewModel.closeAlarmDetails() },
