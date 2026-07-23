@@ -1,5 +1,6 @@
 <resources>
     <string name="add_alarm">Add Alarm</string>
+    <string name="alarm_name_label">Alarm Name</string>
     <string name="app_name">Bocus</string>
     <string name="about_tab_name">About</string>
     <string name="alarms_tab_name">Alarms</string>
@@ -16,6 +17,7 @@
     <string name="default_alarm_name">Alarm</string>
     <string name="dismiss">Dismiss</string>
     <string name="done">Done</string>
+    <string name="edit_alarm">Edit Alarm</string>
     <string name="error">Error</string>
     <string name="every_x_to_y_minutes">every %1$s to %2$s minutes</string>
     <string name="on">on</string>

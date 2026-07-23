@@ -61,10 +61,6 @@ fun AlarmListItem(
                     text = alarm.name,
                     style = MaterialTheme.typography.titleMedium
                 )
-                Text(
-                    text = "${alarm.id}",
-                    style = MaterialTheme.typography.titleSmall
-                )
             }
 
             Text(text = String.format(

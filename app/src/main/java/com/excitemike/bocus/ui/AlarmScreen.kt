@@ -28,6 +28,7 @@ fun AlarmScreen(
     alarms: State<List<Alarm>>,
     selectedAlarm: Int?,
     addAlarm: ()->Unit,
+    updateAlarm: (alarm:Alarm)->Unit,
     openAlarmDetails: (Int)->Unit,
     closeAlarmDetails: () -> Unit
 ) {
@@ -37,6 +38,7 @@ fun AlarmScreen(
         }
         AlarmDetail(
             alarm =  alarms.value[selectedAlarm],
+            updateAlarm = updateAlarm,
             close = { closeAlarmDetails() }
         )
     }

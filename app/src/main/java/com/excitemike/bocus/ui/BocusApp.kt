@@ -56,6 +56,7 @@ fun BocusApp(
                 alarms = viewModel.alarmState.collectAsState(),
                 selectedAlarm = uiState.selectedAlarm,
                 addAlarm = { viewModel.addAlarm(defaultAlarmName, context) },
+                updateAlarm = { viewModel.updateAlarm(it) },
                 openAlarmDetails = { viewModel.openAlarmDetails(it) },
                 closeAlarmDetails = { viewModel.closeAlarmDetails() },
             )

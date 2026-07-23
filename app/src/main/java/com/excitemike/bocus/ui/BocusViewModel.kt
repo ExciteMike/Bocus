@@ -38,6 +38,12 @@ class BocusViewModel(private val alarmRepo: BocusRepository): ViewModel() {
         }
     }
 
+    fun updateAlarm(alarm:Alarm) {
+        viewModelScope.launch {
+            alarmRepo.updateAlarm(alarm)
+        }
+    }
+
     fun goToScreen(screen:AppScreens) {
         _uiState.update { it.copy(currentScreen = screen, selectedAlarm = null) }
     }
