@@ -51,6 +51,7 @@ fun AlarmListItem(
     alarm: Alarm,
     modifier: Modifier = Modifier
 ) {
+    val timeFormatStr = stringResource(R.string.time_format)
     Card (modifier=modifier
             .fillMaxWidth()
             .padding(horizontal = 4.dp, vertical = 4.dp),
@@ -72,8 +73,8 @@ fun AlarmListItem(
 
             Text(text = String.format(
                     stringResource(R.string.time_to_time),
-                    timeString(alarm.startTime),
-                    timeString(alarm.endTime)
+                    timeString(timeFormatStr, alarm.startHour, alarm.startMinute),
+                    timeString(timeFormatStr, alarm.endHour, alarm.endMinute)
                 ),
                 style = MaterialTheme.typography.bodyMedium)
 

@@ -1,5 +1,6 @@
 package com.excitemike.bocus.data
 
+import androidx.compose.ui.res.stringResource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Entity
@@ -8,6 +9,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Update
+import com.excitemike.bocus.R
 import kotlinx.coroutines.flow.Flow
 
 /// what it does when the alarm goes off
@@ -52,9 +54,16 @@ data class Alarm(
     /// every X to Y minutes
     var frequencyMax: Int = DEFAULT_FREQUENCY_MAX,
 
-    /// At what time of day the alarms begin. Minutes since midnight.
-    val startTime: Int = DEFAULT_START,
-    /// at what time of day the alarms end. Minutes since midnight.
+    /** At what time of day the alarms begin. Hour part. 0-23 */
+    val startHour: Int = AlarmMeta.DEFAULT_START_HOUR,
+    /** At what time of day the alarms begin. Minute part. 0-59 */
+    val startMinute: Int = AlarmMeta.DEFAULT_START_MINUTE,
+
+    /** At what time of day the alarms end. Hour part. 0-23 */
+    val endHour: Int = AlarmMeta.DEFAULT_END_HOUR,
+    /** At what time of day the alarms end. Minute part. 0-59 */
+    val endMinute: Int = AlarmMeta.DEFAULT_END_MINUTE,
+
     val endTime: Int = DEFAULT_END,
 
     /// what to do
@@ -73,6 +82,15 @@ data class Alarm(
     var activeDays: Int = DEFAULT_ACTIVE_DAYS,
 )
 
+object AlarmMeta {
+    const val DEFAULT_END_HOUR = 17;
+    const val DEFAULT_END_MINUTE = 0;
+    const val DEFAULT_START_HOUR = 10;
+    const val DEFAULT_START_MINUTE = 0;
+    const val NAME_LEN_MAX = 255
+    const val MESSAGE_LEN_MAX = 255
+}
+
 @Dao
 interface AlarmDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -87,8 +105,8 @@ interface AlarmDao {
     fun getAllAlarms(): Flow<List<Alarm>>
 }
 
-fun timeString(minutesSinceMidnight:Int): String {
-    val hour = minutesSinceMidnight / MINUTES_PER_HOUR
+/** convert an hour (0-23) and minute (0-59) to a time in a format like "1:23 pm" */
+fun timeString(format:String, hour:Int, minute:Int): String {
     val displayHour: String = when (hour) {
         0, 12 -> "12"
         in 1..11 -> "$hour"
@@ -98,8 +116,11 @@ fun timeString(minutesSinceMidnight:Int): String {
         in 0..12 -> "am"
         else -> "pm"
     }
-    val minute = minutesSinceMidnight % MINUTES_PER_HOUR
     val displayMinute = minute.toString().padStart(2, '0')
 
-    return "$displayHour:$displayMinute $amPm"
+    return String.format(
+        format,
+        displayHour,
+        displayMinute,
+        amPm)
 }

@@ -1,6 +1,7 @@
 <resources>
     <string name="add_alarm">Add Alarm</string>
     <string name="alarm_name_label">Alarm Name</string>
+    <string name="alarm_message_label">Alarm Message</string>
     <string name="app_name">Bocus</string>
     <string name="about_tab_name">About</string>
     <string name="alarms_tab_name">Alarms</string>
@@ -18,12 +19,18 @@
     <string name="dismiss">Dismiss</string>
     <string name="done">Done</string>
     <string name="edit_alarm">Edit Alarm</string>
+    <string name="end_time_label">End at time</string>
     <string name="error">Error</string>
     <string name="every_x_to_y_minutes">every %1$s to %2$s minutes</string>
+    <string name="frequency_label">Frequency</string>
+    <string name="maximum_label">Maximum</string>
+    <string name="minimum_label">Minimum</string>
     <string name="on">on</string>
     <string name="ring_bell">ring bell</string>
     <string name="ring_bell_and_vibrate">ring bell and vibrate</string>
     <string name="show_message_x">show message "%1$s"</string>
+    <string name="start_time_label">Start at time</string>
+    <string name="time_format">%1$s:%2$s %3$s</string>
     <string name="time_to_time">%1$s to %2$s</string>
     <string name="vibrate">vibrate</string>
     <string name="welcome_tab_name">Welcome</string>
