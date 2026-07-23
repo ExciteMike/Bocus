@@ -1,5 +1,6 @@
 package com.excitemike.bocus.ui
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -22,13 +24,11 @@ import com.excitemike.bocus.R
 @Composable
 fun BocusApp(
     modifier: Modifier = Modifier,
-    uiState: BocusUiState,
-    addAlarm: (String) -> Unit,
-    dismissErrorDlg: () -> Unit,
-    goToScreen: (AppScreens) -> Unit,
-    openAlarmDetails: (Int)->Unit,
-    closeAlarmDetails: () -> Unit
+    viewModel: BocusViewModel,
+    context: Context,
 ) {
+    val uiState = viewModel.uiState.collectAsState().value
+
     val defaultAlarmName = stringResource(R.string.default_alarm_name)
 
     if (uiState.errorMessage != null) {
@@ -37,12 +37,12 @@ fun BocusApp(
             text = @Composable { Text(text=uiState.errorMessage!!) },
             confirmButton = @Composable { TextButton(
                 onClick = {
-                    dismissErrorDlg()
+                    viewModel.dismissErrorDlg()
                 }
             ) {
                 Text(text=stringResource(R.string.dismiss))
             } },
-            onDismissRequest = { dismissErrorDlg() }
+            onDismissRequest = { viewModel.dismissErrorDlg() }
         )
     }
 
@@ -50,14 +50,14 @@ fun BocusApp(
         val screenMod = Modifier.weight(1f)
         when (uiState.currentScreen) {
             AppScreens.WELCOME -> WelcomeScreen(modifier = screenMod)
-            AppScreens.ABOUT -> AboutScreen(modifier = screenMod, goToScreen = goToScreen)
+            AppScreens.ABOUT -> AboutScreen(modifier = screenMod, goToScreen = { viewModel.goToScreen(it) })
             AppScreens.ALARMS -> AlarmScreen(
                 modifier = screenMod,
-                alarms = uiState.alarms,
-                addAlarm = { addAlarm(defaultAlarmName) },
-                selectedAlarm = uiState.selectedAlarm,
-                openAlarmDetails = openAlarmDetails,
-                closeAlarmDetails = closeAlarmDetails,
+                alarms = viewModel.alarmState.collectAsState(),
+                selectedAlarm = viewModel.selectedAlarm.collectAsState(),
+                addAlarm = { viewModel.addAlarm(defaultAlarmName, context) },
+                openAlarmDetails = { viewModel.openAlarmDetails(it) },
+                closeAlarmDetails = { viewModel.closeAlarmDetails() },
             )
 
             AppScreens.CREDITS -> CreditsScreen(modifier = screenMod)
@@ -77,7 +77,7 @@ fun BocusApp(
                         },
                         label = { Text(text=stringResource(screen.labelId)) },
                         selected = screen == uiState.currentScreen,
-                        onClick = { goToScreen(screen) },
+                        onClick = { viewModel.goToScreen(screen) },
                     )
                 }
         }

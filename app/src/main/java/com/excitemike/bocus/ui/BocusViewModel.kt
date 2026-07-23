@@ -1,46 +1,48 @@
 package com.excitemike.bocus.ui
 
 import android.content.Context
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
-import com.excitemike.bocus.data.AlarmDao
-import com.excitemike.bocus.data.AlarmDatabase
-import kotlinx.coroutines.flow.Flow
+import com.excitemike.bocus.data.BocusRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlin.math.max
+import kotlinx.coroutines.launch
 
-const val MAX_ALARMS = 255
-class BocusViewModel(private val alarmDao: AlarmDao): ViewModel() {
-    private val allAlarms: Flow<List<Alarm>> = alarmDao.getAllAlarms()
-
-    private val _uiState = MutableStateFlow(BocusUiState(alarms = listOf(
-        Alarm(id=0, "Test Alarm", message = "Example Message"))))
+class BocusViewModel(private val alarmRepo: BocusRepository): ViewModel() {
+    val alarmState: StateFlow<List<Alarm>> = alarmRepo.getAllAlarmsStream()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = listOf()
+        )
+    private val _uiState = MutableStateFlow(BocusUiState())
     val uiState: StateFlow<BocusUiState> = _uiState.asStateFlow()
 
+    private val _selectedAlarm = MutableStateFlow<Int?>(null)
+    val selectedAlarm = _selectedAlarm.asStateFlow()
+
     fun addAlarm(name:String, context: Context) {
-        if (uiState.value.alarms.size < MAX_ALARMS) {
+        val size = alarmState.value.size
+        if (size < MAX_ALARMS) {
+            viewModelScope.launch {
+                alarmRepo.insertAlarm(Alarm(name=name))
+            }
+            /*
             val alarm = Alarm(id=getNextAlarmId(), name=name)
-            _uiState.update { it.copy(alarms = it.alarms + alarm) }
+            _uiState.update { it.copy(alarms = it.alarms + alarm) }*/
         } else {
             setErrorMessage(context.getString(R.string.alarm_limit))
         }
     }
+
     fun goToScreen(screen:AppScreens) {
         _uiState.update { it.copy(currentScreen = screen, selectedAlarm = null) }
-    }
-
-    /// TODO: let room generate this id
-    fun getNextAlarmId(): Int {
-        var highest:Int = 0
-        for (alarm in _uiState.value.alarms) {
-            highest = max(highest, alarm.id)
-        }
-        return highest+1
     }
 
     fun setErrorMessage(errorMessage: String) {
@@ -58,10 +60,14 @@ class BocusViewModel(private val alarmDao: AlarmDao): ViewModel() {
     fun closeAlarmDetails() {
         _uiState.update { it.copy(selectedAlarm = null) }
     }
+
+    companion object {
+        const val MAX_ALARMS = 255
+        const val TIMEOUT_MILLIS = 5_000L
+    }
 }
 
 data class BocusUiState (
-    val alarms: List<Alarm> = listOf(),
     var currentScreen:AppScreens = AppScreens.WELCOME,
     /// Error Message
     var errorMessage: String? = null,

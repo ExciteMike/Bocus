@@ -13,34 +13,34 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 
 @Composable
 fun AlarmScreen(
-    alarms: List<Alarm>,
-    selectedAlarm: Int?,
     modifier: Modifier = Modifier,
+    alarms: State<List<Alarm>>,
+    selectedAlarm: State<Int?>,
     addAlarm: ()->Unit,
     openAlarmDetails: (Int)->Unit,
     closeAlarmDetails: () -> Unit
 ) {
-    if (selectedAlarm != null) {
+    if (selectedAlarm.value != null) {
         BackHandler {
             closeAlarmDetails()
         }
         AlarmDetail(
-            alarm = alarms[selectedAlarm],
+            alarm =  alarms.value[selectedAlarm.value!!],
             close = { closeAlarmDetails() }
         )
     }
-    AlarmList(alarms = alarms, modifier = modifier, addAlarm=addAlarm, openAlarmDetails=openAlarmDetails)
+    AlarmList(alarms = alarms.value, modifier = modifier, addAlarm=addAlarm, openAlarmDetails=openAlarmDetails)
 }
 
 @Composable
@@ -59,7 +59,7 @@ fun AlarmList(
                 style = MaterialTheme.typography.titleLarge
             )
             LazyColumn(Modifier.fillMaxSize().weight(1f)) {
-                items(count = alarms.size, key = { alarms[it].id }) { i ->
+                items(count = alarms.size, key = { alarms[it].id?:0 }) { i ->
                     AlarmListItem(
                         modifier = Modifier
                             .fillMaxWidth()

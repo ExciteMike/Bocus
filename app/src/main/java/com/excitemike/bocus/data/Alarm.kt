@@ -18,10 +18,10 @@ enum class NotifMode(val value:Int) {
 }
 
 const val MINUTES_PER_HOUR:Int = 60
-val TEN_AM:Int = 10 * MINUTES_PER_HOUR
-val FIVE_PM:Int = 17 * MINUTES_PER_HOUR
-val DEFAULT_START = TEN_AM
-val DEFAULT_END = FIVE_PM
+const val TEN_AM:Int = 10 * MINUTES_PER_HOUR
+const val FIVE_PM:Int = 17 * MINUTES_PER_HOUR
+const val DEFAULT_START = TEN_AM
+const val DEFAULT_END = FIVE_PM
 const val DEFAULT_FREQUENCY_MIN:Int = 15
 const val DEFAULT_FREQUENCY_MAX:Int = 25
 val DEFAULT_NOTIF_MODE = NotifMode.BellAndVibrate
@@ -42,7 +42,7 @@ const val SATURDAY:Int = 0x40
 data class Alarm(
     /// LazyColumns wants them to have a unique id
     @PrimaryKey(autoGenerate = true)
-    var id: Int,
+    var id: Int? = null,
     /// how to label the alarm in the ui
     var name: String,
 
