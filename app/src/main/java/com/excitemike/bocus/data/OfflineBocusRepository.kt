@@ -8,4 +8,5 @@ class OfflineBocusRepository(private val alarmDao: AlarmDao) : BocusRepository {
     override suspend fun insertAlarm(alarm: Alarm) = alarmDao.insert(alarm)
     override suspend fun deleteAlarm(alarm: Alarm) = alarmDao.delete(alarm)
     override suspend fun updateAlarm(alarm: Alarm) = alarmDao.update(alarm)
+    override suspend fun getAllAlarmsRaw(): List<Alarm> = alarmDao.getAllAlarmsRaw()
 }

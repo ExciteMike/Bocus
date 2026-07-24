@@ -1,6 +1,6 @@
 package com.excitemike.bocus.data
 
-import androidx.compose.ui.res.stringResource
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Entity
@@ -9,86 +9,104 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Update
-import com.excitemike.bocus.R
 import kotlinx.coroutines.flow.Flow
 
-/// what it does when the alarm goes off
-enum class NotifMode(val value:Int) {
-    Bell(0x01),
-    Vibrate(0x10),
-    BellAndVibrate(0x11)
-}
-
-const val MINUTES_PER_HOUR:Int = 60
-const val TEN_AM:Int = 10 * MINUTES_PER_HOUR
-const val FIVE_PM:Int = 17 * MINUTES_PER_HOUR
-const val DEFAULT_START = TEN_AM
-const val DEFAULT_END = FIVE_PM
-const val DEFAULT_FREQUENCY_MIN:Int = 15
-const val DEFAULT_FREQUENCY_MAX:Int = 25
-val DEFAULT_NOTIF_MODE = NotifMode.BellAndVibrate
 const val DEFAULT_ALARM_LENGTH:Int = 30
 const val DEFAULT_ACTIVE_DAYS:Int = 0x3E
-
-/// Bit flag for use with Alarm.ActiveDays
-const val SUNDAY:Int = 0x1
-const val MONDAY:Int = 0x2
-const val TUESDAY:Int = 0x4
-const val WEDNESDAY:Int = 0x8
-const val THURSDAY:Int = 0x10
-const val FRIDAY:Int = 0x20
-const val SATURDAY:Int = 0x40
 
 /// Entry for alarms
 @Entity(tableName = "alarms")
 data class Alarm(
-    /// LazyColumns wants them to have a unique id
+    /** uniquely identify each alarm */
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     var id: Int? = null,
-    /// how to label the alarm in the ui
+
+    /** how to label the alarm in the ui */
+    @ColumnInfo(name = "name")
     var name: String,
 
-    /// every X to Y minutes
-    var frequencyMin: Int = DEFAULT_FREQUENCY_MIN,
+    /** shortest time between triggers of the alarm, in minutes */
+    @ColumnInfo(name = "frequency_min")
+    var frequencyMin: Int = AlarmDefaults.DEFAULT_FREQUENCY_MIN,
 
-    /// every X to Y minutes
-    var frequencyMax: Int = DEFAULT_FREQUENCY_MAX,
+    /** longest time between triggers of the alarm, in minutes */
+    @ColumnInfo(name = "frequency_max")
+    var frequencyMax: Int = AlarmDefaults.DEFAULT_FREQUENCY_MAX,
 
     /** At what time of day the alarms begin. Hour part. 0-23 */
-    val startHour: Int = AlarmMeta.DEFAULT_START_HOUR,
+    @ColumnInfo(name = "start_hour")
+    val startHour: Int = AlarmDefaults.DEFAULT_START_HOUR,
     /** At what time of day the alarms begin. Minute part. 0-59 */
-    val startMinute: Int = AlarmMeta.DEFAULT_START_MINUTE,
+    @ColumnInfo(name = "start_minute")
+    val startMinute: Int = AlarmDefaults.DEFAULT_START_MINUTE,
 
     /** At what time of day the alarms end. Hour part. 0-23 */
-    val endHour: Int = AlarmMeta.DEFAULT_END_HOUR,
+    @ColumnInfo(name = "end_hour")
+    val endHour: Int = AlarmDefaults.DEFAULT_END_HOUR,
     /** At what time of day the alarms end. Minute part. 0-59 */
-    val endMinute: Int = AlarmMeta.DEFAULT_END_MINUTE,
+    @ColumnInfo(name = "end_minute")
+    val endMinute: Int = AlarmDefaults.DEFAULT_END_MINUTE,
 
-    val endTime: Int = DEFAULT_END,
+    /** what to do when the alarm triggers */
+    @ColumnInfo(name = "notif_mode")
+    var notifMode: Int = AlarmNotifMode.DEFAULT,
 
-    /// what to do
-    var notifMode: NotifMode = DEFAULT_NOTIF_MODE,
-
-    /// message to put on the phone notification
+    /** what to say in the notification */
+    @ColumnInfo(name = "message")
     var message: String = "",
 
-    /// whether the alarm repeats if not dismissed
-    var requireDismiss: Boolean = false,
+    /** whether the alarm repeats if not dismissed */
+    //@ColumnInfo(name =  "require_dismiss")
+    //var requireDismiss: Boolean = false,
 
-    /// how long it sounds/buzzes for. Seconds
+    /** how long it sounds/buzzes for. Seconds */
+    @ColumnInfo(name = "alarm_length")
     var alarmLength: Int = DEFAULT_ALARM_LENGTH,
 
-    /// repeat on which days of the week, (bitflags)
+    /** repeat on which days of the week, (bitflags) */
+    @ColumnInfo(name = "active_days")
     var activeDays: Int = DEFAULT_ACTIVE_DAYS,
+
+    /** when was the alarm last fired as measured by System.currentTimeMillis(), or zero */
+    @ColumnInfo(name = "last_triggered_at")
+    var lastTriggeredAt: Int = 0
 )
 
-object AlarmMeta {
-    const val DEFAULT_END_HOUR = 17;
-    const val DEFAULT_END_MINUTE = 0;
-    const val DEFAULT_START_HOUR = 10;
-    const val DEFAULT_START_MINUTE = 0;
+
+/** Bit flags for use with Alarm.ActiveDays */
+object AlarmDayOfWeekFlags {
+    const val SUNDAY:Int = 0x1
+    const val MONDAY:Int = 0x2
+    const val TUESDAY:Int = 0x4
+    const val WEDNESDAY:Int = 0x8
+    const val THURSDAY:Int = 0x10
+    const val FRIDAY:Int = 0x20
+    const val SATURDAY:Int = 0x40
+}
+
+/** default values for alarms */
+object AlarmDefaults {
+    const val DEFAULT_END_HOUR = 17
+    const val DEFAULT_END_MINUTE = 0
+    const val DEFAULT_FREQUENCY_MAX:Int = 25
+    const val DEFAULT_FREQUENCY_MIN:Int = 15
+    const val DEFAULT_START_HOUR = 10
+    const val DEFAULT_START_MINUTE = 0
+}
+
+/** limiting values associated with alarms */
+object AlarmLimits {
     const val NAME_LEN_MAX = 255
     const val MESSAGE_LEN_MAX = 255
+}
+
+/** possibilities for alarm notification mode */
+object AlarmNotifMode {
+    const val BELL = 0x1
+    const val VIBRATE = 0x2
+    const val BELL_AND_VIBRATE = 0x3
+    const val DEFAULT = BELL_AND_VIBRATE
 }
 
 @Dao
@@ -103,6 +121,9 @@ interface AlarmDao {
     fun getAlarm(id: Int): Flow<Alarm>
     @Query("SELECT * from alarms")
     fun getAllAlarms(): Flow<List<Alarm>>
+
+    @Query("SELECT * from alarms")
+    fun getAllAlarmsRaw(): List<Alarm>
 }
 
 /** convert an hour (0-23) and minute (0-59) to a time in a format like "1:23 pm" */

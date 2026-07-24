@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
-import com.excitemike.bocus.data.AlarmMeta
+import com.excitemike.bocus.data.AlarmLimits
 import kotlin.math.max
 import kotlin.math.min
 
@@ -105,7 +105,7 @@ fun AlarmDetailControls(modifier: Modifier,
             modifier = fillMaxWidth,
             state = rememberTextFieldState(alarm.name),
             inputTransformation = InputTransformation
-                .maxLength(AlarmMeta.NAME_LEN_MAX)
+                .maxLength(AlarmLimits.NAME_LEN_MAX)
                 .then { updateAlarm(alarm.copy(name = this.toString())) },
             label = { Text(stringResource(R.string.alarm_name_label)) },
         )
@@ -114,7 +114,7 @@ fun AlarmDetailControls(modifier: Modifier,
             modifier = fillMaxWidth,
             state = rememberTextFieldState(alarm.message),
             inputTransformation = InputTransformation
-                .maxLength(AlarmMeta.MESSAGE_LEN_MAX)
+                .maxLength(AlarmLimits.MESSAGE_LEN_MAX)
                 .then { updateAlarm(alarm.copy(message = this.toString())) },
             label = { Text(stringResource(R.string.alarm_message_label)) },
         )

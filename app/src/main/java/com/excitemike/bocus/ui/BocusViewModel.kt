@@ -1,11 +1,18 @@
 package com.excitemike.bocus.ui
 
+import android.Manifest
+import android.app.AlarmManager
+import android.app.Application
 import android.content.Context
-import androidx.lifecycle.ViewModel
+import androidx.annotation.RequiresPermission
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
-import com.excitemike.bocus.data.BocusRepository
+import com.excitemike.bocus.data.AlarmDatabase
+import com.excitemike.bocus.data.OfflineBocusRepository
+import com.excitemike.bocus.data.updateAllSystemAlarms
+import com.excitemike.bocus.data.updateSystemAlarm
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +21,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class BocusViewModel(private val alarmRepo: BocusRepository): ViewModel() {
+class BocusViewModel(application: Application): AndroidViewModel(application) {
+    private val dao = AlarmDatabase.getDatabase(application).alarmDao()
+    private val alarmRepo = OfflineBocusRepository(dao)
     val alarmState: StateFlow<List<Alarm>> = alarmRepo.getAllAlarmsStream()
         .stateIn(
             scope = viewModelScope,
@@ -30,17 +39,27 @@ class BocusViewModel(private val alarmRepo: BocusRepository): ViewModel() {
             viewModelScope.launch {
                 alarmRepo.insertAlarm(Alarm(name=name))
             }
-            /*
-            val alarm = Alarm(id=getNextAlarmId(), name=name)
-            _uiState.update { it.copy(alarms = it.alarms + alarm) }*/
         } else {
             setErrorMessage(context.getString(R.string.alarm_limit))
         }
     }
 
+    fun updateAllAlarms() {
+        viewModelScope.launch {
+            updateAllSystemAlarms(getApplication() as Context, alarmState.value)
+        }
+    }
+
+    @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
     fun updateAlarm(alarm:Alarm) {
+        val application: Application = getApplication()
+        val alarmManager = application.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (!alarmManager.canScheduleExactAlarms()) {
+            return
+        }
         viewModelScope.launch {
             alarmRepo.updateAlarm(alarm)
+            updateSystemAlarm(application, alarm)
         }
     }
 

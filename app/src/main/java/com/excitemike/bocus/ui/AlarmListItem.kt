@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -18,13 +17,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
-import com.excitemike.bocus.data.FRIDAY
-import com.excitemike.bocus.data.MONDAY
-import com.excitemike.bocus.data.SATURDAY
-import com.excitemike.bocus.data.SUNDAY
-import com.excitemike.bocus.data.THURSDAY
-import com.excitemike.bocus.data.TUESDAY
-import com.excitemike.bocus.data.WEDNESDAY
+import com.excitemike.bocus.data.AlarmDayOfWeekFlags
 import com.excitemike.bocus.data.timeString
 
 fun checkFlags(bits:Int, desiredBits:Int): Boolean {
@@ -84,31 +77,31 @@ fun AlarmListItem(
                     style = MaterialTheme.typography.bodyMedium)
 
                 DayIcon(
-                    isOn = checkFlags(alarm.activeDays, SUNDAY),
+                    isOn = checkFlags(alarm.activeDays, AlarmDayOfWeekFlags.SUNDAY),
                     dayStringId = R.string.day_short_sunday
                 )
                 DayIcon(
-                    isOn = checkFlags(alarm.activeDays, MONDAY),
+                    isOn = checkFlags(alarm.activeDays, AlarmDayOfWeekFlags.MONDAY),
                     dayStringId = R.string.day_short_monday
                 )
                 DayIcon(
-                    isOn = checkFlags(alarm.activeDays, TUESDAY),
+                    isOn = checkFlags(alarm.activeDays, AlarmDayOfWeekFlags.TUESDAY),
                     dayStringId = R.string.day_short_tuesday
                 )
                 DayIcon(
-                    isOn = checkFlags(alarm.activeDays, WEDNESDAY),
+                    isOn = checkFlags(alarm.activeDays, AlarmDayOfWeekFlags.WEDNESDAY),
                     dayStringId = R.string.day_short_wednesday
                 )
                 DayIcon(
-                    isOn = checkFlags(alarm.activeDays, THURSDAY),
+                    isOn = checkFlags(alarm.activeDays, AlarmDayOfWeekFlags.THURSDAY),
                     dayStringId = R.string.day_short_thursday
                 )
                 DayIcon(
-                    isOn = checkFlags(alarm.activeDays, FRIDAY),
+                    isOn = checkFlags(alarm.activeDays, AlarmDayOfWeekFlags.FRIDAY),
                     dayStringId = R.string.day_short_friday
                 )
                 DayIcon(
-                    isOn = checkFlags(alarm.activeDays, SATURDAY),
+                    isOn = checkFlags(alarm.activeDays, AlarmDayOfWeekFlags.SATURDAY),
                     dayStringId = R.string.day_short_saturday
                 )
             }

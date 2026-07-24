@@ -8,4 +8,5 @@ interface BocusRepository {
     suspend fun deleteAlarm(alarm:Alarm)
     suspend fun updateAlarm(alarm:Alarm)
     suspend fun getAlarm(id:Int): Flow<Alarm?>
+    suspend fun getAllAlarmsRaw(): List<Alarm>
 }
