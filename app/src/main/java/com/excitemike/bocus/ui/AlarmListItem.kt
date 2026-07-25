@@ -14,15 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDayOfWeekFlags
+import com.excitemike.bocus.data.activeDaysString
 import com.excitemike.bocus.data.timeString
-
-fun checkFlags(bits:Int, desiredBits:Int): Boolean {
-    return desiredBits == (bits and desiredBits)
-}
 
 @Composable
 fun DayIcon(isOn: Boolean, dayStringId: Int) {
@@ -34,7 +32,9 @@ fun DayIcon(isOn: Boolean, dayStringId: Int) {
             text = stringResource(dayStringId),
             textDecoration = textDecoration,
             fontWeight = fontWeight,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -53,58 +53,40 @@ fun AlarmListItem(
             Row {
                 Text(
                     text = alarm.name,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
-            Text(text = String.format(
+            Text(
+                text = String.format(
                     stringResource(R.string.every_x_to_y_minutes),
                     alarm.frequencyMin,
                     alarm.frequencyMax
                 ),
-                style = MaterialTheme.typography.bodyMedium)
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
 
-            Text(text = String.format(
+            Text(
+                text = String.format(
                     stringResource(R.string.time_to_time),
                     timeString(timeFormatStr, alarm.startHour, alarm.startMinute),
                     timeString(timeFormatStr, alarm.endHour, alarm.endMinute)
                 ),
-                style = MaterialTheme.typography.bodyMedium)
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(modifier = Modifier.padding(end = 4.dp),
-                    text = stringResource(R.string.on),
-                    style = MaterialTheme.typography.bodyMedium)
-
-                DayIcon(
-                    isOn = checkFlags(alarm.activeDays, AlarmDayOfWeekFlags.SUNDAY),
-                    dayStringId = R.string.day_short_sunday
-                )
-                DayIcon(
-                    isOn = checkFlags(alarm.activeDays, AlarmDayOfWeekFlags.MONDAY),
-                    dayStringId = R.string.day_short_monday
-                )
-                DayIcon(
-                    isOn = checkFlags(alarm.activeDays, AlarmDayOfWeekFlags.TUESDAY),
-                    dayStringId = R.string.day_short_tuesday
-                )
-                DayIcon(
-                    isOn = checkFlags(alarm.activeDays, AlarmDayOfWeekFlags.WEDNESDAY),
-                    dayStringId = R.string.day_short_wednesday
-                )
-                DayIcon(
-                    isOn = checkFlags(alarm.activeDays, AlarmDayOfWeekFlags.THURSDAY),
-                    dayStringId = R.string.day_short_thursday
-                )
-                DayIcon(
-                    isOn = checkFlags(alarm.activeDays, AlarmDayOfWeekFlags.FRIDAY),
-                    dayStringId = R.string.day_short_friday
-                )
-                DayIcon(
-                    isOn = checkFlags(alarm.activeDays, AlarmDayOfWeekFlags.SATURDAY),
-                    dayStringId = R.string.day_short_saturday
-                )
-            }
+            Text(
+                text = activeDaysString(alarm),
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }

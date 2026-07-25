@@ -1,5 +1,7 @@
 package com.excitemike.bocus.data
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Delete
@@ -9,10 +11,11 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Update
+import com.excitemike.bocus.R
+import com.excitemike.bocus.util.checkFlags
 import kotlinx.coroutines.flow.Flow
 
 const val DEFAULT_ALARM_LENGTH:Int = 30
-const val DEFAULT_ACTIVE_DAYS:Int = 0x3E
 
 /// Entry for alarms
 @Entity(tableName = "alarms")
@@ -66,7 +69,7 @@ data class Alarm(
 
     /** repeat on which days of the week, (bitflags) */
     @ColumnInfo(name = "active_days")
-    var activeDays: Int = DEFAULT_ACTIVE_DAYS,
+    var activeDays: Int = AlarmDayOfWeekFlags.DEFAULT_ACTIVE_DAYS,
 
     /** when was the alarm last fired as measured by System.currentTimeMillis(), or zero */
     @ColumnInfo(name = "last_triggered_at")
@@ -83,6 +86,9 @@ object AlarmDayOfWeekFlags {
     const val THURSDAY:Int = 0x10
     const val FRIDAY:Int = 0x20
     const val SATURDAY:Int = 0x40
+
+    const val ALL_DAYS:Int = 0x7F
+    const val DEFAULT_ACTIVE_DAYS:Int = 0x3E
 }
 
 /** default values for alarms */
@@ -144,4 +150,33 @@ fun timeString(format:String, hour:Int, minute:Int): String {
         displayHour,
         displayMinute,
         amPm)
+}
+
+/**
+ * Convert the alarms active days to a short string you can display to indicate them.
+ *
+ * So for example if it goes every day you get "SuMoTuWeThFrSa"
+ */
+@Composable
+fun activeDaysString(alarm: Alarm): String {
+    val days = alarm.activeDays
+    when (days) {
+        0, AlarmDayOfWeekFlags.ALL_DAYS -> return stringResource(R.string.day_short_all)
+    }
+    val builder = StringBuilder(stringResource(R.string.on))
+        .append(" ")
+    for ((flags, stringId) in listOf(
+        AlarmDayOfWeekFlags.SUNDAY to R.string.day_short_sunday,
+        AlarmDayOfWeekFlags.MONDAY to R.string.day_short_monday,
+        AlarmDayOfWeekFlags.TUESDAY to R.string.day_short_tuesday,
+        AlarmDayOfWeekFlags.WEDNESDAY to R.string.day_short_wednesday,
+        AlarmDayOfWeekFlags.THURSDAY to R.string.day_short_thursday,
+        AlarmDayOfWeekFlags.FRIDAY to R.string.day_short_friday,
+        AlarmDayOfWeekFlags.SATURDAY to R.string.day_short_saturday,
+    )) {
+        if (checkFlags(days, flags)) {
+            builder.append(stringResource(stringId))
+        }
+    }
+    return builder.toString()
 }

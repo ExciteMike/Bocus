@@ -8,6 +8,7 @@
     <string name="alarm_limit">Maximum number of alarms reached</string>
     <string name="credits_button">Credits</string>
     <string name="credits_tab_name">Credits</string>
+    <string name="day_short_all">Every day</string>
     <string name="day_short_sunday">Su</string>
     <string name="day_short_monday">Mo</string>
     <string name="day_short_tuesday">Tu</string>
@@ -25,6 +26,7 @@
     <string name="frequency_label">Frequency</string>
     <string name="maximum_label">Maximum</string>
     <string name="minimum_label">Minimum</string>
+    <string name="no_alarms">No alarms have been added yet. Click the "+" button below to add one!</string>
     <string name="on">on</string>
     <string name="ring_bell">ring bell</string>
     <string name="ring_bell_and_vibrate">ring bell and vibrate</string>
