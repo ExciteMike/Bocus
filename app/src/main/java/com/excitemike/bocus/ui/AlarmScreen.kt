@@ -11,10 +11,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
@@ -24,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
+import com.excitemike.bocus.data.Command
 import com.excitemike.bocus.modifier.fadeTopAndBottom
 
 @Composable
@@ -34,7 +39,8 @@ fun AlarmScreen(
     addAlarm: ()->Unit,
     updateAlarm: (alarm:Alarm)->Unit,
     openAlarmDetails: (Int)->Unit,
-    closeAlarmDetails: () -> Unit
+    closeAlarmDetails: () -> Unit,
+    requestDeleteAlarm: (String, Command)->Unit
 ) {
     if (selectedAlarmIndex != null) {
         if (selectedAlarmIndex in 0..<alarms.value.size) {
@@ -54,7 +60,8 @@ fun AlarmScreen(
         alarms = alarms.value,
         modifier = modifier,
         addAlarm = addAlarm,
-        openAlarmDetails = openAlarmDetails
+        openAlarmDetails = openAlarmDetails,
+        requestDeleteAlarm = requestDeleteAlarm
     )
 }
 
@@ -63,7 +70,8 @@ fun AlarmList(
     alarms: List<Alarm>,
     modifier: Modifier = Modifier,
     addAlarm: ()->Unit,
-    openAlarmDetails: (Int)->Unit
+    openAlarmDetails: (Int)->Unit,
+    requestDeleteAlarm: (String, Command)->Unit
 ) {
     Box(modifier = modifier.fillMaxSize().padding(horizontal = 16.dp)) {
         Column (
@@ -91,15 +99,31 @@ fun AlarmList(
                     alarms,
                     key = { it.id!! }
                 ) { alarm ->
-                    AlarmListItem(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                val index = alarms.indexOfFirst { it.id == alarm.id }
-                                openAlarmDetails(index)
-                            },
-                        alarm = alarm,
-                    )
+                    val index = lazy { alarms.indexOfFirst { it.id == alarm.id } }
+                    val deleteAlarmTemplate = stringResource(R.string.confirm_delete_alarm)
+                    SwipeToDismissBox(
+                        state = rememberSwipeToDismissBoxState(),
+                        backgroundContent = {
+                            Box { Icon (
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = null
+                            ) }
+                        },
+                        onDismiss = {
+                            val message = String.format(
+                                deleteAlarmTemplate,
+                                alarm.name
+                            )
+                            requestDeleteAlarm(message, Command.DeleteAlarm(alarm.id!!))
+                        }
+                    ) {
+                        AlarmListItem(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { openAlarmDetails(index.value) },
+                            alarm = alarm,
+                        )
+                    }
                 }
             }
         }

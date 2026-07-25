@@ -6,6 +6,7 @@
     <string name="about_tab_name">About</string>
     <string name="alarms_tab_name">Alarms</string>
     <string name="alarm_limit">Maximum number of alarms reached</string>
+    <string name="confirm_delete_alarm">Delete alarm "%1$s?"</string>
     <string name="credits_button">Credits</string>
     <string name="credits_tab_name">Credits</string>
     <string name="day_short_all">Every day</string>

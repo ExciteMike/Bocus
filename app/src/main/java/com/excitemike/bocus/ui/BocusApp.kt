@@ -61,6 +61,7 @@ fun BocusApp(
                 updateAlarm = { viewModel.updateAlarm(it) },
                 openAlarmDetails = { viewModel.openAlarmDetails(it) },
                 closeAlarmDetails = { viewModel.closeAlarmDetails() },
+                requestDeleteAlarm = { message, onConfirm -> viewModel.requestDeleteAlarm(message, onConfirm) },
             )
 
             AppScreens.CREDITS -> CreditsScreen(modifier = screenMod)

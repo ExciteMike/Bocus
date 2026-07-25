@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDatabase
+import com.excitemike.bocus.data.Command
 import com.excitemike.bocus.data.OfflineBocusRepository
 import com.excitemike.bocus.data.updateAllSystemAlarms
 import com.excitemike.bocus.data.updateSystemAlarm
@@ -83,6 +84,9 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
         _uiState.update { it.copy(selectedAlarmIndex = null) }
     }
 
+    fun requestDeleteAlarm(confirmMessage: String, onConfirm: Command) {
+        _uiState.update { it.copy(confirmMessage = confirmMessage, onConfirm = onConfirm) }
+    }
     companion object {
         const val MAX_ALARMS = 255
         const val TIMEOUT_MILLIS = 5_000L
@@ -93,6 +97,10 @@ data class BocusUiState (
     var currentScreen:AppScreens = AppScreens.WELCOME,
     /// Error Message
     var errorMessage: String? = null,
+    /// Confirmation Popup Message
+    var confirmMessage: String? = null,
+    /// Confirmation Popup Action
+    var onConfirm: Command = Command.None,
     /// index of the selected alarm
     var selectedAlarmIndex: Int? = null,
 )
