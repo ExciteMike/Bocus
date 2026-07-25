@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.Command
-import com.excitemike.bocus.modifier.fadeTopAndBottom
+import com.excitemike.bocus.ui.modifier.fadeTopAndBottom
 
 
 /**

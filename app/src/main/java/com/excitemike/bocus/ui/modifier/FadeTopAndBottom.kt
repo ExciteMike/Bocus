@@ -1,4 +1,4 @@
-package com.excitemike.bocus.modifier
+package com.excitemike.bocus.ui.modifier
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
