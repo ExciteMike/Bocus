@@ -2,12 +2,15 @@ package com.excitemike.bocus.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,26 +24,31 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
+import com.excitemike.bocus.modifier.fadeTopAndBottom
 
 @Composable
 fun AlarmScreen(
     modifier: Modifier = Modifier,
     alarms: State<List<Alarm>>,
-    selectedAlarm: Int?,
+    selectedAlarmIndex: Int?,
     addAlarm: ()->Unit,
     updateAlarm: (alarm:Alarm)->Unit,
     openAlarmDetails: (Int)->Unit,
     closeAlarmDetails: () -> Unit
 ) {
-    if (selectedAlarm != null) {
-        BackHandler {
+    if (selectedAlarmIndex != null) {
+        if (selectedAlarmIndex in 0..<alarms.value.size) {
+            BackHandler {
+                closeAlarmDetails()
+            }
+            AlarmDetail(
+                alarm =  alarms.value[selectedAlarmIndex],
+                updateAlarm = updateAlarm,
+                close = { closeAlarmDetails() }
+            )
+        } else {
             closeAlarmDetails()
         }
-        AlarmDetail(
-            alarm =  alarms.value[selectedAlarm],
-            updateAlarm = updateAlarm,
-            close = { closeAlarmDetails() }
-        )
     }
     AlarmList(
         alarms = alarms.value,
@@ -63,15 +71,34 @@ fun AlarmList(
         ) {
             Text(
                 text = "Alarms",
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
             )
-            LazyColumn(Modifier.fillMaxSize().weight(1f)) {
-                items(count = alarms.size, key = { alarms[it].id?:0 }) { i ->
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(200.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+                    .fadeTopAndBottom(16.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                if (alarms.isEmpty()) {
+                    item {
+                        Text(text = stringResource(R.string.no_alarms))
+                    }
+                }
+                items(
+                    alarms,
+                    key = { it.id!! }
+                ) { alarm ->
                     AlarmListItem(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { openAlarmDetails(i) },
-                        alarm = alarms[i],
+                            .clickable {
+                                val index = alarms.indexOfFirst { it.id == alarm.id }
+                                openAlarmDetails(index)
+                            },
+                        alarm = alarm,
                     )
                 }
             }
