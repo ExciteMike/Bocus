@@ -64,7 +64,7 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
     }
 
     fun goToScreen(screen:AppScreens) {
-        _uiState.update { it.copy(currentScreen = screen, selectedAlarm = null) }
+        _uiState.update { it.copy(currentScreen = screen, selectedAlarmIndex = null) }
     }
 
     fun setErrorMessage(errorMessage: String) {
@@ -75,12 +75,12 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
         _uiState.update { it.copy(errorMessage = null) }
     }
 
-    fun openAlarmDetails(selectedAlarm: Int) {
-        _uiState.update { it.copy(selectedAlarm = selectedAlarm) }
+    fun openAlarmDetails(selectedAlarmIndex: Int) {
+        _uiState.update { it.copy(selectedAlarmIndex = selectedAlarmIndex) }
     }
 
     fun closeAlarmDetails() {
-        _uiState.update { it.copy(selectedAlarm = null) }
+        _uiState.update { it.copy(selectedAlarmIndex = null) }
     }
 
     companion object {
@@ -94,5 +94,5 @@ data class BocusUiState (
     /// Error Message
     var errorMessage: String? = null,
     /// index of the selected alarm
-    var selectedAlarm: Int? = null,
+    var selectedAlarmIndex: Int? = null,
 )

@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 class UpdateAllAlarmsService: Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        Log.v("Bocus", "UpdateAllAlarmsService started")
         if (intent?.action != Intent.ACTION_BOOT_COMPLETED) {
             return START_NOT_STICKY
         }

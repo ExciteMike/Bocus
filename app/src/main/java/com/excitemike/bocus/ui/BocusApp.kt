@@ -1,5 +1,6 @@
 package com.excitemike.bocus.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 
+@SuppressLint("ScheduleExactAlarm")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BocusApp(
@@ -54,7 +56,7 @@ fun BocusApp(
             AppScreens.ALARMS -> AlarmScreen(
                 modifier = screenMod,
                 alarms = viewModel.alarmState.collectAsState(),
-                selectedAlarm = uiState.selectedAlarm,
+                selectedAlarmIndex = uiState.selectedAlarmIndex,
                 addAlarm = { viewModel.addAlarm(defaultAlarmName, context) },
                 updateAlarm = { viewModel.updateAlarm(it) },
                 openAlarmDetails = { viewModel.openAlarmDetails(it) },

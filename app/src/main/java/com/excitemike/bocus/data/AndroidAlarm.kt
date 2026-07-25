@@ -92,7 +92,9 @@ fun getNextAlarmTime(alarm:Alarm): Long {
 fun updateAllSystemAlarms(context: Context, alarms: List<Alarm>) {
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    TODO()
+    for (alarm in alarms) {
+        updateSystemAlarm(context, alarm)
+    }
 }
 
 /**
