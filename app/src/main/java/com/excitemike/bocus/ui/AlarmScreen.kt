@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +38,7 @@ import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.Command
 import com.excitemike.bocus.modifier.fadeTopAndBottom
+import kotlinx.coroutines.launch
 
 @Composable
 fun AlarmScreen(
@@ -109,6 +111,7 @@ fun AlarmList(
                     val index = lazy { alarms.indexOfFirst { it.id == alarm.id } }
                     val deleteAlarmTemplate = stringResource(R.string.confirm_delete_alarm)
                     val swipeToDismissState = rememberSwipeToDismissBoxState()
+                    val scope = rememberCoroutineScope()
                     SwipeToDismissBox(
                         state = swipeToDismissState,
                         backgroundContent = {
@@ -160,7 +163,7 @@ fun AlarmList(
                             requestDeleteAlarm(
                                 message,
                                 Command.DeleteAlarm(alarm.id!!),
-                                Command.Callback( suspend { swipeToDismissState.reset() } )
+                                Command.Callback { scope.launch { swipeToDismissState.reset() } }
                             )
                         }
                     ) {
