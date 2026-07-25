@@ -48,6 +48,23 @@ fun BocusApp(
         )
     }
 
+    if (uiState.confirmMessage != null) {
+        AlertDialog(
+            text = { Text(text = uiState.confirmMessage!!) },
+            confirmButton = @Composable { TextButton(
+                onClick = {
+                    viewModel.onConfirm()
+                }
+            ) {
+                Text(text=stringResource(R.string.confirm_button))
+            } },
+            dismissButton = {
+                TextButton(onClick = { viewModel.dismissConfirmDlg() }) { Text(text=stringResource(R.string.cancel_button)) }
+            },
+            onDismissRequest = { viewModel.dismissConfirmDlg() }
+        )
+    }
+
     Column (modifier = modifier.fillMaxSize().padding(top=24.dp)) {
         val screenMod = Modifier.weight(1f)
         when (uiState.currentScreen) {
@@ -61,7 +78,7 @@ fun BocusApp(
                 updateAlarm = { viewModel.updateAlarm(it) },
                 openAlarmDetails = { viewModel.openAlarmDetails(it) },
                 closeAlarmDetails = { viewModel.closeAlarmDetails() },
-                requestDeleteAlarm = { message, onConfirm -> viewModel.requestDeleteAlarm(message, onConfirm) },
+                requestDeleteAlarm = { message, onConfirm, onCancel -> viewModel.requestDeleteAlarm(message, onConfirm, onCancel) },
             )
 
             AppScreens.CREDITS -> CreditsScreen(modifier = screenMod)

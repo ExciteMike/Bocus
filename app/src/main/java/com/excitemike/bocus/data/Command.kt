@@ -7,6 +7,9 @@ sealed class Command {
     /** do nothing */
     object None:Command()
 
+    /** call a callback */
+    data class Callback(val cb: suspend ()->Unit):Command()
+
     /** delete an alarm */
     data class DeleteAlarm(val alarmId: Int):Command()
 }

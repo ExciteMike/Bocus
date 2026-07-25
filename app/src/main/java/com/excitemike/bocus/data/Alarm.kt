@@ -76,6 +76,8 @@ data class Alarm(
     var lastTriggeredAt: Int = 0
 )
 
+/** a little glue to help Room generate a delete by id function */
+data class AlarmId(val id: Int)
 
 /** Bit flags for use with Alarm.ActiveDays */
 object AlarmDayOfWeekFlags {
@@ -121,8 +123,8 @@ interface AlarmDao {
     suspend fun insert(alarm:Alarm)
     @Update
     suspend fun update(alarm: Alarm)
-    @Delete
-    suspend fun delete(alarm: Alarm)
+    @Delete(entity = Alarm::class)
+    suspend fun delete(alarmId: AlarmId)
     @Query("SELECT * from alarms WHERE id = :id")
     fun getAlarm(id: Int): Flow<Alarm>
     @Query("SELECT * from alarms")

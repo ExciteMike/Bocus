@@ -47,7 +47,7 @@ fun AlarmScreen(
     updateAlarm: (alarm:Alarm)->Unit,
     openAlarmDetails: (Int)->Unit,
     closeAlarmDetails: () -> Unit,
-    requestDeleteAlarm: (String, Command)->Unit
+    requestDeleteAlarm: (String, Command, Command)->Unit
 ) {
     if (selectedAlarmIndex != null) {
         if (selectedAlarmIndex in 0..<alarms.value.size) {
@@ -78,7 +78,7 @@ fun AlarmList(
     modifier: Modifier = Modifier,
     addAlarm: ()->Unit,
     openAlarmDetails: (Int)->Unit,
-    requestDeleteAlarm: (String, Command)->Unit
+    requestDeleteAlarm: (String, Command, Command)->Unit
 ) {
     Box(modifier = modifier.fillMaxSize().padding(horizontal = 16.dp)) {
         Column (
@@ -157,7 +157,11 @@ fun AlarmList(
                                 deleteAlarmTemplate,
                                 alarm.name
                             )
-                            requestDeleteAlarm(message, Command.DeleteAlarm(alarm.id!!))
+                            requestDeleteAlarm(
+                                message,
+                                Command.DeleteAlarm(alarm.id!!),
+                                Command.Callback( suspend { swipeToDismissState.reset() } )
+                            )
                         }
                     ) {
                         AlarmListItem(
