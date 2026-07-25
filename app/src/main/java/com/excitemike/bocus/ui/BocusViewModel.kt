@@ -12,6 +12,7 @@ import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.data.Command
 import com.excitemike.bocus.data.OfflineBocusRepository
+import com.excitemike.bocus.data.cancelSystemAlarm
 import com.excitemike.bocus.data.updateAllSystemAlarms
 import com.excitemike.bocus.data.updateSystemAlarm
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -68,7 +69,7 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
         viewModelScope.launch {
             alarmRepo.deleteAlarm(id)
         }
-        TODO("unschedule alarm")
+        cancelSystemAlarm(getApplication(), id)
     }
 
     /** get rid of the confirmation dlg without doing the thing */
@@ -82,7 +83,9 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
         _uiState.update { it.copy(errorMessage = null) }
     }
 
-    /** execute the provided instruction */
+    /**
+     * execute the provided instruction
+     */
     fun doCommand(command: Command) {
         when (command) {
             is Command.None -> Unit
@@ -132,7 +135,6 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
             alarmRepo.updateAlarm(alarm)
             updateSystemAlarm(application, alarm)
         }
-        TODO("(re)schedule alarm")
     }
 
     /** update the system alarms to match the DB */
@@ -150,7 +152,7 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
 
 // TODO: split this up
 data class BocusUiState (
-    var currentScreen:AppScreens = AppScreens.WELCOME,
+    var currentScreen:AppScreens = AppScreens.ALARMS,
     /// Error Message
     var errorMessage: String? = null,
     /// Confirmation Popup Message

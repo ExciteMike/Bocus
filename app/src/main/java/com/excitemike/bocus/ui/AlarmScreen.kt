@@ -1,44 +1,37 @@
 package com.excitemike.bocus.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.Command
-import com.excitemike.bocus.modifier.fadeTopAndBottom
-import kotlinx.coroutines.launch
+import com.excitemike.bocus.ui.component.AlarmGrid
 
 @Composable
 fun AlarmScreen(
@@ -82,7 +75,10 @@ fun AlarmList(
     openAlarmDetails: (Int)->Unit,
     requestDeleteAlarm: (String, Command, Command)->Unit
 ) {
-    Box(modifier = modifier.fillMaxSize().padding(horizontal = 16.dp)) {
+    val shape = MaterialTheme.shapes.small
+    val contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+    val color = MaterialTheme.colorScheme.primaryContainer
+    Box(modifier = modifier.fillMaxSize()) {
         Column (
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -90,103 +86,58 @@ fun AlarmList(
                 text = "Alarms",
                 style = MaterialTheme.typography.titleLarge,
             )
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(200.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
-                    .fadeTopAndBottom(16.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                if (alarms.isEmpty()) {
-                    item {
-                        Text(text = stringResource(R.string.no_alarms))
-                    }
-                }
-                items(
+            if (alarms.isEmpty()) {
+                Text(
+                    modifier = Modifier
+                        .weight(1f)
+                        .wrapContentHeight(Alignment.CenterVertically),
+                    text = stringResource(R.string.no_alarms),
+                )
+            } else {
+                AlarmGrid(
+                    modifier = Modifier.fillMaxSize().weight(1f),
                     alarms,
-                    key = { it.id!! }
-                ) { alarm ->
-                    val index = lazy { alarms.indexOfFirst { it.id == alarm.id } }
-                    val deleteAlarmTemplate = stringResource(R.string.confirm_delete_alarm)
-                    val swipeToDismissState = rememberSwipeToDismissBoxState()
-                    val scope = rememberCoroutineScope()
-                    SwipeToDismissBox(
-                        state = swipeToDismissState,
-                        backgroundContent = {
-                            val deleteColor = Color(1f,0f,0f,0.85f)
-                            val bgColor =  if (swipeToDismissState.targetValue == SwipeToDismissBoxValue.Settled) {
-                                Color.Transparent
-                            } else {
-                                deleteColor
-                            }
-
-                            Row (
-                                Modifier.padding(4.dp)
-                                    .background(
-                                        color = bgColor,
-                                        shape = RoundedCornerShape(16.dp),
-                                    ),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                if (swipeToDismissState.targetValue != SwipeToDismissBoxValue.EndToStart) {
-                                    Icon (
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .fillMaxHeight(),
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = null
-                                    )
-                                } else {
-                                    Spacer(Modifier.weight(1f))
-                                }
-                                Spacer(Modifier.weight(1f))
-                                if (swipeToDismissState.targetValue != SwipeToDismissBoxValue.StartToEnd) {
-                                    Icon (
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .fillMaxHeight(),
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = null
-                                    )
-                                } else {
-                                    Spacer(Modifier.weight(1f))
-                                }
-                            }
-                        },
-                        onDismiss = {
-                            val message = String.format(
-                                deleteAlarmTemplate,
-                                alarm.name
-                            )
-                            requestDeleteAlarm(
-                                message,
-                                Command.DeleteAlarm(alarm.id!!),
-                                Command.Callback { scope.launch { swipeToDismissState.reset() } }
-                            )
-                        }
-                    ) {
-                        AlarmListItem(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { openAlarmDetails(index.value) },
-                            alarm = alarm,
-                        )
-                    }
+                    openAlarmDetails,
+                    requestDeleteAlarm
+                )
+            }
+            Surface (
+                modifier = Modifier
+                    .semantics { role = Role.Button }
+                    .fillMaxWidth()
+                    .background(
+                        color = color,
+                        shape = shape
+                    )
+                    .background(
+                        brush = Brush.verticalGradient(
+                            0f to contentColor,
+                            0.25f to color,
+                            tileMode = TileMode.Clamp,
+                        ),
+                        alpha = 0.5f,
+                        shape = shape,
+                    ),
+                color = Color.Transparent,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimaryContainer),
+                shape = shape,
+                onClick = addAlarm,
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        modifier = Modifier.size(48.dp).offset(4.dp,4.dp),
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.add_alarm),
+                        tint = MaterialTheme.colorScheme.surfaceDim,
+                    )
+                    Icon(
+                        modifier = Modifier.size(48.dp),
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.add_alarm),
+                    )
                 }
             }
-        }
-        FloatingActionButton (
-            modifier = Modifier.align(Alignment.BottomEnd).padding(bottom=16.dp),
-            onClick = addAlarm,
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-            contentColor = MaterialTheme.colorScheme.onTertiaryContainer
-        ) {
-            Icon(
-                painterResource(R.drawable.ic_add),
-                contentDescription = stringResource(R.string.add_alarm)
-            )
         }
     }
 }

@@ -3,7 +3,6 @@ package com.excitemike.bocus.service
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import android.util.Log
 import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.data.OfflineBocusRepository
 import com.excitemike.bocus.data.updateAllSystemAlarms

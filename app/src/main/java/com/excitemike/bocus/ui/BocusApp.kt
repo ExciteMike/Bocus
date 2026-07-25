@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -16,10 +17,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Surface
+import androidx.compose.ui.graphics.vector.ImageVector
 
 @SuppressLint("ScheduleExactAlarm")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,53 +69,67 @@ fun BocusApp(
         )
     }
 
-    Column (modifier = modifier.fillMaxSize().padding(top=24.dp)) {
-        val screenMod = Modifier.weight(1f)
-        when (uiState.currentScreen) {
-            AppScreens.WELCOME -> WelcomeScreen(modifier = screenMod)
-            AppScreens.ABOUT -> AboutScreen(modifier = screenMod, goToScreen = { viewModel.goToScreen(it) })
-            AppScreens.ALARMS -> AlarmScreen(
-                modifier = screenMod,
-                alarms = viewModel.alarmState.collectAsState(),
-                selectedAlarmIndex = uiState.selectedAlarmIndex,
-                addAlarm = { viewModel.addAlarm(defaultAlarmName, context) },
-                updateAlarm = { viewModel.updateAlarm(it) },
-                openAlarmDetails = { viewModel.openAlarmDetails(it) },
-                closeAlarmDetails = { viewModel.closeAlarmDetails() },
-                requestDeleteAlarm = { message, onConfirm, onCancel -> viewModel.requestDeleteAlarm(message, onConfirm, onCancel) },
-            )
+    Surface () {
+        Column(modifier = modifier.fillMaxSize().padding(top = 32.dp)) {
+            val screenMod = Modifier.weight(1f)
+            when (uiState.currentScreen) {
+                AppScreens.WELCOME -> WelcomeScreen(modifier = screenMod)
+                AppScreens.ABOUT -> AboutScreen(
+                    modifier = screenMod,
+                    goToScreen = { viewModel.goToScreen(it) })
 
-            AppScreens.CREDITS -> CreditsScreen(modifier = screenMod)
-        }
+                AppScreens.ALARMS -> AlarmScreen(
+                    modifier = screenMod,
+                    alarms = viewModel.alarmState.collectAsState(),
+                    selectedAlarmIndex = uiState.selectedAlarmIndex,
+                    addAlarm = { viewModel.addAlarm(defaultAlarmName, context) },
+                    updateAlarm = { viewModel.updateAlarm(it) },
+                    openAlarmDetails = { viewModel.openAlarmDetails(it) },
+                    closeAlarmDetails = { viewModel.closeAlarmDetails() },
+                    requestDeleteAlarm = { message, onConfirm, onCancel ->
+                        viewModel.requestDeleteAlarm(
+                            message,
+                            onConfirm,
+                            onCancel
+                        )
+                    },
+                )
 
-        NavigationBar (modifier = Modifier.fillMaxWidth()) {
-            AppScreens.entries
-                .filter { it.showInNav }
-                .forEach { screen ->
-                    NavigationBarItem(
-                        modifier = Modifier.padding(top=4.dp),
-                        icon = {
-                            Icon(
-                                painterResource(screen.icon),
-                                contentDescription = stringResource(screen.labelId)
-                            )
-                        },
-                        label = { Text(text=stringResource(screen.labelId)) },
-                        selected = screen == uiState.currentScreen,
-                        onClick = { viewModel.goToScreen(screen) },
-                    )
-                }
+                AppScreens.CREDITS -> CreditsScreen(modifier = screenMod)
+            }
+
+            // TODO: replace with a navigation rail or something because it looks funny with just two things and also takes up a lot of vertical space as-is
+            NavigationBar(modifier = Modifier.fillMaxWidth()) {
+                AppScreens.entries
+                    .filter { it.showInNav }
+                    .forEach { screen ->
+                        NavigationBarItem(
+                            modifier = Modifier.padding(top = 4.dp),
+                            icon = {
+                                Icon(
+                                    imageVector = screen.icon,
+                                    contentDescription = stringResource(screen.labelId)
+                                )
+                            },
+                            label = { Text(text = stringResource(screen.labelId)) },
+                            selected = screen == uiState.currentScreen,
+                            onClick = { viewModel.goToScreen(screen) },
+                        )
+                    }
+            }
         }
     }
 }
 
+// TODO: animate screen transitions
 enum class AppScreens(
     val labelId: Int,
-    val icon: Int,
+    val icon: ImageVector,
     val showInNav: Boolean
 ) {
-    WELCOME(R.string.welcome_tab_name, R.drawable.ic_about, false),
-    ALARMS(R.string.alarms_tab_name, R.drawable.ic_alarm, true),
-    ABOUT(R.string.about_tab_name, R.drawable.ic_about, true),
-    CREDITS(R.string.credits_tab_name, R.drawable.ic_about, false),
+    // TODO: remove welcome screen. or at least make it come up only once
+    WELCOME(R.string.welcome_tab_name, Icons.Default.Home, false),
+    ALARMS(R.string.alarms_tab_name, Icons.Default.Home, true),
+    ABOUT(R.string.about_tab_name, Icons.Default.Info, true),
+    CREDITS(R.string.credits_tab_name, Icons.Default.Info, false),
 }

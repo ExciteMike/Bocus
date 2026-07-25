@@ -90,8 +90,6 @@ fun getNextAlarmTime(alarm:Alarm): Long {
  * in our data
  */
 fun updateAllSystemAlarms(context: Context, alarms: List<Alarm>) {
-    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
     for (alarm in alarms) {
         updateSystemAlarm(context, alarm)
     }
@@ -126,6 +124,22 @@ fun updateSystemAlarm(context: Context, alarm: Alarm) {
     )
 }
 
-fun cancelSystemAlarm(alarmManager: AlarmManager) {
-    alarmManager.cancel {  }
+/**
+ * cancel an alarm potentially set by this app
+ */
+fun cancelSystemAlarm(context: Context, alarmId: Int) {
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    alarmManager.cancel(
+        PendingIntent.getBroadcast(
+            context,
+            alarmId,
+            Intent(context, AlarmReceiver::class.java),
+            PENDING_INTENT_FLAGS
+        )
+    )
 }
+
+/**
+ * intent flags used by Bocus
+ */
+private const val PENDING_INTENT_FLAGS = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT

@@ -1,3 +1,5 @@
+@file:Suppress("unused", "unused", "unused", "unused", "unused", "SameParameterValue")
+
 package com.excitemike.bocus.ui.theme
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
