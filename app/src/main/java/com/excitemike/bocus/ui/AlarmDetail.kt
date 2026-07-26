@@ -73,7 +73,6 @@ fun AlarmDetailControls(
     alarm: Alarm,
     updateAlarm: (Alarm) -> Unit,
 ) {
-    val timeFormatStr = stringResource(R.string.time_format)
     val fillMaxWidth = Modifier.fillMaxWidth()
     val forceDigits = InputTransformation
         .byValue { current, proposed -> forceNDigits(current, proposed, 2) }

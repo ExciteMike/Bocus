@@ -1,12 +1,14 @@
 <!--suppress LongLine -->
 <resources>
+    <string name="about">About</string>
+    <string name="about_message">This app isn\'t much, but it is built out of artisanal, bespoke code hand-typed by the human fingers of Mike Meyer and not an AI.</string>
     <string name="add_alarm">Add Alarm</string>
     <string name="alarm_name_label">Alarm Name</string>
     <string name="alarm_message_label">Alarm Message</string>
     <string name="app_name">Bocus</string>
-    <string name="about_tab_name">About</string>
     <string name="alarms_tab_name">Alarms</string>
     <string name="alarm_limit">Maximum number of alarms reached</string>
+    <string name="back_button">Go Back</string>
     <string name="cancel_button">Cancel</string>
     <string name="close">Close</string>
     <string name="confirm_button">Confirm</string>

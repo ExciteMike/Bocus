@@ -11,33 +11,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
+import com.excitemike.bocus.ui.component.AlarmDetails
 
 @SuppressLint("ScheduleExactAlarm")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,8 +39,9 @@ fun BocusApp(
     viewModel: BocusViewModel,
 ) {
     val uiState = viewModel.uiState.collectAsState().value
-
     val defaultAlarmName = stringResource(R.string.default_alarm_name)
+    val selectedAlarmIndex = uiState.selectedAlarmIndex
+    val alarms = viewModel.alarmState.collectAsState()
 
     if (uiState.errorMessage != null) {
         AlertDialog(
@@ -98,11 +90,17 @@ fun BocusApp(
         PermissionRequestFlow(activity, viewModel, permission, stringId)
     }
 
+    AlarmDetails(
+        alarms = alarms.value,
+        selectedAlarmIndex = selectedAlarmIndex,
+        updateAlarm = { viewModel.updateAlarm(it) },
+        closeAlarmDetails = { viewModel.closeAlarmDetails() }
+    )
+
     Surface {
-        Column(modifier = modifier.fillMaxSize().padding(top = 32.dp)) {
+        Column(modifier = modifier.fillMaxSize().padding(top = 32.dp, bottom = 48.dp)) {
             val screenMod = Modifier.weight(1f)
             when (uiState.currentScreen) {
-                AppScreens.WELCOME -> WelcomeScreen(modifier = screenMod)
                 AppScreens.ABOUT -> AboutScreen(
                     modifier = screenMod,
                     goToScreen = { viewModel.goToScreen(it) })
@@ -110,11 +108,8 @@ fun BocusApp(
                 AppScreens.ALARMS -> AlarmScreen(
                     modifier = screenMod,
                     alarms = viewModel.alarmState.collectAsState(),
-                    selectedAlarmIndex = uiState.selectedAlarmIndex,
                     addAlarm = { viewModel.addAlarm(defaultAlarmName) },
-                    updateAlarm = { viewModel.updateAlarm(it) },
                     openAlarmDetails = { viewModel.openAlarmDetails(it) },
-                    closeAlarmDetails = { viewModel.closeAlarmDetails() },
                     requestDeleteAlarm = { message, onConfirm, onCancel ->
                         viewModel.requestDeleteAlarm(
                             message,
@@ -122,29 +117,8 @@ fun BocusApp(
                             onCancel
                         )
                     },
+                    goToScreen = { viewModel.goToScreen(it) }
                 )
-
-                AppScreens.CREDITS -> CreditsScreen(modifier = screenMod)
-            }
-
-            // TODO: replace with a navigation rail or something because it looks funny with just two things and also takes up a lot of vertical space as-is
-            NavigationBar(modifier = Modifier.fillMaxWidth()) {
-                AppScreens.entries
-                    .filter { it.showInNav }
-                    .forEach { screen ->
-                        NavigationBarItem(
-                            modifier = Modifier,
-                            icon = {
-                                Icon(
-                                    imageVector = screen.icon,
-                                    contentDescription = stringResource(screen.labelId)
-                                )
-                            },
-                            label = { Text(text = stringResource(screen.labelId)) },
-                            selected = screen == uiState.currentScreen,
-                            onClick = { viewModel.goToScreen(screen) },
-                        )
-                    }
             }
         }
     }
@@ -157,26 +131,27 @@ fun PermissionRequestFlow(
     permission: String,
     rationaleStringId: Int
 ) {
-    var isGranted by remember { mutableStateOf(viewModel.checkPermission(activity, permission)) }
-    var showRationale by remember { mutableStateOf(false) }
-    var showPermissionPrompt by remember { mutableStateOf(true) }
+    val isGranted = remember { mutableStateOf(viewModel.checkPermission(activity, permission)) }
+    val showRationale = remember { mutableStateOf(false) }
+    val showPermissionPrompt = remember { mutableStateOf(true) }
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = {
-            isGranted = it
+            isGranted.value = it
             if (!it) {
-                showRationale = viewModel.shouldShowPermissionRequestRationale(activity, permission)
+                showRationale.value =
+                    viewModel.shouldShowPermissionRequestRationale(activity, permission)
             }
         }
     )
 
-    if (isGranted) {
+    if (isGranted.value) {
         return
     }
 
-    if (showRationale) {
+    if (showRationale.value) {
         AlertDialog(
-            onDismissRequest = { showRationale = false },
+            onDismissRequest = { showRationale.value = false },
             title = {},
             text = {
                 Column {
@@ -186,7 +161,7 @@ fun PermissionRequestFlow(
                         Button(
                             onClick = {
                                 permissionLauncher.launch(permission)
-                                showRationale = false
+                                showRationale.value = false
                             }
                         ) {
                             Text(text = stringResource(R.string.ok))
@@ -198,7 +173,7 @@ fun PermissionRequestFlow(
             },
             confirmButton = {},
             dismissButton = {
-                TextButton(onClick = { showRationale = false }) {
+                TextButton(onClick = { showRationale.value = false }) {
                     Text(stringResource(R.string.cancel_button))
                 }
             },
@@ -206,9 +181,9 @@ fun PermissionRequestFlow(
         return
     }
 
-    if (showPermissionPrompt) {
+    if (showPermissionPrompt.value) {
         AlertDialog(
-            onDismissRequest = { showPermissionPrompt = false },
+            onDismissRequest = { showPermissionPrompt.value = false },
             title = { Text(stringResource(R.string.permission_required)) },
             text = {
                 Column {
@@ -223,7 +198,7 @@ fun PermissionRequestFlow(
                 TextButton(
                     onClick = {
                         if (viewModel.shouldShowPermissionRequestRationale(activity, permission)) {
-                            showRationale = true
+                            showRationale.value = true
                         } else {
                             permissionLauncher.launch(permission)
                         }
@@ -234,7 +209,7 @@ fun PermissionRequestFlow(
             },
             dismissButton = {
                 TextButton(onClick = {
-                    showPermissionPrompt = false
+                    showPermissionPrompt.value = false
                 }) {
                     Text(text = stringResource(R.string.cancel_button))
                 }
@@ -260,14 +235,7 @@ fun GoToSettingsButton(activity: Activity) {
     }
 }
 
-enum class AppScreens(
-    val labelId: Int,
-    val icon: ImageVector,
-    val showInNav: Boolean
-) {
-    // TODO: remove welcome screen. or at least make it come up only once
-    WELCOME(R.string.welcome_tab_name, Icons.Default.Home, false),
-    ALARMS(R.string.alarms_tab_name, Icons.Default.Home, true),
-    ABOUT(R.string.about_tab_name, Icons.Default.Info, true),
-    CREDITS(R.string.credits_tab_name, Icons.Default.Info, false),
+enum class AppScreens {
+    ALARMS,
+    ABOUT
 }

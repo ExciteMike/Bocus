@@ -26,11 +26,11 @@ fun AboutScreen(
     ) {
         Text(
             modifier = Modifier.padding(16.dp),
-            text = "About screen",
+            text = stringResource(R.string.about_message),
             textAlign = TextAlign.Center
         )
-        Button(onClick = { goToScreen(AppScreens.CREDITS) }) {
-            Text(stringResource(R.string.credits_button))
+        Button(onClick = { goToScreen(AppScreens.ALARMS) }) {
+            Text(stringResource(R.string.back_button))
         }
     }
 }

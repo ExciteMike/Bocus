@@ -1,6 +1,5 @@
 package com.excitemike.bocus.ui
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,8 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,33 +39,18 @@ import com.excitemike.bocus.ui.component.AlarmGrid
 fun AlarmScreen(
     modifier: Modifier = Modifier,
     alarms: State<List<Alarm>>,
-    selectedAlarmIndex: Int?,
     addAlarm: () -> Unit,
-    updateAlarm: (alarm: Alarm) -> Unit,
     openAlarmDetails: (Int) -> Unit,
-    closeAlarmDetails: () -> Unit,
-    requestDeleteAlarm: (String, Command, Command) -> Unit
+    requestDeleteAlarm: (String, Command, Command) -> Unit,
+    goToScreen: (AppScreens) -> Unit
 ) {
-    if (selectedAlarmIndex != null) {
-        if (selectedAlarmIndex in 0..<alarms.value.size) {
-            BackHandler {
-                closeAlarmDetails()
-            }
-            AlarmDetail(
-                alarm = alarms.value[selectedAlarmIndex],
-                updateAlarm = updateAlarm,
-                close = { closeAlarmDetails() }
-            )
-        } else {
-            closeAlarmDetails()
-        }
-    }
     AlarmList(
         alarms = alarms.value,
         modifier = modifier,
         addAlarm = addAlarm,
         openAlarmDetails = openAlarmDetails,
-        requestDeleteAlarm = requestDeleteAlarm
+        requestDeleteAlarm = requestDeleteAlarm,
+        goToScreen = goToScreen
     )
 }
 
@@ -74,7 +60,8 @@ fun AlarmList(
     modifier: Modifier = Modifier,
     addAlarm: () -> Unit,
     openAlarmDetails: (Int) -> Unit,
-    requestDeleteAlarm: (String, Command, Command) -> Unit
+    requestDeleteAlarm: (String, Command, Command) -> Unit,
+    goToScreen: (AppScreens) -> Unit,
 ) {
     val shape = MaterialTheme.shapes.medium
     val containerColor = ButtonDefaults.buttonColors().containerColor
@@ -83,10 +70,22 @@ fun AlarmList(
         Column(
             modifier = Modifier.fillMaxSize(),
         ) {
-            Text(
-                text = "Alarms",
-                style = MaterialTheme.typography.titleLarge,
-            )
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "Alarms",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                IconButton(
+                    onClick = { goToScreen(AppScreens.ABOUT) },
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = stringResource(R.string.about),
+                    )
+                }
+            }
             if (alarms.isEmpty()) {
                 Text(
                     modifier = Modifier
