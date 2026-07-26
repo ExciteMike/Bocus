@@ -16,11 +16,9 @@ import com.excitemike.bocus.R
 import com.excitemike.bocus.ui.MainActivity
 
 class AlarmReceiver : BroadcastReceiver() {
+
     override fun onReceive(context: Context?, intent: Intent?) {
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val mediaPlayer: MediaPlayer =
-            MediaPlayer.create(context, Settings.System.DEFAULT_ALARM_ALERT_URI)
-        mediaPlayer.isLooping = true
 
         Log.v("BocusTrace", "AlarmReceiver.onReceive intent $intent")
 
@@ -33,8 +31,9 @@ class AlarmReceiver : BroadcastReceiver() {
             val alarmId = intent.getIntExtra(EXTRA_NAME_ALARM_ID, 0)
             NotificationManagerCompat.from(context).cancel(alarmId)
 
-            mediaPlayer.release()
-            mediaPlayer.stop()
+            mediaPlayer?.stop()
+            mediaPlayer?.release()
+            mediaPlayer = null
 
             val intentToCancel = Intent(context, AlarmReceiver::class.java).apply {
                 action = PLAY_ALARM_ACTION
@@ -94,11 +93,21 @@ class AlarmReceiver : BroadcastReceiver() {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             NotificationManagerCompat.from(context).notify(alarmId, builder.build())
-            mediaPlayer.start()
+            if (mediaPlayer != null) {
+                mediaPlayer?.stop()
+                mediaPlayer?.release()
+                mediaPlayer = null
+            }
+            mediaPlayer =
+                MediaPlayer.create(context, Settings.System.DEFAULT_ALARM_ALERT_URI)
+            mediaPlayer?.isLooping = true
+            mediaPlayer?.start()
         }
     }
 
     companion object {
+        // shared instance of MediaPlayer
+        private var mediaPlayer: MediaPlayer? = null
         const val STOP_CODE = 456
         const val NOTIF_REQ_CODE = 789
         const val EXTRA_NAME_TITLE = "title"
