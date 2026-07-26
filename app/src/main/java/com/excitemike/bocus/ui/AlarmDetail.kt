@@ -46,15 +46,16 @@ import kotlin.math.min
 fun AlarmDetail(
     alarm: Alarm,
     updateAlarm: (Alarm) -> Unit,
-    close: ()->Unit
+    close: () -> Unit
 ) {
     Dialog(
         onDismissRequest = { close() },
     ) {
         Card {
-            Column (modifier = Modifier
-                .padding(16.dp)
-                .imePadding(),
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .imePadding(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -76,9 +77,10 @@ fun AlarmDetail(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlarmDetailControls(modifier: Modifier,
-                        alarm: Alarm,
-                        updateAlarm: (Alarm) -> Unit,
+fun AlarmDetailControls(
+    modifier: Modifier,
+    alarm: Alarm,
+    updateAlarm: (Alarm) -> Unit,
 ) {
     val timeFormatStr = stringResource(R.string.time_format)
     val fillMaxWidth = Modifier.fillMaxWidth()
@@ -202,7 +204,7 @@ fun AlarmDetailControls(modifier: Modifier,
         // Start Time
         //
         val startTimeOpen = remember { mutableStateOf(false) }
-        Row (verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
 
             if (startTimeOpen.value) {
                 Text(

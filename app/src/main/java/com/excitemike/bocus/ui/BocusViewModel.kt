@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class BocusViewModel(application: Application): AndroidViewModel(application) {
+class BocusViewModel(application: Application) : AndroidViewModel(application) {
     private val dao = AlarmDatabase.getDatabase(application).alarmDao()
     private val alarmRepo = OfflineBocusRepository(dao)
     val alarmState: StateFlow<List<Alarm>> = alarmRepo.getAllAlarmsStream()
@@ -36,12 +36,12 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
     val uiState: StateFlow<BocusUiState> = _uiState.asStateFlow()
 
     /** add a new alarm */
-    fun addAlarm(name:String) {
+    fun addAlarm(name: String) {
         val application: Application = getApplication()
 
         val size = alarmState.value.size
         if (size < MAX_ALARMS) {
-            val alarm = Alarm(name=name)
+            val alarm = Alarm(name = name)
             viewModelScope.launch {
                 val id = alarmRepo.insertAlarm(alarm)
                 val alarm = alarm.copy(id = id)
@@ -111,12 +111,12 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
     /**
      * figure out what permissions the app needs
      */
-    fun getSystemPermissionsNeeded() :List<Pair<String, Int>> {
+    fun getSystemPermissionsNeeded(): List<Pair<String, Int>> {
         return com.excitemike.bocus.data.getSystemPermissionsNeeded()
     }
 
     /** transition from one UI screen to another */
-    fun goToScreen(screen:AppScreens) {
+    fun goToScreen(screen: AppScreens) {
         _uiState.update { it.copy(currentScreen = screen, selectedAlarmIndex = null) }
     }
 
@@ -133,7 +133,13 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
 
     /** bring up a confirmation dialog for deleting an alarm */
     fun requestDeleteAlarm(confirmMessage: String, onConfirm: Command, onCancel: Command) {
-        _uiState.update { it.copy(confirmMessage = confirmMessage, onConfirm = onConfirm, onConfirmCancel = onCancel) }
+        _uiState.update {
+            it.copy(
+                confirmMessage = confirmMessage,
+                onConfirm = onConfirm,
+                onConfirmCancel = onCancel
+            )
+        }
     }
 
     /** start showing the error message popup */
@@ -149,9 +155,9 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
     }
 
     /** update the values in an alarm */
-    fun updateAlarm(alarm:Alarm) {
+    fun updateAlarm(alarm: Alarm) {
         val application: Application = getApplication()
-        viewModelScope.launch @androidx.annotation.RequiresPermission(android.Manifest.permission.SCHEDULE_EXACT_ALARM) {
+        viewModelScope.launch {
             alarmRepo.updateAlarm(alarm)
             updateSystemAlarm(application, alarm)
         }
@@ -171,8 +177,8 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
 }
 
 // TODO: split this up
-data class BocusUiState (
-    var currentScreen:AppScreens = AppScreens.ALARMS,
+data class BocusUiState(
+    var currentScreen: AppScreens = AppScreens.ALARMS,
     /// Error Message
     var errorMessage: String? = null,
     /// Confirmation Popup Message

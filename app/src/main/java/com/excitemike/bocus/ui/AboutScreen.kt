@@ -17,9 +17,9 @@ import com.excitemike.bocus.R
 @Composable
 fun AboutScreen(
     modifier: Modifier = Modifier,
-    goToScreen: (AppScreens)->Unit,
+    goToScreen: (AppScreens) -> Unit,
 ) {
-    Column (
+    Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,

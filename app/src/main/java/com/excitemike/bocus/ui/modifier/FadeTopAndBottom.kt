@@ -24,6 +24,7 @@ fun Modifier.fadeTopAndBottom(
 ): Modifier {
     return this.fadeTopAndBottom(all, all)
 }
+
 /**
  * Fade out the top and bottom of a composable so that you can tell it is scrollable.
  * Based on a similar effect at https://medium.com/@yuriyskul/applying-smooth-gradient-edges-for-scrollable-content-in-jetpack-compose-814a10fec8ca
@@ -36,7 +37,7 @@ fun Modifier.fadeTopAndBottom(
     val density = LocalDensity.current
     val topFadePx = with(density) { top.toPx() }
     val bottomFadePx = with(density) { bottom.toPx() }
-    return this.graphicsLayer (compositingStrategy = CompositingStrategy.Offscreen)
+    return this.graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
         .drawWithContent {
             drawContent()
 

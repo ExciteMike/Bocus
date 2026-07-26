@@ -1,4 +1,5 @@
 package com.excitemike.bocus.ui.theme
+
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF2B5C5C)

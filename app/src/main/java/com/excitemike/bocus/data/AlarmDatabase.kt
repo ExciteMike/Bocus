@@ -20,10 +20,11 @@ abstract class AlarmDatabase : RoomDatabase() {
         fun getDatabase(context: Context): AlarmDatabase {
             return Instance ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
-                        context,
-                        AlarmDatabase::class.java,
-                        "alarm_database"
-                    ).fallbackToDestructiveMigration(true) // TODO: I should be doing manual migration of database versions
+                    context,
+                    AlarmDatabase::class.java,
+                    "alarm_database"
+                )
+                    .fallbackToDestructiveMigration(true) // TODO: I should be doing manual migration of database versions
                     .build()
                 Instance = instance
                 instance

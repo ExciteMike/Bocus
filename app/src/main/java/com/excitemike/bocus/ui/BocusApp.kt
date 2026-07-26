@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
@@ -54,15 +53,17 @@ fun BocusApp(
 
     if (uiState.errorMessage != null) {
         AlertDialog(
-            title = @Composable { Text(text = stringResource(R.string.error))},
-            text = @Composable { Text(text=uiState.errorMessage!!) },
-            confirmButton = @Composable { TextButton(
-                onClick = {
-                    viewModel.dismissErrorDlg()
+            title = @Composable { Text(text = stringResource(R.string.error)) },
+            text = @Composable { Text(text = uiState.errorMessage!!) },
+            confirmButton = @Composable {
+                TextButton(
+                    onClick = {
+                        viewModel.dismissErrorDlg()
+                    }
+                ) {
+                    Text(text = stringResource(R.string.dismiss))
                 }
-            ) {
-                Text(text=stringResource(R.string.dismiss))
-            } },
+            },
             onDismissRequest = { viewModel.dismissErrorDlg() }
         )
     }
@@ -70,15 +71,23 @@ fun BocusApp(
     if (uiState.confirmMessage != null) {
         AlertDialog(
             text = { Text(text = uiState.confirmMessage!!) },
-            confirmButton = @Composable { TextButton(
-                onClick = {
-                    viewModel.onConfirm()
+            confirmButton = @Composable {
+                TextButton(
+                    onClick = {
+                        viewModel.onConfirm()
+                    }
+                ) {
+                    Text(text = stringResource(R.string.confirm_button))
                 }
-            ) {
-                Text(text=stringResource(R.string.confirm_button))
-            } },
+            },
             dismissButton = {
-                TextButton(onClick = { viewModel.dismissConfirmDlg() }) { Text(text=stringResource(R.string.cancel_button)) }
+                TextButton(onClick = { viewModel.dismissConfirmDlg() }) {
+                    Text(
+                        text = stringResource(
+                            R.string.cancel_button
+                        )
+                    )
+                }
             },
             onDismissRequest = { viewModel.dismissConfirmDlg() }
         )
@@ -146,7 +155,7 @@ fun PermissionRequestFlow(
     activity: Activity,
     viewModel: BocusViewModel,
     permission: String,
-    rationaleStringId:Int
+    rationaleStringId: Int
 ) {
     var isGranted by remember { mutableStateOf(viewModel.checkPermission(activity, permission)) }
     var showRationale by remember { mutableStateOf(false) }
@@ -174,13 +183,13 @@ fun PermissionRequestFlow(
                     Text(stringResource(rationaleStringId))
                     Spacer(modifier = Modifier.height(8.dp))
                     Row {
-                        Button (
+                        Button(
                             onClick = {
                                 permissionLauncher.launch(permission)
                                 showRationale = false
                             }
                         ) {
-                            Text(text=stringResource(R.string.ok))
+                            Text(text = stringResource(R.string.ok))
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         GoToSettingsButton(activity)
@@ -202,32 +211,32 @@ fun PermissionRequestFlow(
             onDismissRequest = { showPermissionPrompt = false },
             title = { Text(stringResource(R.string.permission_required)) },
             text = {
-                    Column {
-                        Text(stringResource(rationaleStringId))
-                        Spacer(Modifier.height(8.dp))
-                        Text(stringResource(R.string.please_enable_in_settings))
-                        Spacer(Modifier.height(8.dp))
-                        GoToSettingsButton(activity)
-                    }
-                },
+                Column {
+                    Text(stringResource(rationaleStringId))
+                    Spacer(Modifier.height(8.dp))
+                    Text(stringResource(R.string.please_enable_in_settings))
+                    Spacer(Modifier.height(8.dp))
+                    GoToSettingsButton(activity)
+                }
+            },
             confirmButton = {
                 TextButton(
                     onClick = {
-                            if (viewModel.shouldShowPermissionRequestRationale(activity, permission)) {
-                                showRationale = true
-                            } else {
-                                permissionLauncher.launch(permission)
-                            }
+                        if (viewModel.shouldShowPermissionRequestRationale(activity, permission)) {
+                            showRationale = true
+                        } else {
+                            permissionLauncher.launch(permission)
                         }
-                    ) {
-                        Text(text=stringResource(R.string.done))
                     }
-                },
+                ) {
+                    Text(text = stringResource(R.string.done))
+                }
+            },
             dismissButton = {
                 TextButton(onClick = {
                     showPermissionPrompt = false
                 }) {
-                    Text(text=stringResource(R.string.cancel_button))
+                    Text(text = stringResource(R.string.cancel_button))
                 }
             }
         )

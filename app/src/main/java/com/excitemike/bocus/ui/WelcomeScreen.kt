@@ -15,8 +15,8 @@ import com.excitemike.bocus.R
 
 @Composable
 fun WelcomeScreen(modifier: Modifier = Modifier) {
-    Column (
-    modifier = modifier.fillMaxSize(),
+    Column(
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {

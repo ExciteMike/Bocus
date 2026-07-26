@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
-class UpdateAllAlarmsService: Service() {
+class UpdateAllAlarmsService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         if (intent?.action != Intent.ACTION_BOOT_COMPLETED) {
@@ -28,6 +28,7 @@ class UpdateAllAlarmsService: Service() {
 
         return START_NOT_STICKY
     }
+
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }

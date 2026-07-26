@@ -1,3 +1,4 @@
+<!--suppress LongLine -->
 <resources>
     <string name="add_alarm">Add Alarm</string>
     <string name="alarm_name_label">Alarm Name</string>

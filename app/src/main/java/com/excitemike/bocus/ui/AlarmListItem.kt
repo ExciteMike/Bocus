@@ -6,13 +6,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
@@ -21,33 +18,17 @@ import com.excitemike.bocus.data.activeDaysString
 import com.excitemike.bocus.util.timeString
 
 @Composable
-fun DayIcon(isOn: Boolean, dayStringId: Int) {
-    val textDecoration = if (isOn) { null } else { TextDecoration.LineThrough }
-    val fontWeight = if (isOn) { FontWeight.Bold } else { FontWeight.Normal }
-    OutlinedCard (modifier = Modifier.padding(horizontal = 2.dp)) {
-        Text(
-            modifier = Modifier.padding(4.dp),
-            text = stringResource(dayStringId),
-            textDecoration = textDecoration,
-            fontWeight = fontWeight,
-            style = MaterialTheme.typography.bodyMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
-}
-
-@Composable
 fun AlarmListItem(
     alarm: Alarm,
     modifier: Modifier = Modifier
 ) {
     val timeFormatStr = stringResource(R.string.time_format)
-    Card (modifier=modifier
+    Card(
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 4.dp, vertical = 4.dp),
     ) {
-        Column (modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Row {
                 Text(
                     text = alarm.name,

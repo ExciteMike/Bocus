@@ -15,7 +15,7 @@ import com.excitemike.bocus.R
 import com.excitemike.bocus.util.checkFlags
 import kotlinx.coroutines.flow.Flow
 
-const val DEFAULT_ALARM_LENGTH:Int = 30
+const val DEFAULT_ALARM_LENGTH: Int = 30
 
 /// Entry for alarms
 @Entity(tableName = "alarms")
@@ -77,24 +77,24 @@ data class AlarmId(val id: Int)
 
 /** Bit flags for use with Alarm.ActiveDays */
 object AlarmDayOfWeekFlags {
-    const val SUNDAY:Int = 0x1
-    const val MONDAY:Int = 0x2
-    const val TUESDAY:Int = 0x4
-    const val WEDNESDAY:Int = 0x8
-    const val THURSDAY:Int = 0x10
-    const val FRIDAY:Int = 0x20
-    const val SATURDAY:Int = 0x40
+    const val SUNDAY: Int = 0x1
+    const val MONDAY: Int = 0x2
+    const val TUESDAY: Int = 0x4
+    const val WEDNESDAY: Int = 0x8
+    const val THURSDAY: Int = 0x10
+    const val FRIDAY: Int = 0x20
+    const val SATURDAY: Int = 0x40
 
-    const val ALL_DAYS:Int = 0x7F
-    const val DEFAULT_ACTIVE_DAYS:Int = 0x3E
+    const val ALL_DAYS: Int = 0x7F
+    const val DEFAULT_ACTIVE_DAYS: Int = 0x3E
 }
 
 /** default values for alarms */
 object AlarmDefaults {
     const val DEFAULT_END_HOUR = 17
     const val DEFAULT_END_MINUTE = 0
-    const val DEFAULT_FREQUENCY_MAX:Int = 25
-    const val DEFAULT_FREQUENCY_MIN:Int = 15
+    const val DEFAULT_FREQUENCY_MAX: Int = 25
+    const val DEFAULT_FREQUENCY_MIN: Int = 15
     const val DEFAULT_START_HOUR = 10
     const val DEFAULT_START_MINUTE = 0
 }
@@ -116,13 +116,17 @@ object AlarmNotifMode {
 @Dao
 interface AlarmDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(alarm:Alarm): Long
+    suspend fun insert(alarm: Alarm): Long
+
     @Update
     suspend fun update(alarm: Alarm)
+
     @Delete(entity = Alarm::class)
     suspend fun delete(alarmId: AlarmId)
+
     @Query("SELECT * from alarms WHERE id = :id")
     fun getAlarm(id: Int): Flow<Alarm>
+
     @Query("SELECT * from alarms")
     fun getAllAlarms(): Flow<List<Alarm>>
 

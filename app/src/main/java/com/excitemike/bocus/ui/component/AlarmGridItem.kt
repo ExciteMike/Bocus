@@ -33,8 +33,8 @@ import kotlinx.coroutines.launch
 fun AlarmGridItem(
     alarm: Alarm,
     allAlarms: List<Alarm>,
-    openAlarmDetails: (Int)->Unit,
-    requestDeleteAlarm: (String, Command, Command)->Unit
+    openAlarmDetails: (Int) -> Unit,
+    requestDeleteAlarm: (String, Command, Command) -> Unit
 ) {
     val index = lazy { allAlarms.indexOfFirst { alarm.id == it.id } }
     val deleteAlarmTemplate = stringResource(R.string.confirm_delete_alarm)

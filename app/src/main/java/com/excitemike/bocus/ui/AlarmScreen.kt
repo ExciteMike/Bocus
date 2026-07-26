@@ -39,11 +39,11 @@ fun AlarmScreen(
     modifier: Modifier = Modifier,
     alarms: State<List<Alarm>>,
     selectedAlarmIndex: Int?,
-    addAlarm: ()->Unit,
-    updateAlarm: (alarm:Alarm)->Unit,
-    openAlarmDetails: (Int)->Unit,
+    addAlarm: () -> Unit,
+    updateAlarm: (alarm: Alarm) -> Unit,
+    openAlarmDetails: (Int) -> Unit,
     closeAlarmDetails: () -> Unit,
-    requestDeleteAlarm: (String, Command, Command)->Unit
+    requestDeleteAlarm: (String, Command, Command) -> Unit
 ) {
     if (selectedAlarmIndex != null) {
         if (selectedAlarmIndex in 0..<alarms.value.size) {
@@ -51,7 +51,7 @@ fun AlarmScreen(
                 closeAlarmDetails()
             }
             AlarmDetail(
-                alarm =  alarms.value[selectedAlarmIndex],
+                alarm = alarms.value[selectedAlarmIndex],
                 updateAlarm = updateAlarm,
                 close = { closeAlarmDetails() }
             )
@@ -72,15 +72,15 @@ fun AlarmScreen(
 fun AlarmList(
     alarms: List<Alarm>,
     modifier: Modifier = Modifier,
-    addAlarm: ()->Unit,
-    openAlarmDetails: (Int)->Unit,
-    requestDeleteAlarm: (String, Command, Command)->Unit
+    addAlarm: () -> Unit,
+    openAlarmDetails: (Int) -> Unit,
+    requestDeleteAlarm: (String, Command, Command) -> Unit
 ) {
     val shape = MaterialTheme.shapes.medium
     val containerColor = ButtonDefaults.buttonColors().containerColor
     val contentColor = ButtonDefaults.buttonColors().contentColor
     Box(modifier = modifier.fillMaxSize()) {
-        Column (
+        Column(
             modifier = Modifier.fillMaxSize(),
         ) {
             Text(
@@ -102,7 +102,7 @@ fun AlarmList(
                     requestDeleteAlarm
                 )
             }
-            Surface (
+            Surface(
                 modifier = Modifier
                     .semantics { role = Role.Button }
                     .padding(8.dp)
@@ -117,7 +117,7 @@ fun AlarmList(
                 shape = shape,
                 onClick = addAlarm,
             ) {
-                Row (
+                Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {

@@ -21,10 +21,10 @@ import com.excitemike.bocus.ui.modifier.fadeTopAndBottom
 fun AlarmGrid(
     modifier: Modifier = Modifier,// TODO: scrollbar modifier based on https://stackoverflow.com/questions/75035946/how-to-add-scrollbars-to-column
     alarms: List<Alarm>,
-    openAlarmDetails: (Int)->Unit,
-    requestDeleteAlarm: (String, Command, Command)->Unit
+    openAlarmDetails: (Int) -> Unit,
+    requestDeleteAlarm: (String, Command, Command) -> Unit
 ) {
-    Surface (
+    Surface(
         tonalElevation = 5.dp,
         modifier = modifier
             .fadeTopAndBottom(16.dp)

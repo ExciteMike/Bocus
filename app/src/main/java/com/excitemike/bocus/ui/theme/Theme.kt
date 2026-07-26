@@ -1,4 +1,4 @@
-@file:Suppress("unused", "unused", "unused", "unused", "SameParameterValue")
+@file:Suppress("unused", "SameParameterValue")
 
 package com.excitemike.bocus.ui.theme
 

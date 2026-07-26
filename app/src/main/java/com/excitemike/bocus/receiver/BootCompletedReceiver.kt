@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import com.excitemike.bocus.service.UpdateAllAlarmsService
 
-class BootCompletedReceiver: BroadcastReceiver() {
+class BootCompletedReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action != Intent.ACTION_BOOT_COMPLETED) {
             return
