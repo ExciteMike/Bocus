@@ -10,13 +10,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -98,27 +101,29 @@ fun BocusApp(
     )
 
     Surface {
-        Column(modifier = modifier.fillMaxSize().padding(top = 32.dp, bottom = 48.dp)) {
-            val screenMod = Modifier.weight(1f)
-            when (uiState.currentScreen) {
-                AppScreens.ABOUT -> AboutScreen(
-                    modifier = screenMod,
-                    goToScreen = { viewModel.goToScreen(it) })
+        Scaffold(contentWindowInsets = WindowInsets.systemBars) { innerPadding ->
+            Column(modifier = modifier.fillMaxSize().padding(innerPadding)) {
+                val screenMod = Modifier.weight(1f)
+                when (uiState.currentScreen) {
+                    AppScreens.ABOUT -> AboutScreen(
+                        modifier = screenMod,
+                        goToScreen = { viewModel.goToScreen(it) })
 
-                AppScreens.ALARMS -> AlarmScreen(
-                    modifier = screenMod,
-                    alarms = viewModel.alarmState.collectAsState(),
-                    addAlarm = { viewModel.addAlarm(defaultAlarmName) },
-                    openAlarmDetails = { viewModel.openAlarmDetails(it) },
-                    requestDeleteAlarm = { message, onConfirm, onCancel ->
-                        viewModel.requestDeleteAlarm(
-                            message,
-                            onConfirm,
-                            onCancel
-                        )
-                    },
-                    goToScreen = { viewModel.goToScreen(it) }
-                )
+                    AppScreens.ALARMS -> AlarmScreen(
+                        modifier = screenMod,
+                        alarms = viewModel.alarmState.collectAsState(),
+                        addAlarm = { viewModel.addAlarm(defaultAlarmName) },
+                        openAlarmDetails = { viewModel.openAlarmDetails(it) },
+                        requestDeleteAlarm = { message, onConfirm, onCancel ->
+                            viewModel.requestDeleteAlarm(
+                                message,
+                                onConfirm,
+                                onCancel
+                            )
+                        },
+                        goToScreen = { viewModel.goToScreen(it) }
+                    )
+                }
             }
         }
     }
