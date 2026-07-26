@@ -69,7 +69,7 @@ data class Alarm(
 
     /** when was the alarm last fired as measured by System.currentTimeMillis(), or zero */
     @ColumnInfo(name = "last_triggered_at")
-    val lastTriggeredAt: Int = 0
+    val lastTriggeredAt: Long = 0
 )
 
 /** a little glue to help Room generate a delete by id function */

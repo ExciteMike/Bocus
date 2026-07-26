@@ -1,7 +1,6 @@
 package com.excitemike.bocus.receiver
 
 import android.app.AlarmManager
-import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -10,22 +9,20 @@ import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.provider.Settings
 import android.util.Log
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Notifications
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.graphics.drawable.IconCompat
 import com.excitemike.bocus.R
 import com.excitemike.bocus.ui.MainActivity
 
-class AlarmReceiver: BroadcastReceiver() {
+class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val mediaPlayer: MediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_ALARM_ALERT_URI)
+        val mediaPlayer: MediaPlayer =
+            MediaPlayer.create(context, Settings.System.DEFAULT_ALARM_ALERT_URI)
         mediaPlayer.isLooping = true
 
-        Log.v("BocusTrace", "AlarmReceiver.onReceive intent ${intent}")
+        Log.v("BocusTrace", "AlarmReceiver.onReceive intent $intent")
 
         if (intent == null) return
 
@@ -40,14 +37,16 @@ class AlarmReceiver: BroadcastReceiver() {
             mediaPlayer.stop()
 
             val intentToCancel = Intent(context, AlarmReceiver::class.java).apply {
-                action = AlarmReceiver.PLAY_ALARM_ACTION
+                action = PLAY_ALARM_ACTION
             }
-            alarmManager.cancel(PendingIntent.getBroadcast(
-                context,
-                alarmId,
-                intentToCancel,
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
-            ))
+            alarmManager.cancel(
+                PendingIntent.getBroadcast(
+                    context,
+                    alarmId,
+                    intentToCancel,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+                )
+            )
 
             return
         }
@@ -58,7 +57,12 @@ class AlarmReceiver: BroadcastReceiver() {
         val newIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent = PendingIntent.getActivity(context, NOTIF_REQ_CODE, newIntent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            NOTIF_REQ_CODE,
+            newIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
         val stopIntent = Intent(context, AlarmReceiver::class.java).apply {
             action = STOP_ALARM_ACTION
             putExtra(EXTRA_NAME_ALARM_ID, alarmId)
@@ -67,17 +71,28 @@ class AlarmReceiver: BroadcastReceiver() {
             context,
             STOP_CODE + alarmId,
             stopIntent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
         val builder = NotificationCompat.Builder(context, ALARM_CHANNEL)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(pendingIntent)
-            .addAction(NotificationCompat.Action(R.drawable.ic_launcher_foreground, context.getString(R.string.stop), stopPendingIntent))
-            .setAutoCancel(true)
+            .addAction(
+                NotificationCompat.Action(
+                    R.drawable.ic_launcher_foreground,
+                    context.getString(R.string.stop),
+                    stopPendingIntent
+                )
+            )
+            .setOngoing(true)
 
-        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             NotificationManagerCompat.from(context).notify(alarmId, builder.build())
             mediaPlayer.start()
         }
