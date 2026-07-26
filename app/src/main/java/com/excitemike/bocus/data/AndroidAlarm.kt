@@ -3,12 +3,14 @@
  */
 package com.excitemike.bocus.data
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.excitemike.bocus.R
@@ -23,8 +25,6 @@ import kotlin.math.min
 import kotlin.random.Random
 
 private val PERMISSIONS = listOf(
-    android.Manifest.permission.USE_EXACT_ALARM to R.string.explain_alarm_permission,
-    android.Manifest.permission.VIBRATE to R.string.explain_vibrate_permission,
     android.Manifest.permission.POST_NOTIFICATIONS to R.string.explain_notification_permission)
 
 /**
@@ -123,15 +123,13 @@ fun getSystemPermissionExplanationsNeeded(activity: Activity): List<Pair<String,
 /**
  * get a list of permissions this app needs
  */
-fun getSystemPermissionsNeeded(activity: Activity): List<Pair<String, Int>> = PERMISSIONS
-
-
-private const val PERMISSIONS_REQUEST_CODE = 123
+fun getSystemPermissionsNeeded(): List<Pair<String, Int>> = PERMISSIONS
 
 /**
  * make sure that what we have registered with the system is in sync with what we have
  * in our data
  */
+@RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
 fun updateAllSystemAlarms(context: Context, alarms: List<Alarm>) {
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     if (!alarmManager.canScheduleExactAlarms()) {
@@ -146,6 +144,7 @@ fun updateAllSystemAlarms(context: Context, alarms: List<Alarm>) {
 /**
  * If the alarm is already scheduled, cancel it. Then schedule one based on the given Alarm
  */
+@RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
 fun updateSystemAlarm(context: Context, alarm: Alarm) {
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     if (!alarmManager.canScheduleExactAlarms()) {
@@ -159,6 +158,7 @@ fun updateSystemAlarm(context: Context, alarm: Alarm) {
         context,
         alarm.id!!,
         Intent (context, AlarmReceiver::class.java).apply {
+            action = AlarmReceiver.PLAY_ALARM_ACTION
             putExtra(AlarmReceiver.EXTRA_NAME_TITLE, alarm.name)
             putExtra(AlarmReceiver.EXTRA_NAME_MESSAGE, alarm.message)
             putExtra(AlarmReceiver.EXTRA_NAME_ALARM_ID, alarm.id)

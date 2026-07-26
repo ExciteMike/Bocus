@@ -11,7 +11,7 @@ class BootCompletedReceiver: BroadcastReceiver() {
             return
         }
         val intent = Intent(context, UpdateAllAlarmsService::class.java).apply {
-            setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         context?.startService(intent)
     }

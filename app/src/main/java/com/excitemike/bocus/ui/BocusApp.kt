@@ -38,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import com.excitemike.bocus.R
 
 @SuppressLint("ScheduleExactAlarm")
@@ -85,7 +84,7 @@ fun BocusApp(
         )
     }
 
-    val allPermissions = remember { viewModel.getSystemPermissionsNeeded(activity) }
+    val allPermissions = remember { viewModel.getSystemPermissionsNeeded() }
     for ((permission, stringId) in allPermissions) {
         PermissionRequestFlow(activity, viewModel, permission, stringId)
     }
@@ -155,14 +154,12 @@ fun PermissionRequestFlow(
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = {
-            Log.v("BocusTrace", "RequestPermission result $it")
             isGranted = it
             if (!it) {
                 showRationale = viewModel.shouldShowPermissionRequestRationale(activity, permission)
             }
         }
     )
-    Log.v("BocusTrace", "$permission isGranted:$isGranted; showRationale:$showRationale; showPermissionPrompt:$showPermissionPrompt")
 
     if (isGranted) {
         return
@@ -186,7 +183,7 @@ fun PermissionRequestFlow(
                             Text(text=stringResource(R.string.ok))
                         }
                         Spacer(modifier = Modifier.width(8.dp))
-                        GoToSettingsButton(activity, permission)
+                        GoToSettingsButton(activity)
                     }
                 }
             },
@@ -210,7 +207,7 @@ fun PermissionRequestFlow(
                         Spacer(Modifier.height(8.dp))
                         Text(stringResource(R.string.please_enable_in_settings))
                         Spacer(Modifier.height(8.dp))
-                        GoToSettingsButton(activity, permission)
+                        GoToSettingsButton(activity)
                     }
                 },
             confirmButton = {
@@ -219,7 +216,6 @@ fun PermissionRequestFlow(
                             if (viewModel.shouldShowPermissionRequestRationale(activity, permission)) {
                                 showRationale = true
                             } else {
-                                Log.v("BocusTrace", "launching permission request")
                                 permissionLauncher.launch(permission)
                             }
                         }
@@ -239,7 +235,7 @@ fun PermissionRequestFlow(
 }
 
 @Composable
-fun GoToSettingsButton(activity: Activity, permission: String) {
+fun GoToSettingsButton(activity: Activity) {
     Button(
         onClick = {
             val action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS

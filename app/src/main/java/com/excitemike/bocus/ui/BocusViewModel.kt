@@ -1,10 +1,8 @@
 package com.excitemike.bocus.ui
 
-import android.Manifest
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -113,8 +111,8 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
     /**
      * figure out what permissions the app needs
      */
-    fun getSystemPermissionsNeeded(activity: Activity) :List<Pair<String, Int>> {
-        return com.excitemike.bocus.data.getSystemPermissionsNeeded(activity)
+    fun getSystemPermissionsNeeded() :List<Pair<String, Int>> {
+        return com.excitemike.bocus.data.getSystemPermissionsNeeded()
     }
 
     /** transition from one UI screen to another */
@@ -153,7 +151,7 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
     /** update the values in an alarm */
     fun updateAlarm(alarm:Alarm) {
         val application: Application = getApplication()
-        viewModelScope.launch {
+        viewModelScope.launch @androidx.annotation.RequiresPermission(android.Manifest.permission.SCHEDULE_EXACT_ALARM) {
             alarmRepo.updateAlarm(alarm)
             updateSystemAlarm(application, alarm)
         }
