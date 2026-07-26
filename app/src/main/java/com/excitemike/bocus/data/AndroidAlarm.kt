@@ -3,12 +3,15 @@
  */
 package com.excitemike.bocus.data
 
-import android.Manifest
+import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import androidx.annotation.RequiresPermission
+import android.util.Log
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.excitemike.bocus.R
 import com.excitemike.bocus.receiver.AlarmReceiver
 import java.time.DayOfWeek
 import java.time.LocalDateTime
@@ -18,6 +21,11 @@ import java.time.temporal.ChronoUnit
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
+
+private val PERMISSIONS = listOf(
+    android.Manifest.permission.USE_EXACT_ALARM to R.string.explain_alarm_permission,
+    android.Manifest.permission.VIBRATE to R.string.explain_vibrate_permission,
+    android.Manifest.permission.POST_NOTIFICATIONS to R.string.explain_notification_permission)
 
 /**
  * Check that the java.time.DayOfWeek time is selected for the alarm, or no day of week is so
@@ -49,6 +57,13 @@ fun checkTimeOfDay(hourOfDay: Int, minuteOfHour: Int, alarm: Alarm): Boolean {
 }
 
 /**
+ * true when the given permission has been granted
+ */
+fun checkSystemPermission(activity: Activity, permission: String): Boolean {
+    return ContextCompat.checkSelfPermission(activity.application, permission) == android.content.pm.PackageManager.PERMISSION_GRANTED
+}
+
+/**
  * find the closest future occurrence of the alarm
  */
 fun getNextAlarmTime(alarm:Alarm): Long {
@@ -56,7 +71,11 @@ fun getNextAlarmTime(alarm:Alarm): Long {
     val nowDate = now.toLocalDate()
     val nowMillis = System.currentTimeMillis()
     val dayOfWeek = now.dayOfWeek
-    val minutesBetween = Random.nextLong(alarm.frequencyMin.toLong(), alarm.frequencyMax.toLong())
+    val minutesBetween = if (alarm.frequencyMax <= alarm.frequencyMin) {
+        alarm.frequencyMin.toLong()
+    } else {
+        Random.nextLong(alarm.frequencyMin.toLong(), alarm.frequencyMax.toLong())
+    }
     val millisBetween = minutesBetween * 60 * 1000
     val todayStartTimeMillis = LocalDateTime.of(nowDate, LocalTime.of(alarm.startHour, alarm.startMinute)).toEpochSecond(ZoneOffset.UTC) * 1000
     val todayEndTimeMillis =  LocalDateTime.of(nowDate, LocalTime.of(alarm.endHour, alarm.endMinute)).toEpochSecond(ZoneOffset.UTC) * 1000
@@ -86,10 +105,39 @@ fun getNextAlarmTime(alarm:Alarm): Long {
 }
 
 /**
+ * get a list of permissions we still need to request
+ */
+fun getSystemPermissionExplanationsNeeded(activity: Activity): List<Pair<String, Int>> {
+    val requestsNeeded = mutableListOf<Pair<String, Int>>()
+    for (pair in PERMISSIONS) {
+        if (ContextCompat.checkSelfPermission(activity.application, pair.first) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, pair.first)) {
+                Log.v("Bocus", "explanation needed: ${pair.first}")
+                requestsNeeded.add(pair)
+            }
+        }
+    }
+    return requestsNeeded
+}
+
+/**
+ * get a list of permissions this app needs
+ */
+fun getSystemPermissionsNeeded(activity: Activity): List<Pair<String, Int>> = PERMISSIONS
+
+
+private const val PERMISSIONS_REQUEST_CODE = 123
+
+/**
  * make sure that what we have registered with the system is in sync with what we have
  * in our data
  */
 fun updateAllSystemAlarms(context: Context, alarms: List<Alarm>) {
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    if (!alarmManager.canScheduleExactAlarms()) {
+        Log.v("Bocus", "can't schedule")
+        return
+    }
     for (alarm in alarms) {
         updateSystemAlarm(context, alarm)
     }
@@ -98,9 +146,12 @@ fun updateAllSystemAlarms(context: Context, alarms: List<Alarm>) {
 /**
  * If the alarm is already scheduled, cancel it. Then schedule one based on the given Alarm
  */
-@RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
 fun updateSystemAlarm(context: Context, alarm: Alarm) {
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    if (!alarmManager.canScheduleExactAlarms()) {
+        Log.v("Bocus", "can't schedule")
+        return
+    }
 
     val triggerAtMillis = getNextAlarmTime(alarm)
 

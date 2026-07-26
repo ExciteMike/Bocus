@@ -19,8 +19,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             BocusTheme {
                 BocusApp(
+                    activity = this,
                     viewModel = viewModel { BocusViewModel(application) },
-                    context = applicationContext,
                 )
             }
         }

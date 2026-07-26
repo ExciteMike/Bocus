@@ -2,6 +2,7 @@ package com.excitemike.bocus.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -20,7 +21,7 @@ import com.excitemike.bocus.ui.modifier.fadeTopAndBottom
  */
 @Composable
 fun AlarmGrid(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier,// TODO: scrollbar modifier based on https://stackoverflow.com/questions/75035946/how-to-add-scrollbars-to-column
     alarms: List<Alarm>,
     openAlarmDetails: (Int)->Unit,
     requestDeleteAlarm: (String, Command, Command)->Unit
@@ -31,13 +32,11 @@ fun AlarmGrid(
             .fadeTopAndBottom(16.dp)
     ) {
         LazyVerticalGrid(
+            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
             columns = GridCells.Adaptive(200.dp),
             verticalArrangement = Arrangement.Top,
             horizontalArrangement = Arrangement.Center,
         ) {
-            item {
-                Spacer(Modifier.size(8.dp))
-            }
             items(
                 alarms,
                 key = { it.id!! }
@@ -48,9 +47,6 @@ fun AlarmGrid(
                     openAlarmDetails,
                     requestDeleteAlarm
                 )
-            }
-            item {
-                Spacer(Modifier.size(8.dp))
             }
         }
     }

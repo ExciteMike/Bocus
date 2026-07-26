@@ -72,14 +72,14 @@ fun AlarmGridItem(
                 } else {
                     Spacer(Modifier.weight(1f))
                 }
-                Spacer(Modifier.weight(1f))
                 if (swipeToDismissState.targetValue != SwipeToDismissBoxValue.StartToEnd) {
                     Icon(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight(),
                         imageVector = Icons.Default.Delete,
-                        contentDescription = null
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onErrorContainer
                     )
                 } else {
                     Spacer(Modifier.weight(1f))

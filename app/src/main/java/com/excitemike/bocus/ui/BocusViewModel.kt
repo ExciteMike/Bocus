@@ -1,10 +1,11 @@
 package com.excitemike.bocus.ui
 
 import android.Manifest
-import android.app.AlarmManager
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import androidx.annotation.RequiresPermission
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.excitemike.bocus.R
@@ -13,6 +14,7 @@ import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.data.Command
 import com.excitemike.bocus.data.OfflineBocusRepository
 import com.excitemike.bocus.data.cancelSystemAlarm
+import com.excitemike.bocus.data.checkSystemPermission
 import com.excitemike.bocus.data.updateAllSystemAlarms
 import com.excitemike.bocus.data.updateSystemAlarm
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,16 +38,27 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
     val uiState: StateFlow<BocusUiState> = _uiState.asStateFlow()
 
     /** add a new alarm */
-    fun addAlarm(name:String, context: Context) {
+    fun addAlarm(name:String) {
+        val application: Application = getApplication()
+
         val size = alarmState.value.size
         if (size < MAX_ALARMS) {
+            val alarm = Alarm(name=name)
             viewModelScope.launch {
-                alarmRepo.insertAlarm(Alarm(name=name))
+                val id = alarmRepo.insertAlarm(alarm)
+                val alarm = alarm.copy(id = id)
+                updateSystemAlarm(application, alarm)
             }
-            TODO("schedule alarm")
         } else {
-            setErrorMessage(context.getString(R.string.alarm_limit))
+            setErrorMessage(application.getString(R.string.alarm_limit))
         }
+    }
+
+    /**
+     * true when the given permission has been granted
+     */
+    fun checkPermission(activity: Activity, permission: String): Boolean {
+        return checkSystemPermission(activity, permission)
     }
 
     /** close the alarm details */
@@ -97,6 +110,13 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    /**
+     * figure out what permissions the app needs
+     */
+    fun getSystemPermissionsNeeded(activity: Activity) :List<Pair<String, Int>> {
+        return com.excitemike.bocus.data.getSystemPermissionsNeeded(activity)
+    }
+
     /** transition from one UI screen to another */
     fun goToScreen(screen:AppScreens) {
         _uiState.update { it.copy(currentScreen = screen, selectedAlarmIndex = null) }
@@ -123,14 +143,16 @@ class BocusViewModel(application: Application): AndroidViewModel(application) {
         _uiState.update { it.copy(errorMessage = errorMessage) }
     }
 
+    /**
+     * true when the system says we need to show the rationale
+     */
+    fun shouldShowPermissionRequestRationale(activity: Activity, permission: String): Boolean {
+        return ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)
+    }
+
     /** update the values in an alarm */
-    @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
     fun updateAlarm(alarm:Alarm) {
         val application: Application = getApplication()
-        val alarmManager = application.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        if (!alarmManager.canScheduleExactAlarms()) {
-            return
-        }
         viewModelScope.launch {
             alarmRepo.updateAlarm(alarm)
             updateSystemAlarm(application, alarm)

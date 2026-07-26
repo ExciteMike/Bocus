@@ -2,8 +2,11 @@ package com.excitemike.bocus.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.byValue
@@ -11,8 +14,14 @@ import androidx.compose.foundation.text.input.maxLength
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.then
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -21,14 +30,20 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmLimits
+import com.excitemike.bocus.util.timeString
 import kotlin.math.max
 import kotlin.math.min
 
@@ -42,7 +57,11 @@ fun AlarmDetail(
         onDismissRequest = { close() },
     ) {
         Card {
-            Column (modifier = Modifier.padding(16.dp)) {
+            Column (modifier = Modifier
+                .padding(16.dp)
+                .imePadding(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
                     text = stringResource(R.string.edit_alarm),
                     style = MaterialTheme.typography.titleLarge
@@ -51,7 +70,7 @@ fun AlarmDetail(
                 AlarmDetailControls(modifier = Modifier.weight(1f, true), alarm, updateAlarm)
 
                 TextButton(
-                    onClick = { close() }
+                    onClick = { close() },
                 ) {
                     Text(text = stringResource(R.string.done))
                 }
@@ -64,7 +83,9 @@ fun AlarmDetail(
 @Composable
 fun AlarmDetailControls(modifier: Modifier,
                         alarm: Alarm,
-                        updateAlarm: (Alarm) -> Unit,) {
+                        updateAlarm: (Alarm) -> Unit,
+) {
+    val timeFormatStr = stringResource(R.string.time_format)
     val fillMaxWidth = Modifier.fillMaxWidth()
     val forceDigits = InputTransformation
         .byValue { current, proposed -> forceNDigits(current, proposed, 2) }
@@ -119,7 +140,7 @@ fun AlarmDetailControls(modifier: Modifier,
             label = { Text(stringResource(R.string.alarm_message_label)) },
         )
 
-        Text(
+        /*Text(
             text = stringResource(R.string.frequency_label),
             style = MaterialTheme.typography.titleMedium
         )
@@ -130,7 +151,7 @@ fun AlarmDetailControls(modifier: Modifier,
                 alarm.frequencyMin,
                 alarm.frequencyMax
             )
-        )
+        )*/
 
         //
         // Frequency min
@@ -142,15 +163,19 @@ fun AlarmDetailControls(modifier: Modifier,
                 .then {
                     val updatedMin = this.toString().toInt()
                     val updatedMax = max(alarm.frequencyMax, updatedMin)
-                    freqMaxState.edit { replace(0, length, updatedMax.toString()) }
-                    updateAlarm(
-                        alarm.copy(
-                            frequencyMin = updatedMin,
-                            frequencyMax = updatedMax
+                    if (updatedMax > alarm.frequencyMax) {
+                        freqMaxState.edit { replace(0, length, updatedMax.toString()) }
+                    }
+                    if ((updatedMin != alarm.frequencyMin) || (updatedMax != alarm.frequencyMax)) {
+                        updateAlarm(
+                            alarm.copy(
+                                frequencyMin = updatedMin,
+                                frequencyMax = updatedMax
+                            )
                         )
-                    )
+                    }
                 },
-            label = { Text(stringResource(R.string.minimum_label)) }
+            label = { Text(stringResource(R.string.frequency_label_min)) }
         )
 
         //
@@ -163,32 +188,68 @@ fun AlarmDetailControls(modifier: Modifier,
                 .then {
                     val updatedMax = this.toString().toInt()
                     val updatedMin = min(alarm.frequencyMin, updatedMax)
-                    freqMinState.edit { replace(0, length, updatedMin.toString()) }
-                    updateAlarm(
-                        alarm.copy(
-                            frequencyMin = updatedMin,
-                            frequencyMax = updatedMax,
+                    if (updatedMin < alarm.frequencyMin) {
+                        freqMinState.edit { replace(0, length, updatedMin.toString()) }
+                    }
+                    if ((updatedMin != alarm.frequencyMin) || (updatedMax != alarm.frequencyMax)) {
+                        updateAlarm(
+                            alarm.copy(
+                                frequencyMin = updatedMin,
+                                frequencyMax = updatedMax,
+                            )
                         )
-                    )
+                    }
                 },
-            label = { Text(stringResource(R.string.maximum_label)) }
-        )
-
-        //
-        // Start Time Label
-        //
-        Text(
-            text = stringResource(R.string.start_time_label),
-            style = MaterialTheme.typography.titleMedium
+            label = { Text(stringResource(R.string.frequency_label_max)) }
         )
 
         //
         // Start Time
         //
-        TimeInput(
-            state = startTimeState,
-            modifier = fillMaxWidth,
-        )
+        val startTimeOpen = remember { mutableStateOf(false) }
+        Row (verticalAlignment = Alignment.CenterVertically) {
+
+            if (startTimeOpen.value) {
+                Text(
+                    text = stringResource(R.string.start_time_label),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                IconButton(
+                    onClick = { startTimeOpen.value = false },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = stringResource(R.string.close),
+                    )
+                }
+            } else {
+                Text(
+                    text = String.format(
+                        stringResource(R.string.start_time_label_and_value),
+                        timeString(timeFormatStr, alarm.startHour, alarm.startMinute)
+                    ),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                IconButton(
+                    onClick = { startTimeOpen.value = true },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = stringResource(R.string.edit),
+                    )
+                }
+            }
+        }
+
+        //
+        // Start Time
+        //
+        if (startTimeOpen.value) {
+            TimeInput(
+                state = startTimeState,
+                modifier = fillMaxWidth,
+            )
+        }
 
         //
         // End Time Label
@@ -214,8 +275,8 @@ fun AlarmDetailControls(modifier: Modifier,
 fun forceNDigits(current: CharSequence, proposed: CharSequence, maxDigits: Int): CharSequence {
     require(maxDigits > 0)
     require(maxDigits < 99)
-    if (proposed.isEmpty()) {
-        return "0"
+    if ("""0+""".toRegex().matches(proposed)) {
+        return current
     }
     if (!"""\d{1,${maxDigits}}""".toRegex().matches(proposed)) {
         return current

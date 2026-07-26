@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.activeDaysString
-import com.excitemike.bocus.data.timeString
+import com.excitemike.bocus.util.timeString
 
 @Composable
 fun DayIcon(isOn: Boolean, dayStringId: Int) {

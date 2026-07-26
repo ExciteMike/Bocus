@@ -23,19 +23,19 @@ data class Alarm(
     /** uniquely identify each alarm */
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    var id: Int? = null,
+    val id: Int? = null,
 
     /** how to label the alarm in the ui */
     @ColumnInfo(name = "name")
-    var name: String,
+    val name: String,
 
     /** shortest time between triggers of the alarm, in minutes */
     @ColumnInfo(name = "frequency_min")
-    var frequencyMin: Int = AlarmDefaults.DEFAULT_FREQUENCY_MIN,
+    val frequencyMin: Int = AlarmDefaults.DEFAULT_FREQUENCY_MIN,
 
     /** longest time between triggers of the alarm, in minutes */
     @ColumnInfo(name = "frequency_max")
-    var frequencyMax: Int = AlarmDefaults.DEFAULT_FREQUENCY_MAX,
+    val frequencyMax: Int = AlarmDefaults.DEFAULT_FREQUENCY_MAX,
 
     /** At what time of day the alarms begin. Hour part. 0-23 */
     @ColumnInfo(name = "start_hour")
@@ -53,27 +53,23 @@ data class Alarm(
 
     /** what to do when the alarm triggers */
     @ColumnInfo(name = "notif_mode")
-    var notifMode: Int = AlarmNotifMode.DEFAULT,
+    val notifMode: Int = AlarmNotifMode.DEFAULT,
 
     /** what to say in the notification */
     @ColumnInfo(name = "message")
-    var message: String = "",
-
-    /** whether the alarm repeats if not dismissed */
-    //@ColumnInfo(name =  "require_dismiss")
-    //var requireDismiss: Boolean = false,
+    val message: String = "",
 
     /** how long it sounds/buzzes for. Seconds */
     @ColumnInfo(name = "alarm_length")
-    var alarmLength: Int = DEFAULT_ALARM_LENGTH,
+    val alarmLength: Int = DEFAULT_ALARM_LENGTH,
 
     /** repeat on which days of the week, (bitflags) */
     @ColumnInfo(name = "active_days")
-    var activeDays: Int = AlarmDayOfWeekFlags.DEFAULT_ACTIVE_DAYS,
+    val activeDays: Int = AlarmDayOfWeekFlags.DEFAULT_ACTIVE_DAYS,
 
     /** when was the alarm last fired as measured by System.currentTimeMillis(), or zero */
     @ColumnInfo(name = "last_triggered_at")
-    var lastTriggeredAt: Int = 0
+    val lastTriggeredAt: Int = 0
 )
 
 /** a little glue to help Room generate a delete by id function */
@@ -119,8 +115,8 @@ object AlarmNotifMode {
 
 @Dao
 interface AlarmDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(alarm:Alarm)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(alarm:Alarm): Long
     @Update
     suspend fun update(alarm: Alarm)
     @Delete(entity = Alarm::class)
@@ -132,26 +128,6 @@ interface AlarmDao {
 
     @Query("SELECT * from alarms")
     fun getAllAlarmsRaw(): List<Alarm>
-}
-
-/** convert an hour (0-23) and minute (0-59) to a time in a format like "1:23 pm" */
-fun timeString(format:String, hour:Int, minute:Int): String {
-    val displayHour: String = when (hour) {
-        0, 12 -> "12"
-        in 1..11 -> "$hour"
-        else -> "${hour - 12}"
-    }
-    val amPm: String = when (hour) {
-        in 0..12 -> "am"
-        else -> "pm"
-    }
-    val displayMinute = minute.toString().padStart(2, '0')
-
-    return String.format(
-        format,
-        displayHour,
-        displayMinute,
-        amPm)
 }
 
 /**
