@@ -2,7 +2,6 @@ package com.excitemike.bocus.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -13,23 +12,15 @@ import androidx.compose.foundation.text.input.maxLength
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.then
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TimeInput
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -38,7 +29,7 @@ import androidx.compose.ui.window.Dialog
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmLimits
-import com.excitemike.bocus.util.timeString
+import com.excitemike.bocus.ui.component.TimeAccordion
 import kotlin.math.max
 import kotlin.math.min
 
@@ -137,19 +128,6 @@ fun AlarmDetailControls(
             label = { Text(stringResource(R.string.alarm_message_label)) },
         )
 
-        /*Text(
-            text = stringResource(R.string.frequency_label),
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        Text(
-            text = String.format(
-                stringResource(R.string.every_x_to_y_minutes),
-                alarm.frequencyMin,
-                alarm.frequencyMax
-            )
-        )*/
-
         //
         // Frequency min
         //
@@ -203,65 +181,19 @@ fun AlarmDetailControls(
         //
         // Start Time
         //
-        val startTimeOpen = remember { mutableStateOf(false) }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-
-            if (startTimeOpen.value) {
-                Text(
-                    text = stringResource(R.string.start_time_label),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                IconButton(
-                    onClick = { startTimeOpen.value = false },
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(R.string.close),
-                    )
-                }
-            } else {
-                Text(
-                    text = String.format(
-                        stringResource(R.string.start_time_label_and_value),
-                        timeString(timeFormatStr, alarm.startHour, alarm.startMinute)
-                    ),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                IconButton(
-                    onClick = { startTimeOpen.value = true },
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = stringResource(R.string.edit),
-                    )
-                }
-            }
-        }
-
-        //
-        // Start Time
-        //
-        if (startTimeOpen.value) {
-            TimeInput(
-                state = startTimeState,
-                modifier = fillMaxWidth,
-            )
-        }
-
-        //
-        // End Time Label
-        //
-        Text(
-            text = stringResource(R.string.end_time_label),
-            style = MaterialTheme.typography.titleMedium
+        TimeAccordion(
+            startTimeState,
+            stringResource(R.string.start_time_label),
+            stringResource(R.string.start_time_label_and_value)
         )
 
         //
         // End Time
         //
-        TimeInput(
-            state = endTimeState,
-            modifier = fillMaxWidth,
+        TimeAccordion(
+            endTimeState,
+            stringResource(R.string.end_time_label),
+            stringResource(R.string.end_time_label_and_value)
         )
     }
 }

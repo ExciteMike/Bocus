@@ -26,6 +26,7 @@
     <string name="done">Done</string>
     <string name="edit">Edit</string>
     <string name="edit_alarm">Edit Alarm</string>
+    <string name="end_time_label_and_value">End at time %1$s</string>
     <string name="end_time_label">End at time</string>
     <string name="error">Error</string>
     <string name="every_x_to_y_minutes">every %1$s to %2$s minutes</string>
