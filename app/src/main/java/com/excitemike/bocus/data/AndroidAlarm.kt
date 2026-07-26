@@ -111,7 +111,7 @@ fun getNextAlarmTime(alarm: Alarm): Long {
 
     // find how many days ahead to schedule it
     var daysAhead: Long = 0
-    for (i in 0..6) {
+    for (i in 1..6) {
         val dayToCheck = dayOfWeek.plus(i.toLong())
         if (checkDayOfWeek(dayToCheck, alarm)) {
             daysAhead = i.toLong()
@@ -172,13 +172,7 @@ fun updateSystemAlarm(context: Context, alarm: Alarm) {
         Intent(context, AlarmReceiver::class.java).apply {
             action = AlarmReceiver.PLAY_ALARM_ACTION
             putExtra(AlarmReceiver.EXTRA_NAME_TITLE, alarm.name)
-
-            // TODO: uncomment and delete debug thing below putExtra(AlarmReceiver.EXTRA_NAME_MESSAGE, alarm.message)
-            putExtra(
-                AlarmReceiver.EXTRA_NAME_MESSAGE,
-                "scheduled for $dateTimeString\n$triggerAtMillis"
-            )
-
+            putExtra(AlarmReceiver.EXTRA_NAME_MESSAGE, alarm.message)
             putExtra(AlarmReceiver.EXTRA_NAME_ALARM_ID, alarm.id)
         },
         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
