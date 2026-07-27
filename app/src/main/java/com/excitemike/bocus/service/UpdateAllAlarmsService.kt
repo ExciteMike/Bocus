@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 class UpdateAllAlarmsService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        if (intent?.action != Intent.ACTION_BOOT_COMPLETED) {
+        if (intent?.action != ACTION_RESCHEDULE_ALL_ALARMS) {
             return START_NOT_STICKY
         }
         val dao = AlarmDatabase.getDatabase(application).alarmDao()
@@ -31,5 +31,9 @@ class UpdateAllAlarmsService : Service() {
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
+    }
+
+    companion object {
+        const val ACTION_RESCHEDULE_ALL_ALARMS = "reschedule_all_alarms"
     }
 }

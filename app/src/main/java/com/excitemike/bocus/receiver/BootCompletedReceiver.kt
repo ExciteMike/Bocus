@@ -12,6 +12,7 @@ class BootCompletedReceiver : BroadcastReceiver() {
         }
         val intent = Intent(context, UpdateAllAlarmsService::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            action = UpdateAllAlarmsService.ACTION_RESCHEDULE_ALL_ALARMS
         }
         context?.startService(intent)
     }

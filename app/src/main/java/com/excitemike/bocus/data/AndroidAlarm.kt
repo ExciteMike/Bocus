@@ -36,8 +36,6 @@ fun checkDayOfWeek(javaDoW: DayOfWeek, alarm: Alarm): Boolean {
     if (alarm.activeDays == 0) {
         return true
     }
-    // TODO: remove debug early return
-    return true
     return when (javaDoW) {
         DayOfWeek.SUNDAY -> (alarm.activeDays and AlarmDayOfWeekFlags.SUNDAY) != 0
         DayOfWeek.MONDAY -> (alarm.activeDays and AlarmDayOfWeekFlags.MONDAY) != 0
