@@ -13,16 +13,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.excitemike.bocus.receiver.AlarmReceiver
+import com.excitemike.bocus.receiver.BootCompletedReceiver
 import com.excitemike.bocus.ui.theme.BocusTheme
 
 class MainActivity : ComponentActivity() {
-    lateinit var receiver: AlarmReceiver
+    lateinit var alarmReceiver: AlarmReceiver
+    lateinit var bootCompletedReceiver: BootCompletedReceiver
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // TODO: I don't think this accomplishes anything
-        receiver = AlarmReceiver()
+        // TODO: I'm not actually sure instantiating the receivers here accomplishes anything
+        alarmReceiver = AlarmReceiver()
+        bootCompletedReceiver = BootCompletedReceiver()
+
         createNotificationChannel(this)
 
         setContent {
