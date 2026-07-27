@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.byValue
 import androidx.compose.foundation.text.input.maxLength
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -54,7 +55,7 @@ fun AlarmDetail(
                     style = MaterialTheme.typography.titleLarge
                 )
 
-                AlarmDetailControls(modifier = Modifier.weight(1f, true), alarm, updateAlarm)
+                AlarmDetailControls(modifier = Modifier, alarm, updateAlarm)
 
                 TextButton(
                     onClick = { close() },
@@ -107,7 +108,7 @@ fun AlarmDetailControls(
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         TextField(
             modifier = fillMaxWidth,
@@ -116,6 +117,7 @@ fun AlarmDetailControls(
                 .maxLength(AlarmLimits.NAME_LEN_MAX)
                 .then { updateAlarm(alarm.copy(name = this.toString())) },
             label = { Text(stringResource(R.string.alarm_name_label)) },
+            lineLimits = TextFieldLineLimits.SingleLine
         )
 
         TextField(
@@ -125,6 +127,7 @@ fun AlarmDetailControls(
                 .maxLength(AlarmLimits.MESSAGE_LEN_MAX)
                 .then { updateAlarm(alarm.copy(message = this.toString())) },
             label = { Text(stringResource(R.string.alarm_message_label)) },
+            lineLimits = TextFieldLineLimits.SingleLine
         )
 
         //
@@ -157,7 +160,8 @@ fun AlarmDetailControls(
                     }
                 }
             },
-            label = { Text(stringResource(R.string.frequency_label_min)) }
+            label = { Text(stringResource(R.string.frequency_label_min)) },
+            lineLimits = TextFieldLineLimits.SingleLine
         )
 
         //
@@ -174,7 +178,8 @@ fun AlarmDetailControls(
                     }
                 }
             },
-            label = { Text(stringResource(R.string.frequency_label_max)) }
+            label = { Text(stringResource(R.string.frequency_label_max)) },
+            lineLimits = TextFieldLineLimits.SingleLine
         )
 
         //
