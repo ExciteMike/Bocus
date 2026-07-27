@@ -2,6 +2,7 @@ package com.excitemike.bocus.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -10,7 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -40,6 +44,18 @@ fun AlarmGridItem(
     val deleteAlarmTemplate = stringResource(R.string.confirm_delete_alarm)
     val swipeToDismissState = rememberSwipeToDismissBoxState()
     val scope = rememberCoroutineScope()
+    val shape = MaterialTheme.shapes.medium
+    val requestDeleteThisItem = {
+        val message = String.format(
+            deleteAlarmTemplate,
+            alarm.name
+        )
+        requestDeleteAlarm(
+            message,
+            Command.DeleteAlarm(alarm.id!!),
+            Command.Callback { scope.launch { swipeToDismissState.reset() } }
+        )
+    }
     SwipeToDismissBox(
         state = swipeToDismissState,
         backgroundContent = {
@@ -56,7 +72,7 @@ fun AlarmGridItem(
                     .padding(4.dp)
                     .background(
                         color = bgColor,
-                        shape = RoundedCornerShape(16.dp),
+                        shape = shape,
                     ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -86,23 +102,39 @@ fun AlarmGridItem(
                 }
             }
         },
-        onDismiss = {
-            val message = String.format(
-                deleteAlarmTemplate,
-                alarm.name
-            )
-            requestDeleteAlarm(
-                message,
-                Command.DeleteAlarm(alarm.id!!),
-                Command.Callback { scope.launch { swipeToDismissState.reset() } }
-            )
-        }
+        onDismiss = { requestDeleteThisItem() }
     ) {
-        AlarmListItem(
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { openAlarmDetails(index.value) },
-            alarm = alarm,
-        )
+                .padding(horizontal = 4.dp, vertical = 4.dp)
+        ) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                AlarmListItem(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { openAlarmDetails(index.value) },
+                    alarm = alarm
+                )
+                Column {
+                    IconButton(
+                        onClick = { openAlarmDetails(index.value) },
+                        shape = shape,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = stringResource(R.string.edit),
+                        )
+
+                    }
+                    IconButton(onClick = { requestDeleteThisItem() }, shape = shape) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.edit)
+                        )
+                    }
+                }
+            }
+        }
     }
 }

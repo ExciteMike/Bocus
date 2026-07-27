@@ -17,6 +17,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // TODO: I don't think this accomplishes anything
         receiver = AlarmReceiver()
         createNotificationChannel(this)
 

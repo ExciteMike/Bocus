@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
@@ -29,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
@@ -44,91 +44,98 @@ fun AlarmScreen(
     requestDeleteAlarm: (String, Command, Command) -> Unit,
     goToScreen: (AppScreens) -> Unit
 ) {
-    AlarmList(
-        alarms = alarms.value,
-        modifier = modifier,
-        addAlarm = addAlarm,
-        openAlarmDetails = openAlarmDetails,
-        requestDeleteAlarm = requestDeleteAlarm,
-        goToScreen = goToScreen
-    )
+    Box(modifier = modifier.fillMaxSize()) {
+        AlarmList(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(top = 32.dp),
+            alarms = alarms.value,
+            addAlarm = addAlarm,
+            openAlarmDetails = openAlarmDetails,
+            requestDeleteAlarm = requestDeleteAlarm,
+        )
+
+        Text(
+            modifier = Modifier.align(Alignment.TopCenter),
+            text = "Alarms",
+            style = MaterialTheme.typography.titleLarge
+        )
+        IconButton(
+            onClick = { goToScreen(AppScreens.ABOUT) },
+            modifier = Modifier.align(Alignment.TopEnd)
+        ) {
+            Icon(
+                modifier = Modifier.fillMaxSize(),
+                imageVector = Icons.Default.Info,
+                contentDescription = stringResource(R.string.about),
+            )
+        }
+    }
 }
 
 @Composable
 fun AlarmList(
-    alarms: List<Alarm>,
     modifier: Modifier = Modifier,
+    alarms: List<Alarm>,
     addAlarm: () -> Unit,
     openAlarmDetails: (Int) -> Unit,
     requestDeleteAlarm: (String, Command, Command) -> Unit,
-    goToScreen: (AppScreens) -> Unit,
 ) {
     val shape = MaterialTheme.shapes.medium
     val containerColor = ButtonDefaults.buttonColors().containerColor
     val contentColor = ButtonDefaults.buttonColors().contentColor
-    Box(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (alarms.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp)
+            ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
-                    text = "Alarms",
-                    style = MaterialTheme.typography.titleLarge
-                )
-                IconButton(
-                    onClick = { goToScreen(AppScreens.ABOUT) },
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = stringResource(R.string.about),
-                    )
-                }
-            }
-            if (alarms.isEmpty()) {
-                Text(
-                    modifier = Modifier
-                        .weight(1f)
-                        .wrapContentHeight(Alignment.CenterVertically),
                     text = stringResource(R.string.no_alarms),
-                )
-            } else {
-                AlarmGrid(
-                    modifier = Modifier.fillMaxSize().weight(1f),
-                    alarms,
-                    openAlarmDetails,
-                    requestDeleteAlarm
+                    textAlign = TextAlign.Justify
                 )
             }
-            Surface(
-                modifier = Modifier
-                    .semantics { role = Role.Button }
-                    .padding(8.dp)
-                    .fillMaxWidth()
-                    .background(
-                        color = containerColor,
-                        shape = shape
-                    ),
-                color = Color.Transparent,
-                contentColor = contentColor,
-                border = BorderStroke(1.dp, contentColor),
-                shape = shape,
-                onClick = addAlarm,
+        } else {
+            AlarmGrid(
+                modifier = Modifier.weight(1f),
+                alarms,
+                openAlarmDetails,
+                requestDeleteAlarm
+            )
+        }
+
+        Surface(
+            modifier = Modifier
+                .semantics { role = Role.Button }
+                .padding(8.dp)
+                .fillMaxWidth()
+                .background(
+                    color = containerColor,
+                    shape = shape
+                ),
+            color = Color.Transparent,
+            contentColor = contentColor,
+            border = BorderStroke(1.dp, contentColor),
+            shape = shape,
+            onClick = addAlarm,
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = Modifier.size(48.dp),
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.add_alarm),
-                    )
-                    Text(
-                        text = stringResource(R.string.add_alarm)
-                    )
-                }
+                Icon(
+                    modifier = Modifier.size(48.dp),
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add_alarm),
+                )
+                Text(
+                    text = stringResource(R.string.add_alarm)
+                )
             }
         }
     }

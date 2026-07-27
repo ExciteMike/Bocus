@@ -100,30 +100,28 @@ fun BocusApp(
         closeAlarmDetails = { viewModel.closeAlarmDetails() }
     )
 
-    Surface {
+    Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(contentWindowInsets = WindowInsets.systemBars) { innerPadding ->
-            Column(modifier = modifier.fillMaxSize().padding(innerPadding)) {
-                val screenMod = Modifier.weight(1f)
-                when (uiState.currentScreen) {
-                    AppScreens.ABOUT -> AboutScreen(
-                        modifier = screenMod,
-                        goToScreen = { viewModel.goToScreen(it) })
+            val screenMod = modifier.fillMaxSize().padding(innerPadding)
+            when (uiState.currentScreen) {
+                AppScreens.ABOUT -> AboutScreen(
+                    modifier = screenMod,
+                    goToScreen = { viewModel.goToScreen(it) })
 
-                    AppScreens.ALARMS -> AlarmScreen(
-                        modifier = screenMod,
-                        alarms = viewModel.alarmState.collectAsState(),
-                        addAlarm = { viewModel.addAlarm(defaultAlarmName) },
-                        openAlarmDetails = { viewModel.openAlarmDetails(it) },
-                        requestDeleteAlarm = { message, onConfirm, onCancel ->
-                            viewModel.requestDeleteAlarm(
-                                message,
-                                onConfirm,
-                                onCancel
-                            )
-                        },
-                        goToScreen = { viewModel.goToScreen(it) }
-                    )
-                }
+                AppScreens.ALARMS -> AlarmScreen(
+                    modifier = screenMod,
+                    alarms = viewModel.alarmState.collectAsState(),
+                    addAlarm = { viewModel.addAlarm(defaultAlarmName) },
+                    openAlarmDetails = { viewModel.openAlarmDetails(it) },
+                    requestDeleteAlarm = { message, onConfirm, onCancel ->
+                        viewModel.requestDeleteAlarm(
+                            message,
+                            onConfirm,
+                            onCancel
+                        )
+                    },
+                    goToScreen = { viewModel.goToScreen(it) }
+                )
             }
         }
     }

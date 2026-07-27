@@ -2,9 +2,7 @@ package com.excitemike.bocus.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,49 +21,43 @@ fun AlarmListItem(
     modifier: Modifier = Modifier
 ) {
     val timeFormatStr = stringResource(R.string.time_format)
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 4.dp, vertical = 4.dp),
-    ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-            Row {
-                Text(
-                    text = alarm.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
+    Column(modifier = modifier.padding(4.dp)) {
+        Row {
             Text(
-                text = String.format(
-                    stringResource(R.string.every_x_to_y_minutes),
-                    alarm.frequencyMin,
-                    alarm.frequencyMax
-                ),
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            Text(
-                text = String.format(
-                    stringResource(R.string.time_to_time),
-                    timeString(timeFormatStr, alarm.startHour, alarm.startMinute),
-                    timeString(timeFormatStr, alarm.endHour, alarm.endMinute)
-                ),
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            Text(
-                text = activeDaysString(alarm),
-                style = MaterialTheme.typography.bodyMedium,
+                text = alarm.name,
+                style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         }
+
+        Text(
+            text = String.format(
+                stringResource(R.string.every_x_to_y_minutes),
+                alarm.frequencyMin,
+                alarm.frequencyMax
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        Text(
+            text = String.format(
+                stringResource(R.string.time_to_time),
+                timeString(timeFormatStr, alarm.startHour, alarm.startMinute),
+                timeString(timeFormatStr, alarm.endHour, alarm.endMinute)
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        Text(
+            text = activeDaysString(alarm),
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }

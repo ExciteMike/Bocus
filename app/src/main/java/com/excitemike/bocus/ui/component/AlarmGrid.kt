@@ -27,6 +27,7 @@ fun AlarmGrid(
     Surface(
         tonalElevation = 5.dp,
         modifier = modifier
+            .padding(top = 8.dp)
             .fadeTopAndBottom(16.dp)
     ) {
         LazyVerticalGrid(
