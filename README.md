@@ -4,6 +4,10 @@ An alarm app with randomized reminders.
 
 ## to-do list
 
+- textfields should be single line
+- request permission popups suck
+- boot alarm reset doesn't work
+- need to schedule alarms after permissions popups
 - write this readme
 - debounce alarm scheduling/db saves
 - graphics

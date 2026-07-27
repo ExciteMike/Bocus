@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -44,32 +45,32 @@ fun AlarmScreen(
     requestDeleteAlarm: (String, Command, Command) -> Unit,
     goToScreen: (AppScreens) -> Unit
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxWidth()) {
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = "Alarms",
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center
+            )
+            IconButton(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                onClick = { goToScreen(AppScreens.ABOUT) },
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    imageVector = Icons.Default.Info,
+                    contentDescription = stringResource(R.string.about),
+                )
+            }
+        }
         AlarmList(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(top = 32.dp),
+            modifier = Modifier.weight(1f),
             alarms = alarms.value,
             addAlarm = addAlarm,
             openAlarmDetails = openAlarmDetails,
             requestDeleteAlarm = requestDeleteAlarm,
         )
-
-        Text(
-            modifier = Modifier.align(Alignment.TopCenter),
-            text = "Alarms",
-            style = MaterialTheme.typography.titleLarge
-        )
-        IconButton(
-            onClick = { goToScreen(AppScreens.ABOUT) },
-            modifier = Modifier.align(Alignment.TopEnd)
-        ) {
-            Icon(
-                modifier = Modifier.fillMaxSize(),
-                imageVector = Icons.Default.Info,
-                contentDescription = stringResource(R.string.about),
-            )
-        }
     }
 }
 
