@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
@@ -30,7 +31,12 @@ import com.excitemike.bocus.util.timeString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimeAccordion(state: TimePickerState, labelOpen: String, labelClosed: String) {
+fun TimeAccordion(
+    state: TimePickerState,
+    labelOpen: String,
+    labelClosed: String,
+    onBlur: () -> Unit = {}
+) {
     // TODO: use AnimatedContent
     val timeFormatStr = stringResource(R.string.time_format)
     val isOpen = remember { mutableStateOf(false) }
@@ -61,7 +67,13 @@ fun TimeAccordion(state: TimePickerState, labelOpen: String, labelClosed: String
                 }
                 TimeInput(
                     state = state,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged {
+                            if (!it.isFocused) {
+                                onBlur()
+                            }
+                        },
                 )
             }
         }

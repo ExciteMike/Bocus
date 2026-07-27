@@ -139,7 +139,16 @@ fun AlarmDetailControls(
         TimeAccordion(
             startTimeState,
             stringResource(R.string.start_time_label),
-            stringResource(R.string.start_time_label_and_value)
+            stringResource(R.string.start_time_label_and_value),
+            onBlur = {
+                // bump the end up if earlier than start
+                val start = startTimeState.hour * 60 + startTimeState.minute
+                val end = endTimeState.hour * 60 + endTimeState.minute
+                if (start > end) {
+                    endTimeState.hour = startTimeState.hour
+                    endTimeState.minute = startTimeState.minute
+                }
+            }
         )
 
         //
@@ -148,7 +157,16 @@ fun AlarmDetailControls(
         TimeAccordion(
             endTimeState,
             stringResource(R.string.end_time_label),
-            stringResource(R.string.end_time_label_and_value)
+            stringResource(R.string.end_time_label_and_value),
+            onBlur = {
+                // bump the start down if later than end
+                val start = startTimeState.hour * 60 + startTimeState.minute
+                val end = endTimeState.hour * 60 + endTimeState.minute
+                if (start > end) {
+                    startTimeState.hour = endTimeState.hour
+                    startTimeState.minute = endTimeState.minute
+                }
+            }
         )
 
         DaysOfWeek(alarm, updateAlarm)

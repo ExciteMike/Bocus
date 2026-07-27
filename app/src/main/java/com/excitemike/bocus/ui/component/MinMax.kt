@@ -65,7 +65,7 @@ fun MinMax(
                 label = stringResource(R.string.maximum),
                 onValueChanged = onMaxChanged,
                 onBlur = {
-                    // if they set min to more than max, bump up the max
+                    // if they set max to less than min, bump down the min
                     val minVal = minState.text.toString().toIntOrNull() ?: 1
                     val maxVal = maxState.text.toString().toIntOrNull() ?: 1
                     if (maxVal < minVal) {
