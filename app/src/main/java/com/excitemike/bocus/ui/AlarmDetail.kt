@@ -1,10 +1,15 @@
 package com.excitemike.bocus.ui
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
@@ -14,7 +19,9 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.then
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -29,10 +36,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
+import com.excitemike.bocus.data.AlarmDayOfWeekFlags
 import com.excitemike.bocus.data.AlarmLimits
 import com.excitemike.bocus.ui.component.TimeAccordion
+import com.excitemike.bocus.util.checkFlags
 import kotlin.math.max
-import kotlin.math.min
 
 @Composable
 fun AlarmDetail(
@@ -46,7 +54,7 @@ fun AlarmDetail(
         Card {
             Column(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(vertical = 16.dp)
                     .imePadding(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -55,7 +63,7 @@ fun AlarmDetail(
                     style = MaterialTheme.typography.titleLarge
                 )
 
-                AlarmDetailControls(modifier = Modifier, alarm, updateAlarm)
+                AlarmDetailControls(modifier = Modifier.weight(1f), alarm, updateAlarm)
 
                 TextButton(
                     onClick = { close() },
@@ -108,7 +116,7 @@ fun AlarmDetailControls(
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
         TextField(
             modifier = fillMaxWidth,
@@ -199,6 +207,90 @@ fun AlarmDetailControls(
             stringResource(R.string.end_time_label),
             stringResource(R.string.end_time_label_and_value)
         )
+
+        // TODO: Notif mode
+        // TODO: alarmlength
+        // TODO: days
+        DaysOfWeek(alarm, updateAlarm)
+    }
+}
+
+// TODO: break out to separate file
+@Composable
+fun DaysOfWeek(
+    alarm: Alarm,
+    updateAlarm: (Alarm) -> Unit,
+) {
+    Text(
+        text = stringResource(R.string.days_of_week),
+        maxLines = 1,
+        style = MaterialTheme.typography.bodySmall,
+    )
+    val dayData = listOf(
+        AlarmDayOfWeekFlags.SUNDAY to stringResource(R.string.day_short_sunday),
+        AlarmDayOfWeekFlags.MONDAY to stringResource(R.string.day_short_monday),
+        AlarmDayOfWeekFlags.TUESDAY to stringResource(R.string.day_short_tuesday),
+        AlarmDayOfWeekFlags.WEDNESDAY to stringResource(R.string.day_short_wednesday),
+        AlarmDayOfWeekFlags.THURSDAY to stringResource(R.string.day_short_thursday),
+        AlarmDayOfWeekFlags.FRIDAY to stringResource(R.string.day_short_friday),
+        AlarmDayOfWeekFlags.SATURDAY to stringResource(R.string.day_short_saturday),
+    )
+    Row(
+        modifier = Modifier
+            .horizontalScroll(rememberScrollState())
+            .height(48.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        for ((mask, label) in dayData) {
+            val active = checkFlags(alarm.activeDays, mask)
+            if (false) {
+                Box(modifier = Modifier.weight(1f)) {
+                    Text(
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        text = label,
+                        maxLines = 1,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    Checkbox(
+                        modifier = Modifier.align(Alignment.Center),
+                        checked = active,
+                        onCheckedChange = {
+                            val bits = if (active) {
+                                alarm.activeDays and mask.inv()
+                            } else {
+                                alarm.activeDays or mask
+                            }
+                            updateAlarm(alarm.copy(activeDays = bits))
+                        },
+                    )
+                }
+            } else {
+                Box(modifier = Modifier.height(48.dp)) {
+                    FilterChip(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .height(40.dp)
+                            .width(40.dp),
+                        selected = active,
+                        onClick = {
+                            val bits = if (active) {
+                                alarm.activeDays and mask.inv()
+                            } else {
+                                alarm.activeDays or mask
+                            }
+                            updateAlarm(alarm.copy(activeDays = bits))
+                        },
+                        label = {}
+                    )
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = label,
+                        maxLines = 1,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            }
+        }
     }
 }
 

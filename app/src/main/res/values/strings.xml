@@ -20,6 +20,7 @@
     <string name="day_short_thursday">Th</string>
     <string name="day_short_friday">Fr</string>
     <string name="day_short_saturday">Sa</string>
+    <string name="days_of_week">Days of week</string>
     <string name="default_alarm_name">Alarm</string>
     <string name="dismiss">Dismiss</string>
     <string name="done">Done</string>

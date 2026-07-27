@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -70,12 +71,14 @@ fun TimeAccordion(state: TimePickerState, labelOpen: String, labelClosed: String
                     labelClosed,
                     timeString(timeFormatStr, state.hour, state.minute)
                 ),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleSmall
             )
             IconButton(
+                modifier = Modifier.height(32.dp), // TODO: make configurable
                 onClick = { isOpen.value = true },
             ) {
                 Icon(
+                    modifier = Modifier.height(24.dp), // TODO: make configurable
                     imageVector = Icons.Default.Edit,
                     contentDescription = stringResource(R.string.edit),
                 )
