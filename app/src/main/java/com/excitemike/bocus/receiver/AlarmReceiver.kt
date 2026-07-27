@@ -13,12 +13,14 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.excitemike.bocus.R
+import com.excitemike.bocus.service.UpdateAlarmTriggerTimeService
 import com.excitemike.bocus.ui.MainActivity
 
 class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (context == null) return
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         Log.v("BocusTrace", "AlarmReceiver.onReceive intent $intent")
 
@@ -85,7 +87,7 @@ class AlarmReceiver : BroadcastReceiver() {
                     stopPendingIntent
                 )
             )
-            .setOngoing(true)
+            .setDeleteIntent(stopPendingIntent)
 
         if (ActivityCompat.checkSelfPermission(
                 context,

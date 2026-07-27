@@ -160,11 +160,6 @@ fun updateSystemAlarm(context: Context, alarm: Alarm) {
     }
 
     val triggerAtMillis = getNextAlarmTime(alarm)
-    val dateTimeString = Instant
-        .ofEpochSecond(triggerAtMillis / 1000L)
-        .atZone(ZoneId.systemDefault())
-        .toLocalDateTime()
-        .toString()
 
     val pendingIntent = PendingIntent.getBroadcast(
         context,
