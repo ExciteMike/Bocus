@@ -5,7 +5,6 @@ An alarm app with randomized reminders.
 ## to-do list
 
 - write this readme
-- debounce alarm scheduling/db saves
 - graphics
     - logo
     - splash
@@ -15,9 +14,9 @@ An alarm app with randomized reminders.
 - alarm details screen
     - notif mode - two checkboxes
     - alarmlength - also start repeating undismissed alarms
-    - days picker
 - store scheduled time so that updateAllSytemAlarms doesn't push them back
 - request permission - use datastore for isFirstTime
+- debounce alarm scheduling/db saves
 
 - Fun
     - ui sounds

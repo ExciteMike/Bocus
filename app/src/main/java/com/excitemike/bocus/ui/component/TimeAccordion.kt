@@ -47,7 +47,8 @@ fun TimeAccordion(state: TimePickerState, labelOpen: String, labelClosed: String
                     Text(
                         modifier = Modifier.weight(1f),
                         text = labelOpen,
-                        style = MaterialTheme.typography.titleSmall
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     IconButton(
                         onClick = { isOpen.value = false },
@@ -67,11 +68,13 @@ fun TimeAccordion(state: TimePickerState, labelOpen: String, labelClosed: String
     } else {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
+                modifier = Modifier.weight(1f),
                 text = String.format(
                     labelClosed,
                     timeString(timeFormatStr, state.hour, state.minute)
                 ),
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             IconButton(
                 modifier = Modifier.height(32.dp), // TODO: make configurable

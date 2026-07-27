@@ -31,9 +31,10 @@
     <string name="error">Error</string>
     <string name="every_x_to_y_minutes">every %1$s to %2$s minutes</string>
     <string name="explain_notification_permission">Bocus needs notification permissions to notify you when an alarm triggers</string>
-    <string name="frequency_label_min">Frequency Minimum</string>
-    <string name="frequency_label_max">Frequency Maximum</string>
+    <string name="frequency">Frequency</string>
     <string name="go_to_settings">Go to settings</string>
+    <string name="maximum">Maximum</string>
+    <string name="minimum">Minimum</string>
     <string name="no_alarms">No alarms have been added yet. Click the "+" button below to add one!</string>
     <string name="ok">OK</string>
     <string name="on">on</string>
