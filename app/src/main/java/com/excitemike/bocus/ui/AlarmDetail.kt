@@ -130,25 +130,33 @@ fun AlarmDetailControls(
         //
         // Frequency min
         //
+        val freqInputTransformation = forceDigits
+            .then {
+                val updatedMin = this.toString().toInt()
+                val updatedMax = max(alarm.frequencyMax, updatedMin)
+                if (updatedMax > alarm.frequencyMax) {
+                    freqMaxState.edit { replace(0, length, updatedMax.toString()) }
+                }
+                if ((updatedMin != alarm.frequencyMin) || (updatedMax != alarm.frequencyMax)) {
+                    updateAlarm(
+                        alarm.copy(
+                            frequencyMin = updatedMin,
+                            frequencyMax = updatedMax
+                        )
+                    )
+                }
+            }
         TextField(
             modifier = fillMaxWidth,
             state = freqMinState,
-            inputTransformation = forceDigits
-                .then {
+            inputTransformation = forceDigits.then {
+                if (!this.toString().isEmpty()) {
                     val updatedMin = this.toString().toInt()
-                    val updatedMax = max(alarm.frequencyMax, updatedMin)
-                    if (updatedMax > alarm.frequencyMax) {
-                        freqMaxState.edit { replace(0, length, updatedMax.toString()) }
+                    if (updatedMin != alarm.frequencyMin) {
+                        updateAlarm(alarm.copy(frequencyMin = updatedMin))
                     }
-                    if ((updatedMin != alarm.frequencyMin) || (updatedMax != alarm.frequencyMax)) {
-                        updateAlarm(
-                            alarm.copy(
-                                frequencyMin = updatedMin,
-                                frequencyMax = updatedMax
-                            )
-                        )
-                    }
-                },
+                }
+            },
             label = { Text(stringResource(R.string.frequency_label_min)) }
         )
 
@@ -158,22 +166,14 @@ fun AlarmDetailControls(
         TextField(
             modifier = fillMaxWidth,
             state = freqMaxState,
-            inputTransformation = forceDigits
-                .then {
+            inputTransformation = forceDigits.then {
+                if (!this.toString().isEmpty()) {
                     val updatedMax = this.toString().toInt()
-                    val updatedMin = min(alarm.frequencyMin, updatedMax)
-                    if (updatedMin < alarm.frequencyMin) {
-                        freqMinState.edit { replace(0, length, updatedMin.toString()) }
+                    if (updatedMax != alarm.frequencyMax) {
+                        updateAlarm(alarm.copy(frequencyMax = updatedMax))
                     }
-                    if ((updatedMin != alarm.frequencyMin) || (updatedMax != alarm.frequencyMax)) {
-                        updateAlarm(
-                            alarm.copy(
-                                frequencyMin = updatedMin,
-                                frequencyMax = updatedMax,
-                            )
-                        )
-                    }
-                },
+                }
+            },
             label = { Text(stringResource(R.string.frequency_label_max)) }
         )
 
@@ -203,8 +203,8 @@ fun AlarmDetailControls(
 fun forceNDigits(current: CharSequence, proposed: CharSequence, maxDigits: Int): CharSequence {
     require(maxDigits > 0)
     require(maxDigits < 99)
-    if ("""0+""".toRegex().matches(proposed)) {
-        return current
+    if ("""0*""".toRegex().matches(proposed)) {
+        return proposed
     }
     if (!"""\d{1,${maxDigits}}""".toRegex().matches(proposed)) {
         return current

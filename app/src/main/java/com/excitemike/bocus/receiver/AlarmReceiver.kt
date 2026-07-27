@@ -9,6 +9,9 @@ import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.provider.Settings
 import android.util.Log
+import androidx.collection.longListOf
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -108,6 +111,9 @@ class AlarmReceiver : BroadcastReceiver() {
                 )
             )
             .setDeleteIntent(stopPendingIntent)
+            .setLights(Color.Red.toArgb(), 500, 2000)
+            .setSound(Settings.System.DEFAULT_ALARM_ALERT_URI)
+            .setVibrate(longArrayOf(0, 50, 200, 100, 150, 150, 100, 1000))
 
         if (ActivityCompat.checkSelfPermission(
                 context,
@@ -124,7 +130,7 @@ class AlarmReceiver : BroadcastReceiver() {
             mediaPlayer =
                 MediaPlayer.create(context, Settings.System.DEFAULT_ALARM_ALERT_URI)
             mediaPlayer?.isLooping = true
-            mediaPlayer?.start()
+            //mediaPlayer?.start()
         }
     }
 
