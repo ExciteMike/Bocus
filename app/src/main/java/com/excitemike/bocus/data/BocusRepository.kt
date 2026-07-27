@@ -7,6 +7,6 @@ interface BocusRepository {
     suspend fun insertAlarm(alarm: Alarm): Int
     suspend fun deleteAlarm(alarmId: Int)
     suspend fun updateAlarm(alarm: Alarm)
-    suspend fun getAlarm(id: Int): Flow<Alarm?>
+    suspend fun getAlarm(id: Int): Alarm?
     suspend fun getAllAlarmsRaw(): List<Alarm>
 }

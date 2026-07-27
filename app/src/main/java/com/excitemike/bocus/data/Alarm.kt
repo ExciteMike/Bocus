@@ -66,10 +66,6 @@ data class Alarm(
     /** repeat on which days of the week, (bitflags) */
     @ColumnInfo(name = "active_days")
     val activeDays: Int = AlarmDayOfWeekFlags.DEFAULT_ACTIVE_DAYS,
-
-    /** when was the alarm last fired as measured by System.currentTimeMillis(), or zero */
-    @ColumnInfo(name = "last_triggered_at")
-    val lastTriggeredAt: Long = 0
 )
 
 /** a little glue to help Room generate a delete by id function */
@@ -125,7 +121,7 @@ interface AlarmDao {
     suspend fun delete(alarmId: AlarmId)
 
     @Query("SELECT * from alarms WHERE id = :id")
-    fun getAlarm(id: Int): Flow<Alarm>
+    fun getAlarm(id: Int): Alarm?
 
     @Query("SELECT * from alarms")
     fun getAllAlarms(): Flow<List<Alarm>>

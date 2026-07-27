@@ -33,11 +33,11 @@ private val PERMISSIONS = listOf(
  * it defaults to all of them
  */
 fun checkDayOfWeek(javaDoW: DayOfWeek, alarm: Alarm): Boolean {
-    // TODO: remove debug early return
-    return true
     if (alarm.activeDays == 0) {
         return true
     }
+    // TODO: remove debug early return
+    return true
     return when (javaDoW) {
         DayOfWeek.SUNDAY -> (alarm.activeDays and AlarmDayOfWeekFlags.SUNDAY) != 0
         DayOfWeek.MONDAY -> (alarm.activeDays and AlarmDayOfWeekFlags.MONDAY) != 0
@@ -97,8 +97,7 @@ fun getNextAlarmTime(alarm: Alarm): Long {
     }
     val millisBetween = minutesBetween * 60 * 1000
     val nextTimeTodayMillis =
-        maxOf(nowMillis, alarm.lastTriggeredAt, todayStartTimeMillis) + millisBetween
-
+        maxOf(nowMillis, todayStartTimeMillis) + millisBetween
 
     // do it today, if in window
     val validToday = checkDayOfWeek(
@@ -122,7 +121,7 @@ fun getNextAlarmTime(alarm: Alarm): Long {
     val futureDate = nowDate.plus(daysAhead, ChronoUnit.DAYS)
     val futureStartTime = LocalTime.of(alarm.startHour, alarm.startMinute)
     val futureStartMillis = localDateAndTimeToMillis(futureDate, futureStartTime)
-    val alarmTime = maxOf(alarm.lastTriggeredAt, futureStartMillis) + millisBetween
+    val alarmTime = maxOf(nowMillis, futureStartMillis) + millisBetween
 
     return alarmTime
 }
@@ -133,33 +132,17 @@ fun getNextAlarmTime(alarm: Alarm): Long {
 fun getSystemPermissionsNeeded(): List<Pair<String, Int>> = PERMISSIONS
 
 /**
- * make sure that what we have registered with the system is in sync with what we have
- * in our data
- */
-@RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
-fun updateAllSystemAlarms(context: Context, alarms: List<Alarm>) {
-    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    if (!alarmManager.canScheduleExactAlarms()) {
-        Log.v("Bocus", "can't schedule")
-        return
-    }
-    for (alarm in alarms) {
-        updateSystemAlarm(context, alarm)
-    }
-}
-
-/**
  * If the alarm is already scheduled, cancel it. Then schedule one based on the given Alarm
  */
 @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
-fun updateSystemAlarm(context: Context, alarm: Alarm) {
+fun scheduleSystemAlarm(context: Context, alarm: Alarm) {
+    val triggerAtMillis = getNextAlarmTime(alarm)
+
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     if (!alarmManager.canScheduleExactAlarms()) {
         Log.v("Bocus", "can't schedule")
         return
     }
-
-    val triggerAtMillis = getNextAlarmTime(alarm)
 
     val pendingIntent = PendingIntent.getBroadcast(
         context,
@@ -180,6 +163,22 @@ fun updateSystemAlarm(context: Context, alarm: Alarm) {
         triggerAtMillis,
         pendingIntent
     )
+}
+
+/**
+ * make sure that what we have registered with the system is in sync with what we have
+ * in our data
+ */
+@RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
+fun updateAllSystemAlarms(context: Context, alarms: List<Alarm>) {
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    if (!alarmManager.canScheduleExactAlarms()) {
+        Log.v("Bocus", "can't schedule")
+        return
+    }
+    for (alarm in alarms) {
+        scheduleSystemAlarm(context, alarm)
+    }
 }
 
 /**
