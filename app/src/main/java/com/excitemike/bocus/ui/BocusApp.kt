@@ -8,17 +8,16 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
+import com.excitemike.bocus.data.updateAllSystemAlarms
 import com.excitemike.bocus.ui.component.AlarmDetails
 
 @SuppressLint("ScheduleExactAlarm")
@@ -135,94 +135,89 @@ fun PermissionRequestFlow(
     rationaleStringId: Int
 ) {
     val isGranted = remember { mutableStateOf(viewModel.checkPermission(activity, permission)) }
-    val showRationale = remember { mutableStateOf(false) }
+    val isFirstTime = remember { mutableStateOf(true) }
     val showPermissionPrompt = remember { mutableStateOf(true) }
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = {
+            val prevValue = isGranted.value
             isGranted.value = it
-            if (!it) {
-                showRationale.value =
-                    viewModel.shouldShowPermissionRequestRationale(activity, permission)
+            showPermissionPrompt.value = !it
+            if (it && !prevValue) {
+                updateAllSystemAlarms(activity, viewModel.alarmState.value)
             }
         }
     )
+    val rationaleString = stringResource(rationaleStringId)
 
     if (isGranted.value) {
         return
     }
 
-    if (showRationale.value) {
-        AlertDialog(
-            onDismissRequest = { showRationale.value = false },
-            title = {},
-            text = {
-                Column {
-                    Text(stringResource(rationaleStringId))
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row {
-                        Button(
-                            onClick = {
-                                permissionLauncher.launch(permission)
-                                showRationale.value = false
-                            }
-                        ) {
-                            Text(text = stringResource(R.string.ok))
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        GoToSettingsButton(activity)
-                    }
-                }
-            },
-            confirmButton = {},
-            dismissButton = {
-                TextButton(onClick = { showRationale.value = false }) {
-                    Text(stringResource(R.string.cancel_button))
-                }
-            },
-        )
-        return
-    }
-
     if (showPermissionPrompt.value) {
-        AlertDialog(
-            onDismissRequest = { showPermissionPrompt.value = false },
-            title = { Text(stringResource(R.string.permission_required)) },
-            text = {
-                Column {
-                    Text(stringResource(rationaleStringId))
-                    Spacer(Modifier.height(8.dp))
-                    Text(stringResource(R.string.please_enable_in_settings))
-                    Spacer(Modifier.height(8.dp))
-                    GoToSettingsButton(activity)
-                }
+        PermissionPrompt(
+            activity = activity,
+            onConfirm = {
+                showPermissionPrompt.value = false
+                isFirstTime.value = false
+                permissionLauncher.launch(permission)
             },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        if (viewModel.shouldShowPermissionRequestRationale(activity, permission)) {
-                            showRationale.value = true
-                        } else {
-                            permissionLauncher.launch(permission)
-                        }
-                    }
-                ) {
-                    Text(text = stringResource(R.string.done))
+            onDismissRequest = {
+                showPermissionPrompt.value = false
+                if (!isGranted.value && isFirstTime.value) {
+                    permissionLauncher.launch(permission)
                 }
+                isFirstTime.value = false
             },
-            dismissButton = {
-                TextButton(onClick = {
-                    showPermissionPrompt.value = false
-                }) {
-                    Text(text = stringResource(R.string.cancel_button))
-                }
-            }
+            rationaleString = rationaleString,
+            showSettingsBtn = !isFirstTime.value
         )
     }
 }
 
 @Composable
+fun PermissionPrompt(
+    onConfirm: () -> Unit,
+    onDismissRequest: () -> Unit,
+    rationaleString: String,
+    showSettingsBtn: Boolean,
+    activity: Activity
+) {
+    val dismissBtn = if (showSettingsBtn) {
+        @Composable {
+            TextButton(onClick = onDismissRequest) {
+                Text(text = stringResource(R.string.cancel_button))
+            }
+        }
+    } else {
+        null
+    }
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = { Text(stringResource(R.string.permission_required)) },
+        text = {
+            Column {
+                Text(rationaleString)
+                Spacer(Modifier.height(8.dp))
+                if (showSettingsBtn) {
+                    Text(stringResource(R.string.please_enable_in_settings))
+                    Spacer(Modifier.height(8.dp))
+                    GoToSettingsButton(activity)
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(text = stringResource(R.string.done))
+            }
+        },
+        dismissButton = dismissBtn
+    )
+}
+
+@Composable
 fun GoToSettingsButton(activity: Activity) {
+    val shape = MaterialTheme.shapes.medium
     Button(
         onClick = {
             val action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
@@ -232,7 +227,8 @@ fun GoToSettingsButton(activity: Activity) {
             intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
             intent.data = Uri.fromParts("package", packageName, null)
             activity.startActivity(intent)
-        }
+        },
+        shape = shape
     ) {
         Text(stringResource(R.string.go_to_settings))
     }

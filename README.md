@@ -4,7 +4,6 @@ An alarm app with randomized reminders.
 
 ## to-do list
 
-- request permission popups suck
 - need to schedule alarms after permissions popups
 - write this readme
 - debounce alarm scheduling/db saves
@@ -15,6 +14,8 @@ An alarm app with randomized reminders.
 - full impl of alarmdetails screen
 - scrollbar modifier
 - day picker
+- store scheduled time so that updateAllSytemAlarms doesn't push them back
+- request permission - use datastore for isFirstTime
 
 - Fun
     - ui sounds
