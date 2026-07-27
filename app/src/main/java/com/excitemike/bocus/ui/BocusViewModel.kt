@@ -14,7 +14,7 @@ import com.excitemike.bocus.data.OfflineBocusRepository
 import com.excitemike.bocus.data.cancelSystemAlarm
 import com.excitemike.bocus.data.checkSystemPermission
 import com.excitemike.bocus.data.updateAllSystemAlarms
-import com.excitemike.bocus.data.updateSystemAlarm
+import com.excitemike.bocus.data.scheduleSystemAlarm
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -45,7 +45,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
             viewModelScope.launch {
                 val id = alarmRepo.insertAlarm(alarm)
                 val alarm = alarm.copy(id = id)
-                updateSystemAlarm(application, alarm)
+                scheduleSystemAlarm(application, alarm)
             }
         } else {
             setErrorMessage(application.getString(R.string.alarm_limit))
@@ -159,7 +159,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
         val application: Application = getApplication()
         viewModelScope.launch {
             alarmRepo.updateAlarm(alarm)
-            updateSystemAlarm(application, alarm)
+            scheduleSystemAlarm(application, alarm)
         }
     }
 

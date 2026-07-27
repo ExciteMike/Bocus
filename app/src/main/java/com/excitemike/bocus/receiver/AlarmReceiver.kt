@@ -13,8 +13,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.excitemike.bocus.R
-import com.excitemike.bocus.service.UpdateAlarmTriggerTimeService
+import com.excitemike.bocus.data.AlarmDatabase
+import com.excitemike.bocus.data.OfflineBocusRepository
+import com.excitemike.bocus.data.scheduleSystemAlarm
+import com.excitemike.bocus.data.updateAllSystemAlarms
 import com.excitemike.bocus.ui.MainActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -48,6 +55,19 @@ class AlarmReceiver : BroadcastReceiver() {
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
                 )
             )
+
+            // schedule the next one
+            val dao = AlarmDatabase.getDatabase(context).alarmDao()
+            val alarmRepo = OfflineBocusRepository(dao)
+            val job = SupervisorJob()
+            val scope = CoroutineScope(Dispatchers.IO + job)
+            scope.launch {
+                val alarm = alarmRepo.getAlarm(alarmId)
+                if (alarm != null) {
+                    Log.v("BocusTrace", "rescheduling")
+                    scheduleSystemAlarm(context, alarm)
+                }
+            }
 
             return
         }
@@ -95,6 +115,7 @@ class AlarmReceiver : BroadcastReceiver() {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             NotificationManagerCompat.from(context).notify(alarmId, builder.build())
+
             if (mediaPlayer != null) {
                 mediaPlayer?.stop()
                 mediaPlayer?.release()
