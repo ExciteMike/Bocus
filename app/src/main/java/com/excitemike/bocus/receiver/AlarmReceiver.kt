@@ -6,10 +6,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.MediaPlayer
 import android.provider.Settings
 import android.util.Log
-import androidx.collection.longListOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
@@ -19,7 +17,6 @@ import com.excitemike.bocus.R
 import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.data.OfflineBocusRepository
 import com.excitemike.bocus.data.scheduleSystemAlarm
-import com.excitemike.bocus.data.updateAllSystemAlarms
 import com.excitemike.bocus.ui.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,10 +39,6 @@ class AlarmReceiver : BroadcastReceiver() {
         if (intent.action == STOP_ALARM_ACTION) {
             val alarmId = intent.getIntExtra(EXTRA_NAME_ALARM_ID, 0)
             NotificationManagerCompat.from(context).cancel(alarmId)
-
-            mediaPlayer?.stop()
-            mediaPlayer?.release()
-            mediaPlayer = null
 
             val intentToCancel = Intent(context, AlarmReceiver::class.java).apply {
                 action = PLAY_ALARM_ACTION
@@ -121,22 +114,10 @@ class AlarmReceiver : BroadcastReceiver() {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             NotificationManagerCompat.from(context).notify(alarmId, builder.build())
-
-            if (mediaPlayer != null) {
-                mediaPlayer?.stop()
-                mediaPlayer?.release()
-                mediaPlayer = null
-            }
-            mediaPlayer =
-                MediaPlayer.create(context, Settings.System.DEFAULT_ALARM_ALERT_URI)
-            mediaPlayer?.isLooping = true
-            //mediaPlayer?.start()
         }
     }
 
     companion object {
-        // shared instance of MediaPlayer
-        private var mediaPlayer: MediaPlayer? = null
         const val STOP_CODE = 456
         const val NOTIF_REQ_CODE = 789
         const val EXTRA_NAME_TITLE = "title"
