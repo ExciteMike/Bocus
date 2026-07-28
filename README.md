@@ -5,10 +5,6 @@ An alarm app with randomized reminders.
 ## to-do list
 
 - write this readme
-- graphics
-    - logo
-    - splash
-    - notification icon
 - full impl of alarmdetails screen
 - scrollbar modifier
 - alarm details screen
@@ -17,6 +13,7 @@ An alarm app with randomized reminders.
 - store scheduled time so that updateAllSytemAlarms doesn't push them back
 - request permission - use datastore for isFirstTime
 - debounce alarm scheduling/db saves
+- about screen
 
 - Fun
     - ui sounds
