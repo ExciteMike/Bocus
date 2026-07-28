@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
@@ -66,13 +67,18 @@ fun DaysOfWeek(
                         }
                         updateAlarm(alarm.copy(activeDays = bits))
                     },
-                    label = {}
+                    label = {},
                 )
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     text = label,
                     maxLines = 1,
                     style = MaterialTheme.typography.bodySmall,
+                    fontWeight = if (active) {
+                        FontWeight.Bold
+                    } else {
+                        FontWeight.Light
+                    }
                 )
             }
         }
