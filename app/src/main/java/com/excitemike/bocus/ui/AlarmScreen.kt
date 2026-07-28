@@ -25,6 +25,7 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
@@ -35,6 +36,7 @@ import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.Command
 import com.excitemike.bocus.ui.component.AlarmGrid
+import com.excitemike.bocus.util.Fx
 
 @Composable
 fun AlarmScreen(
@@ -110,6 +112,7 @@ fun AlarmList(
             )
         }
 
+        val context = LocalContext.current
         Surface(
             modifier = Modifier
                 .semantics { role = Role.Button }
@@ -123,7 +126,10 @@ fun AlarmList(
             contentColor = contentColor,
             border = BorderStroke(1.dp, contentColor),
             shape = shape,
-            onClick = addAlarm,
+            onClick = {
+                Fx.buttonClickFx(context)
+                addAlarm()
+            },
         ) {
             Row(
                 horizontalArrangement = Arrangement.Center,

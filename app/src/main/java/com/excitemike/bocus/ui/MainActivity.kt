@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.excitemike.bocus.receiver.AlarmReceiver
 import com.excitemike.bocus.receiver.BootCompletedReceiver
 import com.excitemike.bocus.ui.theme.BocusTheme
+import com.excitemike.bocus.util.Fx
 
 class MainActivity : ComponentActivity() {
     lateinit var alarmReceiver: AlarmReceiver
@@ -18,6 +19,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        Fx.init(this)
 
         // TODO: I'm not actually sure instantiating the receivers here accomplishes anything
         alarmReceiver = AlarmReceiver()
