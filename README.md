@@ -13,6 +13,9 @@ An alarm app with randomized reminders.
 - request permission - use datastore for isFirstTime
 - debounce alarm scheduling/db saves
 - about screen
+- min max quirks
+    - double zero shouldn't clear it
+    - min/max affecting the other isn't propagated to the alarm/db
 
 - Fun
     - ui sounds

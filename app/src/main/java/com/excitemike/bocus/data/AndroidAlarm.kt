@@ -189,7 +189,9 @@ fun cancelSystemAlarm(context: Context, alarmId: Int) {
         PendingIntent.getBroadcast(
             context,
             alarmId,
-            Intent(context, AlarmReceiver::class.java),
+            Intent(context, AlarmReceiver::class.java).apply {
+                action = AlarmReceiver.PLAY_ALARM_ACTION
+            },
             PENDING_INTENT_FLAGS
         )
     )
