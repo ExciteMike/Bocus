@@ -208,7 +208,7 @@ fun PermissionPrompt(
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text(text = stringResource(R.string.done))
+                Text(text = stringResource(R.string.ok))
             }
         },
         dismissButton = dismissBtn
