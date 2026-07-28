@@ -77,10 +77,10 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
 
     /** delete an alarm by id */
     fun deleteAlarmById(id: Int) {
+        cancelSystemAlarm(getApplication(), id)
         viewModelScope.launch {
             alarmRepo.deleteAlarm(id)
         }
-        cancelSystemAlarm(getApplication(), id)
     }
 
     /** get rid of the confirmation dlg without doing the thing */
@@ -160,13 +160,6 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             alarmRepo.updateAlarm(alarm)
             scheduleSystemAlarm(application, alarm)
-        }
-    }
-
-    /** update the system alarms to match the DB */
-    fun updateAllSystemAlarms() {
-        viewModelScope.launch {
-            updateAllSystemAlarms(getApplication() as Context, alarmState.value)
         }
     }
 

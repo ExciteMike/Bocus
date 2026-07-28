@@ -15,8 +15,6 @@ import com.excitemike.bocus.R
 import com.excitemike.bocus.util.checkFlags
 import kotlinx.coroutines.flow.Flow
 
-const val DEFAULT_ALARM_LENGTH: Int = 30
-
 /// Entry for alarms
 @Entity(tableName = "alarms")
 data class Alarm(

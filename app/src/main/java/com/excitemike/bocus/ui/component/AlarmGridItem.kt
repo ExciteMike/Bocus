@@ -45,6 +45,7 @@ fun AlarmGridItem(
     val scope = rememberCoroutineScope()
     val shape = MaterialTheme.shapes.medium
     val requestDeleteThisItem = {
+        // TODO: play delete fx
         val message = String.format(
             deleteAlarmTemplate,
             alarm.name

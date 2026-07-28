@@ -13,7 +13,7 @@ fun AlarmDetails(
     closeAlarmDetails: () -> Unit,
 ) {
     if (selectedAlarmIndex != null) {
-        if (selectedAlarmIndex in 0..<alarms.size) {
+        if (selectedAlarmIndex in alarms.indices) {
             BackHandler {
                 closeAlarmDetails()
             }
