@@ -10,13 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -30,44 +26,6 @@ import com.excitemike.bocus.ui.component.BocusButton
 
 @Composable
 fun AlarmScreen(
-    modifier: Modifier = Modifier,
-    alarms: State<List<Alarm>>,
-    addAlarm: () -> Unit,
-    openAlarmDetails: (Int) -> Unit,
-    requestDeleteAlarm: (String, Command, Command) -> Unit,
-    goToScreen: (AppScreens) -> Unit
-) {
-    Column(modifier = modifier.fillMaxSize()) {
-        Box(Modifier.fillMaxWidth()) {
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = "Alarms",
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center
-            )
-            IconButton(
-                modifier = Modifier.align(Alignment.CenterEnd),
-                onClick = { goToScreen(AppScreens.ABOUT) },
-            ) {
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    imageVector = Icons.Default.Info,
-                    contentDescription = stringResource(R.string.about),
-                )
-            }
-        }
-        AlarmList(
-            modifier = Modifier.weight(1f),
-            alarms = alarms.value,
-            addAlarm = addAlarm,
-            openAlarmDetails = openAlarmDetails,
-            requestDeleteAlarm = requestDeleteAlarm,
-        )
-    }
-}
-
-@Composable
-fun AlarmList(
     modifier: Modifier = Modifier,
     alarms: List<Alarm>,
     addAlarm: () -> Unit,
@@ -122,3 +80,4 @@ fun AlarmList(
         }
     }
 }
+

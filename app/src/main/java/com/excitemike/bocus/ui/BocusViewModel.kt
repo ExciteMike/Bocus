@@ -2,7 +2,6 @@ package com.excitemike.bocus.ui
 
 import android.app.Activity
 import android.app.Application
-import android.content.Context
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,7 +12,6 @@ import com.excitemike.bocus.data.Command
 import com.excitemike.bocus.data.OfflineBocusRepository
 import com.excitemike.bocus.data.cancelSystemAlarm
 import com.excitemike.bocus.data.checkSystemPermission
-import com.excitemike.bocus.data.updateAllSystemAlarms
 import com.excitemike.bocus.data.scheduleSystemAlarm
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -65,7 +63,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /** close and clean up after the confirmation dialog */
-    fun closeConfirmDlg() {
+    private fun closeConfirmDlg() {
         _uiState.update {
             it.copy(
                 confirmMessage = null,
@@ -85,8 +83,9 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
 
     /** get rid of the confirmation dlg without doing the thing */
     fun dismissConfirmDlg() {
-        doCommand(_uiState.value.onConfirmCancel)
+        val command = _uiState.value.onConfirmCancel
         closeConfirmDlg()
+        doCommand(command)
     }
 
     /** get rid of the error dlg without doing the thing */
@@ -115,15 +114,11 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
         return com.excitemike.bocus.data.getSystemPermissionsNeeded()
     }
 
-    /** transition from one UI screen to another */
-    fun goToScreen(screen: AppScreens) {
-        _uiState.update { it.copy(currentScreen = screen, selectedAlarmIndex = null) }
-    }
-
     /** the user confirmed. do the thing */
     fun onConfirm() {
-        doCommand(_uiState.value.onConfirm)
+        val command = _uiState.value.onConfirm
         closeConfirmDlg()
+        doCommand(command)
     }
 
     /** bring up the alarm details for editing  */
@@ -132,7 +127,11 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /** bring up a confirmation dialog for deleting an alarm */
-    fun requestDeleteAlarm(confirmMessage: String, onConfirm: Command, onCancel: Command) {
+    fun requestDeleteAlarm(
+        confirmMessage: String,
+        onConfirm: Command,
+        onCancel: Command
+    ) {
         _uiState.update {
             it.copy(
                 confirmMessage = confirmMessage,
@@ -171,7 +170,6 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
 
 // TODO: split this up
 data class BocusUiState(
-    var currentScreen: AppScreens = AppScreens.ALARMS,
     /// Error Message
     var errorMessage: String? = null,
     /// Confirmation Popup Message

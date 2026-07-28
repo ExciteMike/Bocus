@@ -1,10 +1,11 @@
 <!--suppress LongLine -->
 <resources>
-    <string name="about">About</string>
+    <string name="about_tab_label">About</string>
     <string name="about_message">This app isn\'t much, but it is built out of artisanal code hand-typed by the human fingers of Mike Meyer.</string>
     <string name="add_alarm">Add Alarm</string>
     <string name="alarm_name_label">Alarm Name</string>
     <string name="alarm_message_label">Alarm Message</string>
+    <string name="alarm_tab_label">Alarms</string>
     <string name="app_name">Bocus</string>
     <string name="alarm_limit">Maximum number of alarms reached</string>
     <string name="back_button">Go Back</string>

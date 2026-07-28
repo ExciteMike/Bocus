@@ -10,27 +10,33 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.excitemike.bocus.R
+import com.excitemike.bocus.data.INITIAL_APP_SCREEN
 import com.excitemike.bocus.data.updateAllSystemAlarms
 import com.excitemike.bocus.ui.component.AlarmDetails
 import com.excitemike.bocus.ui.component.BocusButton
+import com.excitemike.bocus.ui.component.BocusNavHost
+import com.excitemike.bocus.ui.component.BocusTabRow
 
 @SuppressLint("ScheduleExactAlarm")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,7 +47,6 @@ fun BocusApp(
     viewModel: BocusViewModel,
 ) {
     val uiState = viewModel.uiState.collectAsState().value
-    val defaultAlarmName = stringResource(R.string.default_alarm_name)
     val selectedAlarmIndex = uiState.selectedAlarmIndex
     val alarms = viewModel.alarmState.collectAsState()
 
@@ -99,30 +104,37 @@ fun BocusApp(
         closeAlarmDetails = { viewModel.closeAlarmDetails() }
     )
 
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Scaffold(contentWindowInsets = WindowInsets.systemBars) { innerPadding ->
-            val screenMod = modifier.fillMaxSize().padding(innerPadding)
-            when (uiState.currentScreen) {
-                AppScreens.ABOUT -> AboutScreen(
-                    modifier = screenMod,
-                    goToScreen = { viewModel.goToScreen(it) })
-
-                AppScreens.ALARMS -> AlarmScreen(
-                    modifier = screenMod,
-                    alarms = viewModel.alarmState.collectAsState(),
-                    addAlarm = { viewModel.addAlarm(defaultAlarmName) },
-                    openAlarmDetails = { viewModel.openAlarmDetails(it) },
-                    requestDeleteAlarm = { message, onConfirm, onCancel ->
-                        viewModel.requestDeleteAlarm(
-                            message,
-                            onConfirm,
-                            onCancel
-                        )
-                    },
-                    goToScreen = { viewModel.goToScreen(it) }
-                )
-            }
+    Scaffold(
+        modifier = modifier,
+        contentWindowInsets = WindowInsets.systemBars
+    ) { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
+            val navController = rememberNavController()
+            var currentScreenIndex by rememberSaveable { mutableIntStateOf(INITIAL_APP_SCREEN.ordinal) }
+            val alarms = viewModel.alarmState.collectAsState()
+            BocusTabRow(
+                currentScreenIndex = currentScreenIndex,
+                onNav = {
+                    navController.navigate(it.name)
+                    currentScreenIndex = it.ordinal
+                }
+            )
+            val defaultAlarmName = stringResource(R.string.default_alarm_name)
+            BocusNavHost(
+                navController = navController,
+                alarms = alarms.value,
+                addAlarm = { viewModel.addAlarm(defaultAlarmName) },
+                openAlarmDetails = { viewModel.openAlarmDetails(it) },
+                requestDeleteAlarm = { message, onConfirm, onCancel ->
+                    viewModel.requestDeleteAlarm(
+                        message,
+                        onConfirm,
+                        onCancel
+                    )
+                }
+            )
         }
+
     }
 }
 
@@ -231,7 +243,3 @@ fun GoToSettingsButton(activity: Activity) {
     }
 }
 
-enum class AppScreens {
-    ALARMS,
-    ABOUT
-}

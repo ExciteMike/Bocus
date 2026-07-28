@@ -12,12 +12,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
-import com.excitemike.bocus.ui.component.BocusButton
 
 @Composable
 fun AboutScreen(
-    modifier: Modifier = Modifier,
-    goToScreen: (AppScreens) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -29,11 +27,5 @@ fun AboutScreen(
             text = stringResource(R.string.about_message),
             textAlign = TextAlign.Start
         )
-        BocusButton(
-            onClick = { goToScreen(AppScreens.ALARMS) },
-            modifier = Modifier,
-        ) {
-            Text(stringResource(R.string.back_button))
-        }
     }
 }
