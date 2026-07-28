@@ -36,13 +36,16 @@
     <string name="maximum">Maximum</string>
     <string name="minimum">Minimum</string>
     <string name="no_alarms">No alarms have been added yet. Click the "+" button below to add one!</string>
+    <string name="notif_effects">Notification Effects</string>
     <string name="ok">OK</string>
     <string name="on">on</string>
     <string name="permission_required">Permission Required</string>
     <string name="please_enable_in_settings">Please enable this permission in your settings</string>
+    <string name="ring">Ring</string>
     <string name="start_time_label">Start at time</string>
     <string name="start_time_label_and_value">Start at time %1$s</string>
     <string name="stop">Stop</string>
     <string name="time_format">%1$s:%2$s %3$s</string>
     <string name="time_to_time">%1$s to %2$s</string>
+    <string name="vibrate">Vibrate</string>
 </resources>

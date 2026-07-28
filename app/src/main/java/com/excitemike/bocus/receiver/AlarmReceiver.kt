@@ -7,17 +7,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.provider.Settings
-import android.util.Log
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.AlarmDatabase
+import com.excitemike.bocus.data.AlarmNotifMode
 import com.excitemike.bocus.data.OfflineBocusRepository
 import com.excitemike.bocus.data.scheduleSystemAlarm
 import com.excitemike.bocus.ui.MainActivity
+import com.excitemike.bocus.util.checkFlags
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -29,12 +28,7 @@ class AlarmReceiver : BroadcastReceiver() {
         if (context == null) return
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        Log.v("BocusTrace", "AlarmReceiver.onReceive intent $intent")
-
         if (intent == null) return
-
-        Log.v("BocusTrace", "AlarmReceiver.onReceive intent action = ${intent.action}")
-        Log.v("BocusTrace", "extra = ${intent.getIntExtra(EXTRA_NAME_ALARM_ID, 0)}")
 
         if (intent.action == STOP_ALARM_ACTION) {
             val alarmId = intent.getIntExtra(EXTRA_NAME_ALARM_ID, 0)
@@ -60,7 +54,6 @@ class AlarmReceiver : BroadcastReceiver() {
             scope.launch {
                 val alarm = alarmRepo.getAlarm(alarmId)
                 if (alarm != null) {
-                    Log.v("BocusTrace", "rescheduling")
                     scheduleSystemAlarm(context, alarm)
                 }
             }
@@ -71,6 +64,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val title = intent.getStringExtra(EXTRA_NAME_TITLE)
         val message = intent.getStringExtra(EXTRA_NAME_MESSAGE)
         val alarmId = intent.getIntExtra(EXTRA_NAME_ALARM_ID, 0)
+        val notifFx = intent.getIntExtra(EXTRA_NAME_ALARM_NOTIF_FX, AlarmNotifMode.RING_AND_VIBRATE)
         val newIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
@@ -83,6 +77,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val stopIntent = Intent(context, AlarmReceiver::class.java).apply {
             action = STOP_ALARM_ACTION
             putExtra(EXTRA_NAME_ALARM_ID, alarmId)
+            putExtra(EXTRA_NAME_ALARM_NOTIF_FX, notifFx)
         }
         val stopPendingIntent = PendingIntent.getBroadcast(
             context,
@@ -104,9 +99,12 @@ class AlarmReceiver : BroadcastReceiver() {
                 )
             )
             .setDeleteIntent(stopPendingIntent)
-            .setLights(Color.Red.toArgb(), 500, 2000)
-            .setSound(Settings.System.DEFAULT_ALARM_ALERT_URI)
-            .setVibrate(longArrayOf(0, 50, 200, 100, 150, 150, 100, 1000))
+        if (checkFlags(notifFx, AlarmNotifMode.RING)) {
+            builder.setSound(Settings.System.DEFAULT_ALARM_ALERT_URI)
+        }
+        if (checkFlags(notifFx, AlarmNotifMode.VIBRATE)) {
+            builder.setVibrate(longArrayOf(0, 50, 200, 100, 150, 150, 100, 1000))
+        }
 
         if (ActivityCompat.checkSelfPermission(
                 context,
@@ -123,6 +121,7 @@ class AlarmReceiver : BroadcastReceiver() {
         const val EXTRA_NAME_TITLE = "title"
         const val EXTRA_NAME_MESSAGE = "message"
         const val EXTRA_NAME_ALARM_ID = "alarm_id"
+        const val EXTRA_NAME_ALARM_NOTIF_FX = "alarm_flags"
         const val PLAY_ALARM_ACTION = "play_alarm"
         const val STOP_ALARM_ACTION = "stop_alarm"
         const val ALARM_CHANNEL = "alarm_channel"

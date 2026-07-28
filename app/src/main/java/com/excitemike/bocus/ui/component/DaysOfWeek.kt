@@ -3,8 +3,11 @@ package com.excitemike.bocus.ui.component
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.FilterChip
@@ -29,57 +32,61 @@ fun DaysOfWeek(
     alarm: Alarm,
     updateAlarm: (Alarm) -> Unit,
 ) {
-    Text(
-        text = stringResource(R.string.days_of_week),
-        maxLines = 1,
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
-    val dayData = listOf(
-        AlarmDayOfWeekFlags.SUNDAY to stringResource(R.string.day_short_sunday),
-        AlarmDayOfWeekFlags.MONDAY to stringResource(R.string.day_short_monday),
-        AlarmDayOfWeekFlags.TUESDAY to stringResource(R.string.day_short_tuesday),
-        AlarmDayOfWeekFlags.WEDNESDAY to stringResource(R.string.day_short_wednesday),
-        AlarmDayOfWeekFlags.THURSDAY to stringResource(R.string.day_short_thursday),
-        AlarmDayOfWeekFlags.FRIDAY to stringResource(R.string.day_short_friday),
-        AlarmDayOfWeekFlags.SATURDAY to stringResource(R.string.day_short_saturday),
-    )
-    Row(
-        modifier = Modifier
-            .horizontalScroll(rememberScrollState())
-            .height(48.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        for ((mask, label) in dayData) {
-            val active = checkFlags(alarm.activeDays, mask)
-            Box(modifier = Modifier.height(48.dp)) {
-                FilterChip(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .height(40.dp)
-                        .width(40.dp),
-                    selected = active,
-                    onClick = {
-                        val bits = if (active) {
-                            alarm.activeDays and mask.inv()
+    Column {
+        Text(
+            modifier = Modifier.align(Alignment.Start).padding(start = 16.dp),
+            text = stringResource(R.string.days_of_week),
+            maxLines = 1,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        val dayData = listOf(
+            AlarmDayOfWeekFlags.SUNDAY to stringResource(R.string.day_short_sunday),
+            AlarmDayOfWeekFlags.MONDAY to stringResource(R.string.day_short_monday),
+            AlarmDayOfWeekFlags.TUESDAY to stringResource(R.string.day_short_tuesday),
+            AlarmDayOfWeekFlags.WEDNESDAY to stringResource(R.string.day_short_wednesday),
+            AlarmDayOfWeekFlags.THURSDAY to stringResource(R.string.day_short_thursday),
+            AlarmDayOfWeekFlags.FRIDAY to stringResource(R.string.day_short_friday),
+            AlarmDayOfWeekFlags.SATURDAY to stringResource(R.string.day_short_saturday),
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .height(50.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            for ((mask, label) in dayData) {
+                val active = checkFlags(alarm.activeDays, mask)
+                Box(modifier = Modifier.height(48.dp)) {
+                    FilterChip(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .height(40.dp)
+                            .width(42.dp),
+                        selected = active,
+                        onClick = {
+                            val bits = if (active) {
+                                alarm.activeDays and mask.inv()
+                            } else {
+                                alarm.activeDays or mask
+                            }
+                            updateAlarm(alarm.copy(activeDays = bits))
+                        },
+                        label = {},
+                    )
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = label,
+                        maxLines = 1,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = if (active) {
+                            FontWeight.Bold
                         } else {
-                            alarm.activeDays or mask
+                            FontWeight.Light
                         }
-                        updateAlarm(alarm.copy(activeDays = bits))
-                    },
-                    label = {},
-                )
-                Text(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = label,
-                    maxLines = 1,
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = if (active) {
-                        FontWeight.Bold
-                    } else {
-                        FontWeight.Light
-                    }
-                )
+                    )
+                }
             }
         }
     }

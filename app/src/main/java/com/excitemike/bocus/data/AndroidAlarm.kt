@@ -150,6 +150,7 @@ fun scheduleSystemAlarm(context: Context, alarm: Alarm) {
             putExtra(AlarmReceiver.EXTRA_NAME_TITLE, alarm.name)
             putExtra(AlarmReceiver.EXTRA_NAME_MESSAGE, alarm.message)
             putExtra(AlarmReceiver.EXTRA_NAME_ALARM_ID, alarm.id)
+            putExtra(AlarmReceiver.EXTRA_NAME_ALARM_NOTIF_FX, alarm.notifMode)
         },
         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
     )

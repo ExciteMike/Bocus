@@ -54,8 +54,6 @@ fun createNotificationChannel(context: Context) {
     ).apply {
         description = "Bocus Alarms"
         setSound(Settings.System.DEFAULT_ALARM_ALERT_URI, audioAttributes)
-        enableLights(true)
-        lightColor = Color.Red.toArgb()
         enableVibration(true)
         vibrationPattern = longArrayOf(0, 50, 200, 100, 150, 150, 100, 1000)
     }

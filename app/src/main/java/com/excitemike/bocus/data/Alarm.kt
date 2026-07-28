@@ -103,10 +103,10 @@ object AlarmLimits {
 
 /** possibilities for alarm notification mode */
 object AlarmNotifMode {
-    const val BELL = 0x1
+    const val RING = 0x1
     const val VIBRATE = 0x2
-    const val BELL_AND_VIBRATE = 0x3
-    const val DEFAULT = BELL_AND_VIBRATE
+    const val RING_AND_VIBRATE = 0x3
+    const val DEFAULT = RING_AND_VIBRATE
 }
 
 @Dao

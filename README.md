@@ -5,7 +5,7 @@ An alarm app with randomized reminders.
 ## to-do list
 
 - write this readme
-- full impl of alarmdetails screen
+- delete needs to cancel the alarm!
 - scrollbar modifier
 - alarm details screen
     - notif mode - two checkboxes

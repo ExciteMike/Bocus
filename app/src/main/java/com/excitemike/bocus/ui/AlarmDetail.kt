@@ -31,6 +31,7 @@ import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmLimits
 import com.excitemike.bocus.ui.component.DaysOfWeek
 import com.excitemike.bocus.ui.component.MinMax
+import com.excitemike.bocus.ui.component.NotifMode
 import com.excitemike.bocus.ui.component.TimeAccordion
 
 @Composable
@@ -137,6 +138,7 @@ fun AlarmDetailControls(
         // Start Time
         //
         TimeAccordion(
+            modifier = Modifier.padding(start = 16.dp),
             startTimeState,
             stringResource(R.string.start_time_label),
             stringResource(R.string.start_time_label_and_value),
@@ -155,6 +157,7 @@ fun AlarmDetailControls(
         // End Time
         //
         TimeAccordion(
+            modifier = Modifier.padding(start = 16.dp),
             endTimeState,
             stringResource(R.string.end_time_label),
             stringResource(R.string.end_time_label_and_value),
@@ -170,8 +173,8 @@ fun AlarmDetailControls(
         )
 
         DaysOfWeek(alarm, updateAlarm)
+        NotifMode(alarm, updateAlarm)
 
-        // TODO: Notif mode
         // TODO: alarmlength
     }
 }
