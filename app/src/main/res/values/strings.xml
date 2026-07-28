@@ -1,7 +1,7 @@
 <!--suppress LongLine -->
 <resources>
     <string name="about">About</string>
-    <string name="about_message">This app isn\'t much, but it is built out of artisanal, bespoke code hand-typed by the human fingers of Mike Meyer and not an AI.</string>
+    <string name="about_message">This app isn\'t much, but it is built out of artisanal code hand-typed by the human fingers of Mike Meyer.</string>
     <string name="add_alarm">Add Alarm</string>
     <string name="alarm_name_label">Alarm Name</string>
     <string name="alarm_message_label">Alarm Message</string>

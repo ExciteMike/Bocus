@@ -1,7 +1,5 @@
 package com.excitemike.bocus.ui
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,29 +11,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.Command
 import com.excitemike.bocus.ui.component.AlarmGrid
-import com.excitemike.bocus.util.Fx
+import com.excitemike.bocus.ui.component.BocusButton
 
 @Composable
 fun AlarmScreen(
@@ -83,9 +74,6 @@ fun AlarmList(
     openAlarmDetails: (Int) -> Unit,
     requestDeleteAlarm: (String, Command, Command) -> Unit,
 ) {
-    val shape = MaterialTheme.shapes.medium
-    val containerColor = ButtonDefaults.buttonColors().containerColor
-    val contentColor = ButtonDefaults.buttonColors().contentColor
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -110,25 +98,13 @@ fun AlarmList(
                 requestDeleteAlarm
             )
         }
-
-        val context = LocalContext.current
-        Surface(
+        BocusButton(
             modifier = Modifier
-                .semantics { role = Role.Button }
-                .padding(8.dp)
                 .fillMaxWidth()
-                .background(
-                    color = containerColor,
-                    shape = shape
-                ),
-            color = Color.Transparent,
-            contentColor = contentColor,
-            border = BorderStroke(1.dp, contentColor),
-            shape = shape,
+                .padding(8.dp),
             onClick = {
-                Fx.buttonClickFx(context)
                 addAlarm()
-            },
+            }
         ) {
             Row(
                 horizontalArrangement = Arrangement.Center,

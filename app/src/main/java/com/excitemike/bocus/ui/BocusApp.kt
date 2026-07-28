@@ -15,9 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.updateAllSystemAlarms
 import com.excitemike.bocus.ui.component.AlarmDetails
+import com.excitemike.bocus.ui.component.BocusButton
 
 @SuppressLint("ScheduleExactAlarm")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -217,8 +216,7 @@ fun PermissionPrompt(
 
 @Composable
 fun GoToSettingsButton(activity: Activity) {
-    val shape = MaterialTheme.shapes.medium
-    Button(
+    BocusButton(
         onClick = {
             val action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
             val packageName = activity.applicationContext.packageName
@@ -228,7 +226,6 @@ fun GoToSettingsButton(activity: Activity) {
             intent.data = Uri.fromParts("package", packageName, null)
             activity.startActivity(intent)
         },
-        shape = shape
     ) {
         Text(stringResource(R.string.go_to_settings))
     }

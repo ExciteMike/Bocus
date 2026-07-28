@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
+import com.excitemike.bocus.ui.component.BocusButton
 
 @Composable
 fun AboutScreen(
@@ -27,9 +27,12 @@ fun AboutScreen(
         Text(
             modifier = Modifier.padding(16.dp),
             text = stringResource(R.string.about_message),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Start
         )
-        Button(onClick = { goToScreen(AppScreens.ALARMS) }) {
+        BocusButton(
+            onClick = { goToScreen(AppScreens.ALARMS) },
+            modifier = Modifier,
+        ) {
             Text(stringResource(R.string.back_button))
         }
     }
