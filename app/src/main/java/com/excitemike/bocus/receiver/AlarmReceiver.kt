@@ -1,5 +1,6 @@
 package com.excitemike.bocus.receiver
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -60,6 +61,7 @@ class AlarmReceiver : BroadcastReceiver() {
     /**
      * called when the receiver is receiving an intent broadcast
      */
+    @SuppressLint("LaunchActivityFromNotification")
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context == null) return
         if (intent == null) return
@@ -99,7 +101,7 @@ class AlarmReceiver : BroadcastReceiver() {
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setContentIntent(pendingIntent)
+            .setContentIntent(stopPendingIntent)
             .addAction(
                 NotificationCompat.Action(
                     R.drawable.ic_launcher_foreground,

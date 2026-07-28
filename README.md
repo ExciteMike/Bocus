@@ -8,7 +8,6 @@ An alarm app with randomized reminders.
 - delete needs to cancel the alarm!
 - scrollbar modifier
 - alarm details screen
-    - notif mode - two checkboxes
     - alarmlength - also start repeating undismissed alarms
 - store scheduled time so that updateAllSytemAlarms doesn't push them back
 - request permission - use datastore for isFirstTime

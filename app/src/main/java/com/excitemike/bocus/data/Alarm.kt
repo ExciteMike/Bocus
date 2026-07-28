@@ -59,10 +59,6 @@ data class Alarm(
     @ColumnInfo(name = "message")
     val message: String = "",
 
-    /** how long it sounds/buzzes for. Seconds */
-    @ColumnInfo(name = "alarm_length")
-    val alarmLength: Int = DEFAULT_ALARM_LENGTH,
-
     /** repeat on which days of the week, (bitflags) */
     @ColumnInfo(name = "active_days")
     val activeDays: Int = AlarmDayOfWeekFlags.DEFAULT_ACTIVE_DAYS,
