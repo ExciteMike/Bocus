@@ -123,14 +123,12 @@ private fun forceNDigits(
     if (proposed.isEmpty()) {
         return "0"
     }
-    if ("""0+\d+""".toRegex().matches(proposed)) {
-        return proposed.replace("""^0+""".toRegex(), "")
-    }
-    if ("""0+""".toRegex().matches(proposed)) {
+    if (proposed.matches("0".toRegex())) {
         return proposed
     }
-    if (!"""\d{1,${maxDigits}}""".toRegex().matches(proposed)) {
+    val trimmed = proposed.replace("^0+".toRegex(), "")
+    if (!"""\d{1,${maxDigits}}""".toRegex().matches(trimmed)) {
         return current
     }
-    return proposed
+    return trimmed
 }
