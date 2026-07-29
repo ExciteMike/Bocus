@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -23,11 +22,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.Command
+import com.excitemike.bocus.util.Fx
+import com.excitemike.bocus.util.FxType
 import kotlinx.coroutines.launch
 
 
@@ -38,6 +40,7 @@ fun AlarmGridItem(
     openAlarmDetails: (Int) -> Unit,
     requestDeleteAlarm: (String, Command, Command) -> Unit
 ) {
+    val context = LocalContext.current
     val index = lazy { allAlarms.indexOfFirst { alarm.id == it.id } }
     val deleteAlarmTemplate = stringResource(R.string.confirm_delete_alarm)
     val swipeToDismissState = rememberSwipeToDismissBoxState()
@@ -101,7 +104,10 @@ fun AlarmGridItem(
                 }
             }
         },
-        onDismiss = { requestDeleteThisItem() }
+        onDismiss = {
+            Fx.buttonClickFx(context, FxType.SWISH)
+            requestDeleteThisItem()
+        }
     ) {
         Card(
             modifier = Modifier
@@ -112,13 +118,16 @@ fun AlarmGridItem(
                 AlarmListItem(
                     modifier = Modifier
                         .weight(1f)
-                        .clickable { openAlarmDetails(index.value) },
+                        .clickable {
+                            Fx.buttonClickFx(context, FxType.SWISH)
+                            openAlarmDetails(index.value)
+                        },
                     alarm = alarm
                 )
                 Column {
-                    IconButton(
+                    BocusButton(
                         onClick = { openAlarmDetails(index.value) },
-                        shape = shape,
+                        fx = FxType.NORMAL
                     ) {
                         Icon(
                             imageVector = Icons.Default.Edit,
@@ -126,7 +135,10 @@ fun AlarmGridItem(
                         )
 
                     }
-                    IconButton(onClick = { requestDeleteThisItem() }, shape = shape) {
+                    BocusButton(
+                        onClick = { requestDeleteThisItem() },
+                        fx = FxType.NORMAL
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = stringResource(R.string.edit)

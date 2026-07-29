@@ -14,3 +14,6 @@
 .cxx
 local.properties
 *.backup
+*.mp3
+*.7z
+*.rar

@@ -20,7 +20,6 @@ import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.data.AlarmNotifMode
 import com.excitemike.bocus.data.OfflineBocusRepository
 import com.excitemike.bocus.data.scheduleSystemAlarm
-import com.excitemike.bocus.ui.MainActivity
 import com.excitemike.bocus.util.checkFlags
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -76,15 +75,6 @@ class AlarmReceiver : BroadcastReceiver() {
         val message = intent.getStringExtra(EXTRA_NAME_MESSAGE)
         val alarmId = intent.getIntExtra(EXTRA_NAME_ALARM_ID, 0)
         val notifFx = intent.getIntExtra(EXTRA_NAME_ALARM_NOTIF_FX, AlarmNotifMode.RING_AND_VIBRATE)
-        val newIntent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-        val pendingIntent = PendingIntent.getActivity(
-            context,
-            NOTIF_REQ_CODE,
-            newIntent,
-            PendingIntent.FLAG_IMMUTABLE
-        )
         val stopIntent = Intent(context, AlarmReceiver::class.java).apply {
             action = STOP_ALARM_ACTION
             putExtra(EXTRA_NAME_ALARM_ID, alarmId)
@@ -190,7 +180,6 @@ class AlarmReceiver : BroadcastReceiver() {
         private var vibMgr: VibratorManager? = null
 
         const val STOP_CODE = 456
-        const val NOTIF_REQ_CODE = 789
         const val EXTRA_NAME_TITLE = "title"
         const val EXTRA_NAME_MESSAGE = "message"
         const val EXTRA_NAME_ALARM_ID = "alarm_id"

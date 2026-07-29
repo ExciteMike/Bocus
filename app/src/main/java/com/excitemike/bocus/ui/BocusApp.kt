@@ -17,7 +17,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,6 +36,7 @@ import com.excitemike.bocus.ui.component.AlarmDetails
 import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.ui.component.BocusNavHost
 import com.excitemike.bocus.ui.component.BocusTabRow
+import com.excitemike.bocus.util.FxType
 
 @SuppressLint("ScheduleExactAlarm")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,10 +55,11 @@ fun BocusApp(
             title = @Composable { Text(text = stringResource(R.string.error)) },
             text = @Composable { Text(text = uiState.errorMessage!!) },
             confirmButton = @Composable {
-                TextButton(
+                BocusButton(
                     onClick = {
                         viewModel.dismissErrorDlg()
-                    }
+                    },
+                    fx = FxType.NORMAL
                 ) {
                     Text(text = stringResource(R.string.dismiss))
                 }
@@ -71,16 +72,20 @@ fun BocusApp(
         AlertDialog(
             text = { Text(text = uiState.confirmMessage!!) },
             confirmButton = @Composable {
-                TextButton(
+                BocusButton(
                     onClick = {
                         viewModel.onConfirm()
-                    }
+                    },
+                    fx = FxType.CONFIRM
                 ) {
                     Text(text = stringResource(R.string.confirm_button))
                 }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.dismissConfirmDlg() }) {
+                BocusButton(
+                    onClick = { viewModel.dismissConfirmDlg() },
+                    fx = FxType.CANCEL
+                ) {
                     Text(
                         text = stringResource(
                             R.string.cancel_button
@@ -196,7 +201,10 @@ fun PermissionPrompt(
 ) {
     val dismissBtn = if (showSettingsBtn) {
         @Composable {
-            TextButton(onClick = onDismissRequest) {
+            BocusButton(
+                onClick = onDismissRequest,
+                fx = FxType.CANCEL
+            ) {
                 Text(text = stringResource(R.string.cancel_button))
             }
         }
@@ -218,7 +226,10 @@ fun PermissionPrompt(
             }
         },
         confirmButton = {
-            TextButton(onClick = onConfirm) {
+            BocusButton(
+                onClick = onConfirm,
+                fx = FxType.NORMAL
+            ) {
                 Text(text = stringResource(R.string.ok))
             }
         },
@@ -238,6 +249,7 @@ fun GoToSettingsButton(activity: Activity) {
             intent.data = Uri.fromParts("package", packageName, null)
             activity.startActivity(intent)
         },
+        fx = FxType.NORMAL
     ) {
         Text(stringResource(R.string.go_to_settings))
     }

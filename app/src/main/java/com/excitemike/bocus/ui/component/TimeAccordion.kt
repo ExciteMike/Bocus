@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimeInput
@@ -29,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
+import com.excitemike.bocus.util.FxType
 import com.excitemike.bocus.util.timeString
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,8 +59,9 @@ fun TimeAccordion(
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    IconButton(
+                    BocusButton(
                         onClick = { isOpen.value = false },
+                        fx = FxType.BACK
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -98,11 +99,12 @@ fun TimeAccordion(
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            IconButton(
+            BocusButton(
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .height(32.dp), // TODO: make configurable
                 onClick = { isOpen.value = true },
+                fx = FxType.NORMAL
             ) {
                 Icon(
                     modifier = Modifier.height(24.dp), // TODO: make configurable

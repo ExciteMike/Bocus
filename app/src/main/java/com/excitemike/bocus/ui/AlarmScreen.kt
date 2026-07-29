@@ -23,6 +23,7 @@ import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.Command
 import com.excitemike.bocus.ui.component.AlarmGrid
 import com.excitemike.bocus.ui.component.BocusButton
+import com.excitemike.bocus.util.FxType
 
 @Composable
 fun AlarmScreen(
@@ -62,7 +63,8 @@ fun AlarmScreen(
                 .padding(8.dp),
             onClick = {
                 addAlarm()
-            }
+            },
+            fx = FxType.CONFIRM
         ) {
             Row(
                 horizontalArrangement = Arrangement.Center,
