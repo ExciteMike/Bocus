@@ -5,14 +5,11 @@ An alarm app with randomized reminders.
 ## to-do list
 
 - write this readme
-- delete needs to cancel the alarm!
 - scrollbar modifier
 - store scheduled time so that updateAllSytemAlarms doesn't push them back
 - request permission - use datastore for isFirstTime
 - debounce alarm scheduling/db saves
 - about screen
-- min max quirks
-    - min/max affecting the other isn't propagated to the alarm/db
 
 - Fun
     - ui sounds

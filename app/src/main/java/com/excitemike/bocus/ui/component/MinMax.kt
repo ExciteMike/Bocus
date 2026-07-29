@@ -55,6 +55,7 @@ fun MinMax(
                     val maxVal = maxState.text.toString().toIntOrNull() ?: 1
                     if (minVal > maxVal) {
                         maxState.edit { replace(0, length, minVal.toString()) }
+                        onMaxChanged(minVal)
                     }
                 }
             )
@@ -70,6 +71,7 @@ fun MinMax(
                     val maxVal = maxState.text.toString().toIntOrNull() ?: 1
                     if (maxVal < minVal) {
                         minState.edit { replace(0, length, maxVal.toString()) }
+                        onMinChanged(maxVal)
                     }
                 }
             )
