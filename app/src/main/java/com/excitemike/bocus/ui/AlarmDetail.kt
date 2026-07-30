@@ -31,6 +31,7 @@ import androidx.compose.ui.window.Dialog
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmLimits
+import com.excitemike.bocus.modifier.verticalScrollbar
 import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.ui.component.DaysOfWeek
 import com.excitemike.bocus.ui.component.MinMax
@@ -51,7 +52,7 @@ fun AlarmDetail(
         Card {
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 8.dp, vertical = 16.dp)
+                    .padding(start = 8.dp, end = 4.dp, top = 8.dp, bottom = 8.dp)
                     .imePadding(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -111,8 +112,11 @@ fun AlarmDetailControls(
         }
     }
 
+    val scrollState = rememberScrollState()
     Column(
-        modifier = modifier.verticalScroll(rememberScrollState()),
+        modifier = modifier.verticalScroll(scrollState)
+            .verticalScrollbar(scrollState)
+            .padding(end = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
