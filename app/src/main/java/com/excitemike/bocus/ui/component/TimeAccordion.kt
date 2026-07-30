@@ -20,7 +20,7 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
@@ -42,7 +42,7 @@ fun TimeAccordion(
 ) {
     // TODO: use AnimatedContent
     val timeFormatStr = stringResource(R.string.time_format)
-    val isOpen = remember { mutableStateOf(false) }
+    val isOpen = rememberSaveable { mutableStateOf(false) }
     if (isOpen.value) {
         Box(
             modifier = Modifier.border(

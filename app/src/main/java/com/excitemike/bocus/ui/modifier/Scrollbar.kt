@@ -1,4 +1,4 @@
-package com.excitemike.bocus.modifier
+package com.excitemike.bocus.ui.modifier
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.LinearEasing
@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -32,61 +33,92 @@ private val THUMB_MIN_LENGTH = 20.dp
 private val TRACK_CORNER_RADIUS = 4.dp
 
 fun Modifier.verticalScrollbar(
-    state: ScrollState
-): Modifier = scrollbar(state, Orientation.Vertical)
+    state: LazyGridState,
+): Modifier {
+    val indicatorState = state.scrollIndicatorState ?: return this
+    val maxOffset = indicatorState.contentSize - indicatorState.viewportSize
+    if (maxOffset <= 0) return this
+    return scrollbar(
+        state.isScrollInProgress,
+        indicatorState.scrollOffset,
+        maxOffset,
+        indicatorState.viewportSize,
+        Orientation.Vertical,
+        false
+    )
+}
+
+
+fun Modifier.verticalScrollbar(
+    state: ScrollState,
+): Modifier = scrollbar(
+    state.isScrollInProgress,
+    state.value,
+    state.maxValue,
+    state.viewportSize,
+    Orientation.Vertical,
+    true
+)
 
 @SuppressLint("FrequentlyChangingValue")
-fun Modifier.scrollbar(
-    state: ScrollState,
-    direction: Orientation
+private fun Modifier.scrollbar(
+    isScrollInProgress: Boolean,
+    scrollOffset: Int,
+    scrollOffsetMax: Int,
+    viewportSize: Int,
+    direction: Orientation,
+    /** whether the whole scrollback needs to move (because it is rendered inside the scrollable area vs on top */
+    move: Boolean
 ): Modifier = composed {
-    val isMoving = state.isScrollInProgress
     val animSpec = tween<Float>(
-        delayMillis = if (isMoving) 0 else TWEEN_DELAY,
-        durationMillis = if (isMoving) TWEEN_DURATION_FAST else TWEEN_DURATION_SLOW,
+        delayMillis = if (isScrollInProgress) 0 else TWEEN_DELAY,
+        durationMillis = if (isScrollInProgress) TWEEN_DURATION_FAST else TWEEN_DURATION_SLOW,
         easing = LinearEasing
     )
-    val targetAlpha = if (isMoving) SCROLL_BAR_ALPHA_HIGH else SCROLL_BAR_ALPHA_LOW
+    val targetAlpha = if (isScrollInProgress) SCROLL_BAR_ALPHA_HIGH else SCROLL_BAR_ALPHA_LOW
     val alpha by animateFloatAsState(targetAlpha, animSpec)
     val thumbColor = MaterialTheme.colorScheme.secondary
     val trackColor = MaterialTheme.colorScheme.onSecondary
     val layoutDirection = LocalLayoutDirection.current
+    val viewportSize = viewportSize.toFloat()
+    val scrollMax = scrollOffsetMax.toFloat()
+    val contentSize = viewportSize + scrollMax
     drawWithContent {
         drawContent()
 
-        val contentLength = if (direction == Orientation.Vertical) size.height else size.width
         val crossSize = if (direction == Orientation.Vertical) size.width else size.height
-        val scrollMax = state.maxValue.toFloat()
-        val viewLength = contentLength - scrollMax
-        val scrollRatio = state.value.toFloat() / max(scrollMax, 1f)
-        val thumbRatio = viewLength / max(VERY_SMALL, contentLength)
+
+        val scrollRatio = scrollOffset.toFloat() / max(scrollMax, 1f)
+        val thumbRatio = viewportSize / max(VERY_SMALL, contentSize)
         val thumbPos = positionHelper(
             direction = direction,
             layoutDirection = layoutDirection,
             objectRatio = thumbRatio,
             scrollRatio = scrollRatio,
-            viewLength = viewLength,
-            contentLength = contentLength,
+            viewLength = viewportSize,
+            contentLength = contentSize,
             crossSize = crossSize,
+            move = move
         )
         val trackPos = positionHelper(
             direction = direction,
             layoutDirection = layoutDirection,
             objectRatio = 1f,
             scrollRatio = scrollRatio,
-            viewLength = viewLength,
-            contentLength = contentLength,
+            viewLength = viewportSize,
+            contentLength = contentSize,
             crossSize = crossSize,
+            move = move
         )
         val thumbSize = sizeHelper(
             direction = direction,
             objectRatio = thumbRatio,
-            viewLength = viewLength
+            viewLength = viewportSize
         )
         val trackSize = sizeHelper(
             direction = direction,
             objectRatio = 1f,
-            viewLength = viewLength
+            viewLength = viewportSize
         )
 
         drawRoundRect(
@@ -119,10 +151,15 @@ private fun ContentDrawScope.positionHelper(
     scrollRatio: Float,
     viewLength: Float,
     contentLength: Float,
-    crossSize: Float
+    crossSize: Float,
+    move: Boolean
 ): Offset {
     val objLength = max(objectRatio * viewLength, THUMB_MIN_LENGTH.toPx())
-    val maxOffset = max(0f, contentLength - objLength)
+    val maxOffset = if (move) {
+        max(0f, contentLength - objLength)
+    } else {
+        max(0f, viewLength - objLength)
+    }
     val offset = scrollRatio * maxOffset
     return if (direction == Orientation.Vertical) {
         Offset(

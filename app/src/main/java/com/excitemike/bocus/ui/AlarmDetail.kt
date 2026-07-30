@@ -1,5 +1,6 @@
 package com.excitemike.bocus.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -31,7 +32,7 @@ import androidx.compose.ui.window.Dialog
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmLimits
-import com.excitemike.bocus.modifier.verticalScrollbar
+import com.excitemike.bocus.ui.modifier.verticalScrollbar
 import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.ui.component.DaysOfWeek
 import com.excitemike.bocus.ui.component.MinMax
@@ -74,6 +75,7 @@ fun AlarmDetail(
     }
 }
 
+@SuppressLint("FrequentlyChangingValue")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmDetailControls(
