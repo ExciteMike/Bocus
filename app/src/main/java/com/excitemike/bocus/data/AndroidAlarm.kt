@@ -77,6 +77,32 @@ fun localDateAndTimeToMillis(d: LocalDate, t: LocalTime): Long {
 }
 
 /**
+ * check whether proposedTime appear to be a valid time to schedule the alarm at
+ */
+fun alarmTimeValid(alarm: Alarm, proposedTimeMillis: Long): Boolean {
+    val proposedDateTime = millisToZonedDateTime(proposedTimeMillis)
+    val proposedTimeDate = proposedDateTime.toLocalDate()
+    val dayOfWeek = proposedTimeDate.dayOfWeek
+    val validDay = checkDayOfWeek(dayOfWeek, alarm)
+    if (!validDay) return false
+
+    val alarmStartLocalTime = LocalTime.of(alarm.startHour, alarm.startMinute)
+    val alarmEndLocalTime = LocalTime.of(alarm.endHour, alarm.endMinute)
+    val dayStartTimeMillis = localDateAndTimeToMillis(proposedTimeDate, alarmStartLocalTime)
+    val dayEndTimeMillis = localDateAndTimeToMillis(proposedTimeDate, alarmEndLocalTime)
+    val validTime = proposedTimeMillis in (dayStartTimeMillis..dayEndTimeMillis)
+    if (!validTime) return false
+
+    val nowMillis = System.currentTimeMillis()
+    val delta = proposedTimeMillis - nowMillis
+    val maxDelay = alarm.frequencyMax
+    val deltaMin = nowMillis - maxDelay
+    val deltaMax = nowMillis + maxDelay
+    val validDelta = (delta in deltaMin..deltaMax)
+    return validDelta
+}
+
+/**
  * find the closest future occurrence of the alarm
  */
 fun getNextAlarmTime(alarm: Alarm): Long {
@@ -130,12 +156,11 @@ fun getNextAlarmTime(alarm: Alarm): Long {
 fun getSystemPermissionsNeeded(): List<Pair<String, Int>> = PERMISSIONS
 
 /**
- * If the alarm is already scheduled, cancel it. Then schedule one based on the given Alarm
+ * SET SCHEDULEDAT BEFORE SENDING THE ALARM!
+ * If the alarm is already scheduled, cancel it. Then schedule one based on the given Alarm and its scheduledAt field
  */
 @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
 fun scheduleSystemAlarm(context: Context, alarm: Alarm) {
-    val triggerAtMillis = getNextAlarmTime(alarm)
-
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     if (!alarmManager.canScheduleExactAlarms()) {
         Log.v("Bocus", "can't schedule")
@@ -159,24 +184,40 @@ fun scheduleSystemAlarm(context: Context, alarm: Alarm) {
     }
     alarmManager.setExactAndAllowWhileIdle(
         AlarmManager.RTC_WAKEUP,
-        triggerAtMillis,
+        alarm.scheduledAt,
         pendingIntent
     )
 }
 
 /**
- * make sure that what we have registered with the system is in sync with what we have
- * in our data
+ * Make sure that what we have registered with the system is in sync with what we have
+ * in our data.
+ * updateAlarm will be called when an alarm is scheduled, providing a copy of the schedueld alarm with the scheduledAt field updated
  */
 @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
-fun updateAllSystemAlarms(context: Context, alarms: List<Alarm>) {
+suspend fun rescheduleAllSystemAlarms(
+    context: Context,
+    alarms: List<Alarm>,
+    updateAlarm: suspend (alarm: Alarm) -> Unit
+) {
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     if (!alarmManager.canScheduleExactAlarms()) {
         Log.v("Bocus", "can't schedule")
         return
     }
     for (alarm in alarms) {
-        scheduleSystemAlarm(context, alarm)
+        val nowMillis = System.currentTimeMillis()
+        val delta = alarm.scheduledAt - nowMillis
+        val maxDelay = alarm.frequencyMax.toLong() * 60L * 1000L
+        val useAlreadyScheduled =
+            alarmTimeValid(alarm, alarm.scheduledAt) && (delta in (-maxDelay)..(maxDelay))
+        val triggerAtMillis =
+            if (useAlreadyScheduled) alarm.scheduledAt else getNextAlarmTime(alarm)
+        val newAlarm = alarm.copy(scheduledAt = triggerAtMillis)
+        if (!useAlreadyScheduled) {
+            updateAlarm(newAlarm)
+        }
+        scheduleSystemAlarm(context, newAlarm)
     }
 }
 

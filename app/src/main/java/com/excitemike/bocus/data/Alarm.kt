@@ -60,6 +60,12 @@ data class Alarm(
     /** repeat on which days of the week, (bitflags) */
     @ColumnInfo(name = "active_days")
     val activeDays: Int = AlarmDayOfWeekFlags.DEFAULT_ACTIVE_DAYS,
+
+    /**
+     * Store when it scheduled for, so that we can restore it correctly on boot. Milliseconds since epoch.
+     * */
+    @ColumnInfo(name = "scheduled_at")
+    val scheduledAt: Long = 0
 )
 
 /** a little glue to help Room generate a delete by id function */

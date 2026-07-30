@@ -19,6 +19,7 @@ import com.excitemike.bocus.R
 import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.data.AlarmNotifMode
 import com.excitemike.bocus.data.OfflineBocusRepository
+import com.excitemike.bocus.data.getNextAlarmTime
 import com.excitemike.bocus.data.scheduleSystemAlarm
 import com.excitemike.bocus.util.checkFlags
 import kotlinx.coroutines.CoroutineScope
@@ -148,7 +149,8 @@ class AlarmReceiver : BroadcastReceiver() {
         scope.launch {
             val alarm = alarmRepo.getAlarm(alarmId)
             if (alarm != null) {
-                scheduleSystemAlarm(context, alarm)
+                val newAlarm = alarm.copy(scheduledAt = getNextAlarmTime(alarm))
+                scheduleSystemAlarm(context, newAlarm)
             }
         }
     }

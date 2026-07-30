@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.IBinder
 import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.data.OfflineBocusRepository
-import com.excitemike.bocus.data.updateAllSystemAlarms
+import com.excitemike.bocus.data.rescheduleAllSystemAlarms
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -23,7 +23,11 @@ class UpdateAllAlarmsService : Service() {
         val scope = CoroutineScope(Dispatchers.IO + job)
         scope.launch {
             val alarms = alarmRepo.getAllAlarmsRaw()
-            updateAllSystemAlarms(application, alarms)
+            rescheduleAllSystemAlarms(
+                application,
+                alarms,
+                updateAlarm = { newAlarm -> alarmRepo.updateAlarm(newAlarm) }
+            )
         }
 
         return START_NOT_STICKY

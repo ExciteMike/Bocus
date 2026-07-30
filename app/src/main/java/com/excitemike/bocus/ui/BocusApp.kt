@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -31,12 +32,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.INITIAL_APP_SCREEN
-import com.excitemike.bocus.data.updateAllSystemAlarms
+import com.excitemike.bocus.data.rescheduleAllSystemAlarms
 import com.excitemike.bocus.ui.component.AlarmDetails
 import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.ui.component.BocusNavHost
 import com.excitemike.bocus.ui.component.BocusTabRow
 import com.excitemike.bocus.util.FxType
+import kotlinx.coroutines.launch
 
 @SuppressLint("ScheduleExactAlarm")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -105,7 +107,8 @@ fun BocusApp(
     AlarmDetails(
         alarms = alarms.value,
         selectedAlarmIndex = selectedAlarmIndex,
-        updateAlarm = { viewModel.updateAlarm(it) },
+        // TODO: this always reschedules! Could be smarter!
+        updateAlarm = { viewModel.updateAlarmAndReschedule(it) },
         closeAlarmDetails = { viewModel.closeAlarmDetails() }
     )
 
@@ -153,14 +156,28 @@ fun PermissionRequestFlow(
     val isGranted = remember { mutableStateOf(viewModel.checkPermission(activity, permission)) }
     val isFirstTime = remember { mutableStateOf(true) }
     val showPermissionPrompt = remember { mutableStateOf(true) }
+    val reschedScope = rememberCoroutineScope()
+    val updateScope = rememberCoroutineScope()
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
-        onResult = {
+        onResult = { userGrantedPermission ->
             val prevValue = isGranted.value
-            isGranted.value = it
-            showPermissionPrompt.value = !it
-            if (it && !prevValue) {
-                updateAllSystemAlarms(activity, viewModel.alarmState.value)
+            isGranted.value = userGrantedPermission
+            showPermissionPrompt.value = !userGrantedPermission
+            if (userGrantedPermission && !prevValue) {
+                reschedScope.launch {
+                    rescheduleAllSystemAlarms(
+                        activity,
+                        viewModel.alarmState.value,
+                        updateAlarm = { alarm ->
+                            updateScope.launch {
+                                viewModel.updateAlarmNoReschedule(
+                                    alarm
+                                )
+                            }
+                        }
+                    )
+                }
             }
         }
     )
