@@ -87,14 +87,14 @@ class AlarmReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         val builder = NotificationCompat.Builder(context, ALARM_CHANNEL)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_big)
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(stopPendingIntent)
             .addAction(
                 NotificationCompat.Action(
-                    R.drawable.ic_launcher_foreground,
+                    R.drawable.ic_big,
                     context.getString(R.string.stop),
                     stopPendingIntent
                 )
