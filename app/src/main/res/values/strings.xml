@@ -8,7 +8,6 @@
     <string name="alarm_tab_label">Alarms</string>
     <string name="app_name">Bocus</string>
     <string name="alarm_limit">Maximum number of alarms reached</string>
-    <string name="back_button">Go Back</string>
     <string name="cancel_button">Cancel</string>
     <string name="close">Close</string>
     <string name="confirm_button">Confirm</string>

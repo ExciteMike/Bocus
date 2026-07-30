@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlin.math.max
 
-private const val SCROLL_BAR_ALPHA_HIGH = 0.8f
-private const val SCROLL_BAR_ALPHA_LOW = 0.2f
+private const val SCROLL_BAR_ALPHA_HIGH = 1f
+private const val SCROLL_BAR_ALPHA_LOW = 0.35f
 private const val TWEEN_DELAY = 1000
 private const val TWEEN_DURATION_FAST = 100
 private const val TWEEN_DURATION_SLOW = 300
@@ -77,8 +77,8 @@ private fun Modifier.scrollbar(
     )
     val targetAlpha = if (isScrollInProgress) SCROLL_BAR_ALPHA_HIGH else SCROLL_BAR_ALPHA_LOW
     val alpha by animateFloatAsState(targetAlpha, animSpec)
-    val thumbColor = MaterialTheme.colorScheme.secondary
-    val trackColor = MaterialTheme.colorScheme.onSecondary
+    val thumbColor = MaterialTheme.colorScheme.onSecondaryContainer
+    val trackColor = MaterialTheme.colorScheme.secondaryContainer
     val layoutDirection = LocalLayoutDirection.current
     val viewportSize = viewportSize.toFloat()
     val scrollMax = scrollOffsetMax.toFloat()

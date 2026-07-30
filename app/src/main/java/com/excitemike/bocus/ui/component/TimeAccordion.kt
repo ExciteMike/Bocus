@@ -59,7 +59,7 @@ fun TimeAccordion(
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    BocusButton(
+                    BocusIconButton(
                         onClick = { isOpen.value = false },
                         fx = FxType.BACK
                     ) {
@@ -99,7 +99,7 @@ fun TimeAccordion(
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            BocusButton(
+            BocusIconButton(
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .height(32.dp), // TODO: make configurable

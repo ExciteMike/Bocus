@@ -36,7 +36,7 @@ fun AlarmGrid(
         val gridState = rememberLazyGridState()
         LazyVerticalGrid(
             modifier = Modifier
-                .padding(top = 8.dp, bottom = 8.dp)
+                .padding(top = 8.dp, bottom = 8.dp, end = 4.dp)
                 .verticalScrollbar(gridState),
             state = gridState,
             columns = GridCells.Adaptive(200.dp),
@@ -48,10 +48,11 @@ fun AlarmGrid(
                 key = { it.id!! }
             ) {
                 AlarmGridItem(
-                    it,
-                    alarms,
-                    openAlarmDetails,
-                    requestDeleteAlarm
+                    modifier = Modifier.padding(end = 8.dp),
+                    alarm = it,
+                    allAlarms = alarms,
+                    openAlarmDetails = openAlarmDetails,
+                    requestDeleteAlarm = requestDeleteAlarm
                 )
             }
         }

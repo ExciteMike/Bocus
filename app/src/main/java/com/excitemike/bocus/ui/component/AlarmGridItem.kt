@@ -35,6 +35,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun AlarmGridItem(
+    modifier: Modifier = Modifier,
     alarm: Alarm,
     allAlarms: List<Alarm>,
     openAlarmDetails: (Int) -> Unit,
@@ -59,6 +60,7 @@ fun AlarmGridItem(
         )
     }
     SwipeToDismissBox(
+        modifier = modifier,
         state = swipeToDismissState,
         backgroundContent = {
             val deleteColor = MaterialTheme.colorScheme.errorContainer
@@ -125,7 +127,7 @@ fun AlarmGridItem(
                     alarm = alarm
                 )
                 Column {
-                    BocusButton(
+                    BocusIconButton(
                         onClick = { openAlarmDetails(index.value) },
                         fx = FxType.NORMAL
                     ) {
@@ -135,7 +137,7 @@ fun AlarmGridItem(
                         )
 
                     }
-                    BocusButton(
+                    BocusIconButton(
                         onClick = { requestDeleteThisItem() },
                         fx = FxType.NORMAL
                     ) {
