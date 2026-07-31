@@ -33,7 +33,6 @@ import androidx.navigation.compose.rememberNavController
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.INITIAL_APP_SCREEN
 import com.excitemike.bocus.data.rescheduleAllSystemAlarms
-import com.excitemike.bocus.ui.component.AlarmDetails
 import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.ui.component.BocusNavHost
 import com.excitemike.bocus.ui.component.BocusTabRow
@@ -104,7 +103,7 @@ fun BocusApp(
         PermissionRequestFlow(activity, viewModel, permission, stringId)
     }
 
-    AlarmDetails(
+    AlarmDetailDialog(
         alarms = alarms.value,
         selectedAlarmIndex = selectedAlarmIndex,
         // TODO: this always reschedules! Could be smarter!

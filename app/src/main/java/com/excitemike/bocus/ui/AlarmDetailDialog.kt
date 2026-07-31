@@ -1,6 +1,7 @@
 package com.excitemike.bocus.ui
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -42,7 +43,37 @@ import com.excitemike.bocus.util.Fx
 import com.excitemike.bocus.util.FxType
 
 @Composable
-fun AlarmDetail(
+fun AlarmDetailDialog(
+    alarms: List<Alarm>,
+    selectedAlarmIndex: Int?,
+    updateAlarm: (alarm: Alarm) -> Unit,
+    closeAlarmDetails: () -> Unit,
+) {
+    val context = LocalContext.current
+    if (selectedAlarmIndex != null) {
+        if (selectedAlarmIndex in alarms.indices) {
+            BackHandler {
+                Fx.buttonClickFx(context, FxType.BACK)
+                closeAlarmDetails()
+            }
+            AlarmDetailDialogInner(
+                alarm = alarms[selectedAlarmIndex],
+                updateAlarm = updateAlarm,
+                close = {
+                    if (it) {
+                        Fx.buttonClickFx(context, FxType.BACK)
+                    }
+                    closeAlarmDetails()
+                }
+            )
+        } else {
+            closeAlarmDetails()
+        }
+    }
+}
+
+@Composable
+fun AlarmDetailDialogInner(
     alarm: Alarm,
     updateAlarm: (Alarm) -> Unit,
     close: (Boolean) -> Unit
