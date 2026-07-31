@@ -49,13 +49,13 @@ fun BocusSwipeToDismissBox(
     Box(modifier) {
         BocusSwipeToDismissBoxInner(
             swipeToDismissState = swipeToDismissState,
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier.fillMaxSize(),
             onDismiss = { state.value = true },
             content = content
         )
         if (state.value) {
             InlineConfirm(
-                modifier = Modifier.align(Alignment.Center),
+                modifier = Modifier.fillMaxSize(),
                 confirmPrompt = dismissConfirmPrompt,
                 confirmText = stringResource(R.string.confirm_button),
                 onConfirm = {
