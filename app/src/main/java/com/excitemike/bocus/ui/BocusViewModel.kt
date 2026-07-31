@@ -9,6 +9,7 @@ import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.data.Command
+import com.excitemike.bocus.data.MessageList
 import com.excitemike.bocus.data.OfflineBocusRepository
 import com.excitemike.bocus.data.cancelSystemAlarm
 import com.excitemike.bocus.data.checkSystemPermission
@@ -23,9 +24,18 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class BocusViewModel(application: Application) : AndroidViewModel(application) {
-    private val dao = AlarmDatabase.getDatabase(application).alarmDao()
-    private val alarmRepo = OfflineBocusRepository(dao)
-    val alarmState: StateFlow<List<Alarm>> = alarmRepo.getAllAlarmsStream()
+    val repo = OfflineBocusRepository(
+        AlarmDatabase.getDatabase(application).alarmDao(),
+        AlarmDatabase.getDatabase(application).messageListDao(),
+        AlarmDatabase.getDatabase(application).messageDao(),
+    )
+    val alarmState: StateFlow<List<Alarm>> = repo.getAllAlarmsStream()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = listOf()
+        )
+    val messageListState: StateFlow<List<MessageList>> = repo.getAllMessageListsStream()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
@@ -43,7 +53,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
             val tmpAlarm = Alarm(name = name)
             val alarm = tmpAlarm.copy(scheduledAt = getNextAlarmTime(tmpAlarm))
             viewModelScope.launch {
-                val id = alarmRepo.insertAlarm(alarm)
+                val id = repo.insertAlarm(alarm)
                 val alarm = alarm.copy(id = id)
                 scheduleSystemAlarm(application, alarm)
             }
@@ -79,7 +89,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     fun deleteAlarmById(id: Int) {
         cancelSystemAlarm(getApplication(), id)
         viewModelScope.launch {
-            alarmRepo.deleteAlarm(id)
+            repo.deleteAlarm(id)
         }
     }
 
@@ -159,7 +169,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     fun updateAlarmAndReschedule(alarm: Alarm) {
         val application: Application = getApplication()
         viewModelScope.launch {
-            alarmRepo.updateAlarm(alarm)
+            repo.updateAlarm(alarm)
             val newAlarm = alarm.copy(scheduledAt = getNextAlarmTime(alarm))
             scheduleSystemAlarm(application, newAlarm)
         }
@@ -168,7 +178,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     /** update the values in an alarm */
     fun updateAlarmNoReschedule(alarm: Alarm) {
         viewModelScope.launch {
-            alarmRepo.updateAlarm(alarm)
+            repo.updateAlarm(alarm)
         }
     }
 

@@ -6,12 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [Alarm::class],
-    version = 5,
+    entities = [Alarm::class, MessageList::class, Message::class],
+    version = 6,
     exportSchema = false
 )
 abstract class AlarmDatabase : RoomDatabase() {
     abstract fun alarmDao(): AlarmDao
+    abstract fun messageListDao(): MessageListDao
+    abstract fun messageDao(): MessageDao
 
     companion object {
         @Volatile

@@ -1,4 +1,4 @@
-package com.excitemike.bocus.ui
+package com.excitemike.bocus.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

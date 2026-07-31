@@ -120,6 +120,7 @@ fun BocusApp(
             val navController = rememberNavController()
             var currentScreenIndex by rememberSaveable { mutableIntStateOf(INITIAL_APP_SCREEN.ordinal) }
             val alarms = viewModel.alarmState.collectAsState()
+            val messageLists = viewModel.messageListState.collectAsState()
             BocusTabRow(
                 currentScreenIndex = currentScreenIndex,
                 onNav = {
@@ -131,6 +132,7 @@ fun BocusApp(
             BocusNavHost(
                 navController = navController,
                 alarms = alarms.value,
+                messageLists = messageLists.value,
                 addAlarm = { viewModel.addAlarm(defaultAlarmName) },
                 openAlarmDetails = { viewModel.openAlarmDetails(it) },
                 requestDeleteAlarm = { message, onConfirm, onCancel ->

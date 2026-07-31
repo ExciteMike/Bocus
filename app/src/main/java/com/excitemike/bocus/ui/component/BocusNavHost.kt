@@ -10,13 +10,16 @@ import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AppScreens
 import com.excitemike.bocus.data.Command
 import com.excitemike.bocus.data.INITIAL_APP_SCREEN
-import com.excitemike.bocus.ui.AboutScreen
-import com.excitemike.bocus.ui.AlarmScreen
+import com.excitemike.bocus.data.MessageList
+import com.excitemike.bocus.ui.screen.AboutScreen
+import com.excitemike.bocus.ui.screen.AlarmScreen
+import com.excitemike.bocus.ui.screen.MessageListScreen
 
 @Composable
 fun BocusNavHost(
     navController: NavHostController,
     alarms: List<Alarm>,
+    messageLists: List<MessageList>,
     addAlarm: () -> Unit,
     openAlarmDetails: (Int) -> Unit,
     requestDeleteAlarm: (String, Command, Command) -> Unit
@@ -30,6 +33,11 @@ fun BocusNavHost(
                 when (screen) {
                     AppScreens.ABOUT -> AboutScreen(
                         modifier = Modifier.fillMaxSize()
+                    )
+
+                    AppScreens.MESSAGE_LISTS -> MessageListScreen(
+                        modifier = Modifier.fillMaxSize(),
+                        messageLists
                     )
 
                     AppScreens.ALARMS -> AlarmScreen(

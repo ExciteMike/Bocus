@@ -17,16 +17,19 @@ class UpdateAllAlarmsService : Service() {
         if (intent?.action != ACTION_RESCHEDULE_ALL_ALARMS) {
             return START_NOT_STICKY
         }
-        val dao = AlarmDatabase.getDatabase(application).alarmDao()
-        val alarmRepo = OfflineBocusRepository(dao)
+        val repo = OfflineBocusRepository(
+            AlarmDatabase.getDatabase(application).alarmDao(),
+            AlarmDatabase.getDatabase(application).messageListDao(),
+            AlarmDatabase.getDatabase(application).messageDao(),
+        )
         val job = SupervisorJob()
         val scope = CoroutineScope(Dispatchers.IO + job)
         scope.launch {
-            val alarms = alarmRepo.getAllAlarmsRaw()
+            val alarms = repo.getAllAlarmsRaw()
             rescheduleAllSystemAlarms(
                 application,
                 alarms,
-                updateAlarm = { newAlarm -> alarmRepo.updateAlarm(newAlarm) }
+                updateAlarm = { newAlarm -> repo.updateAlarm(newAlarm) }
             )
         }
 

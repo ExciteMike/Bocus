@@ -142,12 +142,15 @@ class AlarmReceiver : BroadcastReceiver() {
         stopVibration()
 
         // schedule the next occurrence, if it hasn't been deleted
-        val dao = AlarmDatabase.getDatabase(context).alarmDao()
-        val alarmRepo = OfflineBocusRepository(dao)
+        val repo = OfflineBocusRepository(
+            AlarmDatabase.getDatabase(context).alarmDao(),
+            AlarmDatabase.getDatabase(context).messageListDao(),
+            AlarmDatabase.getDatabase(context).messageDao(),
+        )
         val job = SupervisorJob()
         val scope = CoroutineScope(Dispatchers.IO + job)
         scope.launch {
-            val alarm = alarmRepo.getAlarm(alarmId)
+            val alarm = repo.getAlarm(alarmId)
             if (alarm != null) {
                 val newAlarm = alarm.copy(scheduledAt = getNextAlarmTime(alarm))
                 scheduleSystemAlarm(context, newAlarm)

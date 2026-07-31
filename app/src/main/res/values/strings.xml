@@ -34,6 +34,7 @@
     <string name="frequency">Frequency (minutes)</string>
     <string name="go_to_settings">Go to settings</string>
     <string name="maximum">Maximum</string>
+    <string name="message_list_tab">Messages</string>
     <string name="minimum">Minimum</string>
     <string name="no_alarms">No alarms have been added yet. Click the "+" button below to add one!</string>
     <string name="notif_effects">Notification Effects</string>
