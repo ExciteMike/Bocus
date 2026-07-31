@@ -56,6 +56,9 @@ data class Message(
     val message: String,
 )
 
+/** a little glue to help Room generate a delete by id function */
+data class MessageListId(val id: Int)
+
 /**
  * Data access interface for message lists
  */
@@ -68,7 +71,7 @@ interface MessageListDao {
     suspend fun update(messageList: MessageList)
 
     @Delete(entity = MessageList::class)
-    suspend fun delete(messageList: MessageList)
+    suspend fun delete(id: MessageListId)
 
     @Query("SELECT * from message_lists")
     fun getAllMessageLists(): Flow<List<MessageList>>

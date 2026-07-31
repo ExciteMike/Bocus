@@ -49,7 +49,6 @@ fun BocusApp(
 ) {
     val uiState = viewModel.uiState.collectAsState().value
     val selectedAlarmIndex = uiState.selectedAlarmIndex
-    val alarms = viewModel.alarmState.collectAsState()
 
     if (uiState.errorMessage != null) {
         AlertDialog(
@@ -103,8 +102,10 @@ fun BocusApp(
         PermissionRequestFlow(activity, viewModel, permission, stringId)
     }
 
+    // TODO: this should be part of the alarms screen
+    val alarms = viewModel.alarmState.collectAsState().value
     AlarmDetailDialog(
-        alarms = alarms.value,
+        alarms = alarms,
         selectedAlarmIndex = selectedAlarmIndex,
         // TODO: this always reschedules! Could be smarter!
         updateAlarm = { viewModel.updateAlarmAndReschedule(it) },
@@ -118,8 +119,6 @@ fun BocusApp(
         Column(modifier = Modifier.padding(innerPadding)) {
             val navController = rememberNavController()
             var currentScreenIndex by rememberSaveable { mutableIntStateOf(INITIAL_APP_SCREEN.ordinal) }
-            val alarms = viewModel.alarmState.collectAsState()
-            val messageLists = viewModel.messageListState.collectAsState()
             BocusTabRow(
                 currentScreenIndex = currentScreenIndex,
                 onNav = {
@@ -127,20 +126,9 @@ fun BocusApp(
                     currentScreenIndex = it.ordinal
                 }
             )
-            val defaultAlarmName = stringResource(R.string.default_alarm_name)
             BocusNavHost(
                 navController = navController,
-                alarms = alarms.value,
-                messageLists = messageLists.value,
-                addAlarm = { viewModel.addAlarm(defaultAlarmName) },
-                openAlarmDetails = { viewModel.openAlarmDetails(it) },
-                requestDeleteAlarm = { message, onConfirm, onCancel ->
-                    viewModel.requestDeleteAlarm(
-                        message,
-                        onConfirm,
-                        onCancel
-                    )
-                }
+                viewModel = viewModel
             )
         }
 

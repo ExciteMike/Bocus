@@ -1,23 +1,26 @@
 package com.excitemike.bocus.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.util.Fx
 import com.excitemike.bocus.util.FxType
 import com.excitemike.bocus.R
+import kotlinx.coroutines.launch
 
 /**
  * A container that can be swiped to delete an item. Handles confirmation.
@@ -36,32 +40,38 @@ fun BocusSwipeToDismissBox(
     dismissConfirmPrompt: String,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
+    state: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) },
     onCancel: (() -> Unit)? = null,
     content: @Composable (RowScope.() -> Unit)
 ) {
-    var isConfirming by rememberSaveable { mutableStateOf(false) }
-    if (isConfirming) {
-        InlineConfirm(
-            modifier = modifier,
-            confirmPrompt = dismissConfirmPrompt,
-            confirmText = stringResource(R.string.confirm_button),
-            onConfirm = {
-                isConfirming = false
-                onConfirm()
-            },
-            cancelText = stringResource(R.string.cancel_button),
-            onCancel = {
-                isConfirming = false
-                if (onCancel != null) onCancel()
-            },
-            singleLine = false
-        )
-    } else {
+    val swipeToDismissState = rememberSwipeToDismissBoxState()
+    val scope = rememberCoroutineScope()
+    Box(modifier) {
         BocusSwipeToDismissBoxInner(
-            modifier = modifier,
-            onDismiss = { isConfirming = true },
+            swipeToDismissState = swipeToDismissState,
+            modifier = Modifier.align(Alignment.Center),
+            onDismiss = { state.value = true },
             content = content
         )
+        if (state.value) {
+            InlineConfirm(
+                modifier = Modifier.align(Alignment.Center),
+                confirmPrompt = dismissConfirmPrompt,
+                confirmText = stringResource(R.string.confirm_button),
+                onConfirm = {
+                    state.value = false
+                    scope.launch { swipeToDismissState.reset() }
+                    onConfirm()
+                },
+                cancelText = stringResource(R.string.cancel_button),
+                onCancel = {
+                    state.value = false
+                    scope.launch { swipeToDismissState.reset() }
+                    if (onCancel != null) onCancel()
+                },
+                singleLine = false
+            )
+        }
     }
 }
 
@@ -70,12 +80,12 @@ fun BocusSwipeToDismissBox(
  */
 @Composable
 private fun BocusSwipeToDismissBoxInner(
+    swipeToDismissState: SwipeToDismissBoxState,
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
     content: @Composable (RowScope.() -> Unit)
 ) {
     val context = LocalContext.current
-    val swipeToDismissState = rememberSwipeToDismissBoxState()
     val shape = MaterialTheme.shapes.medium
     SwipeToDismissBox(
         modifier = modifier,

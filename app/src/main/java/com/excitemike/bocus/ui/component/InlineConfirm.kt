@@ -4,6 +4,10 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,40 +21,55 @@ import com.excitemike.bocus.util.FxType
  */
 @Composable
 fun InlineConfirm(
-    modifier: Modifier,
     confirmPrompt: String,
     confirmText: String,
     onConfirm: () -> Unit,
     cancelText: String,
     onCancel: () -> Unit,
+    modifier: Modifier = Modifier,
     singleLine: Boolean = true
 ) {
     val context = LocalContext.current
     BackHandler {
-        Fx.buttonClickFx(context, FxType.BACK)
+        Fx.buttonClickFx(context, FxType.CANCEL)
         onCancel()
     }
 
-    if (singleLine) {
-        Row(
-            modifier = modifier,
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IcMessage(confirmPrompt)
-            IcCancel(cancelText, onCancel)
-            IcConfirm(confirmText, onConfirm)
-        }
-    } else {
-        Column(
-            modifier = modifier,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            IcMessage(confirmPrompt)
-            Row {
+    Surface(
+        modifier = modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.errorContainer,
+        contentColor = MaterialTheme.colorScheme.onErrorContainer,
+    ) {
+        if (singleLine) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IcMessage(confirmPrompt)
                 IcCancel(cancelText, onCancel)
                 IcConfirm(confirmText, onConfirm)
+            }
+        } else {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                IcMessage(confirmPrompt)
+                Row {
+                    Spacer(Modifier.weight(1f))
+                    IcCancel(
+                        cancelText,
+                        onCancel,
+                        modifier = Modifier.weight(4f)
+                    )
+                    Spacer(Modifier.weight(1f))
+                    IcConfirm(
+                        confirmText,
+                        onConfirm,
+                        modifier = Modifier.weight(4f)
+                    )
+                    Spacer(Modifier.weight(1f))
+                }
             }
         }
     }

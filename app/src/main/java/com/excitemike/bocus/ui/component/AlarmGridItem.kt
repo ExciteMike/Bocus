@@ -18,7 +18,9 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,7 +41,8 @@ fun AlarmGridItem(
     alarm: Alarm,
     allAlarms: List<Alarm>,
     openAlarmDetails: (Int) -> Unit,
-    requestDeleteAlarm: (String, Command, Command) -> Unit
+    requestDeleteAlarm: (String, Command, Command) -> Unit,
+    deleteAlarmById: (Int) -> Unit
 ) {
     val context = LocalContext.current
     val index = lazy { allAlarms.indexOfFirst { alarm.id == it.id } }
@@ -59,57 +62,14 @@ fun AlarmGridItem(
             Command.Callback { scope.launch { swipeToDismissState.reset() } }
         )
     }
-    SwipeToDismissBox(
-        modifier = modifier,
-        state = swipeToDismissState,
-        backgroundContent = {
-            val deleteColor = MaterialTheme.colorScheme.errorContainer
-            val bgColor =
-                if (swipeToDismissState.targetValue == SwipeToDismissBoxValue.Settled) {
-                    Color.Transparent
-                } else {
-                    deleteColor
-                }
-
-            Row(
-                Modifier
-                    .padding(4.dp)
-                    .background(
-                        color = bgColor,
-                        shape = shape,
-                    ),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (swipeToDismissState.targetValue != SwipeToDismissBoxValue.EndToStart) {
-                    Icon(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                } else {
-                    Spacer(Modifier.weight(1f))
-                }
-                if (swipeToDismissState.targetValue != SwipeToDismissBoxValue.StartToEnd) {
-                    Icon(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                } else {
-                    Spacer(Modifier.weight(1f))
-                }
-            }
-        },
-        onDismiss = {
-            Fx.buttonClickFx(context, FxType.SWISH)
-            requestDeleteThisItem()
-        }
+    val confirmFormat = stringResource(R.string.confirm_delete_alarm)
+    val confirmPrompt = String.format(confirmFormat, alarm.name)
+    val isConfirming = rememberSaveable{ mutableStateOf(false) }
+    BocusSwipeToDismissBox(
+        dismissConfirmPrompt = confirmPrompt,
+        onConfirm = { deleteAlarmById(alarm.id!!) },
+        modifier = modifier.padding(end = 8.dp),
+        state = isConfirming
     ) {
         Card(
             modifier = Modifier
@@ -138,7 +98,7 @@ fun AlarmGridItem(
 
                     }
                     BocusIconButton(
-                        onClick = { requestDeleteThisItem() },
+                        onClick = { isConfirming.value = true },
                         fx = FxType.NORMAL
                     ) {
                         Icon(

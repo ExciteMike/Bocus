@@ -10,24 +10,4 @@ interface BocusRepository {
     suspend fun updateAlarm(alarm: Alarm)
     suspend fun getAlarm(id: Int): Alarm?
     suspend fun getAllAlarmsRaw(): List<Alarm>
-
-    /**
-     * data stream for message lists
-     */
-    fun getAllMessageListsStream(): Flow<List<MessageList>>
-
-    /**
-     * get a message from the DB (or null, if the id is no good)
-     */
-    suspend fun getMessageList(id: Int): MessageList?
-
-    /**
-     * get all messages in a list
-     */
-    suspend fun getAllMessagesInList(messageListId: Int): List<Message>
-
-    /**
-     * get messages by id (or null, if id is no good)
-     */
-    suspend fun getMessage(messageId: Int): Message?
 }

@@ -36,8 +36,7 @@ fun Modifier.verticalScrollbar(
     state: LazyGridState,
 ): Modifier {
     val indicatorState = state.scrollIndicatorState ?: return this
-    val maxOffset = indicatorState.contentSize - indicatorState.viewportSize
-    if (maxOffset <= 0) return this
+    val maxOffset = max(0, indicatorState.contentSize - indicatorState.viewportSize)
     return scrollbar(
         state.isScrollInProgress,
         indicatorState.scrollOffset,

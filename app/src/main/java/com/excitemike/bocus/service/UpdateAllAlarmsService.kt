@@ -19,8 +19,6 @@ class UpdateAllAlarmsService : Service() {
         }
         val repo = OfflineBocusRepository(
             AlarmDatabase.getDatabase(application).alarmDao(),
-            AlarmDatabase.getDatabase(application).messageListDao(),
-            AlarmDatabase.getDatabase(application).messageDao(),
         )
         val job = SupervisorJob()
         val scope = CoroutineScope(Dispatchers.IO + job)

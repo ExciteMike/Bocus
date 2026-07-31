@@ -10,6 +10,7 @@ import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.data.Command
 import com.excitemike.bocus.data.MessageList
+import com.excitemike.bocus.data.MessageListId
 import com.excitemike.bocus.data.OfflineBocusRepository
 import com.excitemike.bocus.data.cancelSystemAlarm
 import com.excitemike.bocus.data.checkSystemPermission
@@ -26,16 +27,15 @@ import kotlinx.coroutines.launch
 class BocusViewModel(application: Application) : AndroidViewModel(application) {
     val repo = OfflineBocusRepository(
         AlarmDatabase.getDatabase(application).alarmDao(),
-        AlarmDatabase.getDatabase(application).messageListDao(),
-        AlarmDatabase.getDatabase(application).messageDao(),
     )
+    val messageListDao = AlarmDatabase.getDatabase(application).messageListDao()
     val alarmState: StateFlow<List<Alarm>> = repo.getAllAlarmsStream()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
             initialValue = listOf()
         )
-    val messageListState: StateFlow<List<MessageList>> = repo.getAllMessageListsStream()
+    val messageListState: StateFlow<List<MessageList>> = messageListDao.getAllMessageLists()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
@@ -59,6 +59,23 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
             }
         } else {
             setErrorMessage(application.getString(R.string.alarm_limit))
+        }
+    }
+
+    /**
+     * insert a new message list
+     */
+    fun addMessageList(name: String) {
+        val context: Application = getApplication()
+        val dao = AlarmDatabase.getDatabase(context).messageListDao()
+        val size = messageListState.value.size
+        if (size < MAX_MESSAGE_LISTS) {
+            val messageList = MessageList(name = name)
+            viewModelScope.launch {
+                dao.insert(messageList)
+            }
+        } else {
+            setErrorMessage(context.getString(R.string.message_list_limit))
         }
     }
 
@@ -90,6 +107,15 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
         cancelSystemAlarm(getApplication(), id)
         viewModelScope.launch {
             repo.deleteAlarm(id)
+        }
+    }
+
+    /**
+     * remove a message list from the DB
+     */
+    fun deleteMessageListById(id: Int) {
+        viewModelScope.launch {
+            messageListDao.delete(MessageListId(id))
         }
     }
 
@@ -184,6 +210,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
 
     companion object {
         const val MAX_ALARMS = 255
+        const val MAX_MESSAGE_LISTS = 255
         const val TIMEOUT_MILLIS = 5_000L
     }
 }

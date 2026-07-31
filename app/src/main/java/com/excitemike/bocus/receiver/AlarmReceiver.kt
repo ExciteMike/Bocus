@@ -144,8 +144,6 @@ class AlarmReceiver : BroadcastReceiver() {
         // schedule the next occurrence, if it hasn't been deleted
         val repo = OfflineBocusRepository(
             AlarmDatabase.getDatabase(context).alarmDao(),
-            AlarmDatabase.getDatabase(context).messageListDao(),
-            AlarmDatabase.getDatabase(context).messageDao(),
         )
         val job = SupervisorJob()
         val scope = CoroutineScope(Dispatchers.IO + job)

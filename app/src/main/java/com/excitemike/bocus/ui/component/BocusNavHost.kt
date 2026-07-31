@@ -6,11 +6,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AppScreens
-import com.excitemike.bocus.data.Command
 import com.excitemike.bocus.data.INITIAL_APP_SCREEN
-import com.excitemike.bocus.data.MessageList
+import com.excitemike.bocus.ui.BocusViewModel
 import com.excitemike.bocus.ui.screen.AboutScreen
 import com.excitemike.bocus.ui.screen.AlarmScreen
 import com.excitemike.bocus.ui.screen.MessageListScreen
@@ -18,13 +16,7 @@ import com.excitemike.bocus.ui.screen.MessageListScreen
 @Composable
 fun BocusNavHost(
     navController: NavHostController,
-    alarms: List<Alarm>,
-    messageLists: List<MessageList>,
-    addAlarm: () -> Unit,
-    openAlarmDetails: (Int) -> Unit,
-    requestDeleteAlarm: (String, Command, Command) -> Unit,
-    addMessageList: () -> Unit,
-    deleteMessageList: (Int) -> Unit
+    viewModel: BocusViewModel,
 ) {
     NavHost(
         navController,
@@ -39,17 +31,12 @@ fun BocusNavHost(
 
                     AppScreens.MESSAGE_LISTS -> MessageListScreen(
                         modifier = Modifier.fillMaxSize(),
-                        messageLists = messageLists,
-                        addMessageList = addMessageList,
-                        deleteMessageList = deleteMessageList
+                        viewModel = viewModel,
                     )
 
                     AppScreens.ALARMS -> AlarmScreen(
                         modifier = Modifier.fillMaxSize(),
-                        alarms = alarms,
-                        addAlarm = addAlarm,
-                        openAlarmDetails = openAlarmDetails,
-                        requestDeleteAlarm = requestDeleteAlarm,
+                        viewModel = viewModel,
                     )
                 }
             }

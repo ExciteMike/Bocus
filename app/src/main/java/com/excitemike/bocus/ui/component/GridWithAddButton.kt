@@ -81,7 +81,7 @@ fun <T> GridWithAddButton(
         BocusButton(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(horizontal = 8.dp),
             onClick = onAdd,
             fx = FxType.CONFIRM
         ) {
