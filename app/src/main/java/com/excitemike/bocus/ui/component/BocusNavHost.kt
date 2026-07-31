@@ -22,7 +22,9 @@ fun BocusNavHost(
     messageLists: List<MessageList>,
     addAlarm: () -> Unit,
     openAlarmDetails: (Int) -> Unit,
-    requestDeleteAlarm: (String, Command, Command) -> Unit
+    requestDeleteAlarm: (String, Command, Command) -> Unit,
+    addMessageList: () -> Unit,
+    deleteMessageList: (Int) -> Unit
 ) {
     NavHost(
         navController,
@@ -37,7 +39,9 @@ fun BocusNavHost(
 
                     AppScreens.MESSAGE_LISTS -> MessageListScreen(
                         modifier = Modifier.fillMaxSize(),
-                        messageLists
+                        messageLists = messageLists,
+                        addMessageList = addMessageList,
+                        deleteMessageList = deleteMessageList
                     )
 
                     AppScreens.ALARMS -> AlarmScreen(

@@ -193,7 +193,7 @@ data class BocusUiState(
     /// Error Message
     var errorMessage: String? = null,
     /// Confirmation Popup Message
-    var confirmMessage: String? = null,
+    var confirmMessage: String? = null, // TODO: make these internal to the item that needs the confirmation
     /// Confirmation Popup Action
     var onConfirm: Command = Command.None,
     /// Confirmation Popup Cancel Action
