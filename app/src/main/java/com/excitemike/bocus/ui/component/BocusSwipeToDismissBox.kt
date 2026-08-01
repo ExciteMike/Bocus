@@ -108,30 +108,14 @@ private fun BocusSwipeToDismissBoxInner(
                     ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (swipeToDismissState.targetValue != SwipeToDismissBoxValue.EndToStart) {
-                    Icon(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                } else {
-                    Spacer(Modifier.weight(1f))
-                }
-                if (swipeToDismissState.targetValue != SwipeToDismissBoxValue.StartToEnd) {
-                    Icon(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                } else {
-                    Spacer(Modifier.weight(1f))
-                }
+                Icon(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onErrorContainer
+                )
             }
         },
         onDismiss = {
