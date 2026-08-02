@@ -48,7 +48,6 @@ fun BocusApp(
     viewModel: BocusViewModel,
 ) {
     val uiState = viewModel.uiState.collectAsState().value
-    val selectedAlarmIndex = uiState.selectedAlarmIndex
 
     if (uiState.errorMessage != null) {
         AlertDialog(
@@ -101,16 +100,6 @@ fun BocusApp(
     for ((permission, stringId) in allPermissions) {
         PermissionRequestFlow(activity, viewModel, permission, stringId)
     }
-
-    // TODO: this should be part of the alarms screen
-    val alarms = viewModel.alarmState.collectAsState().value
-    AlarmDetailDialog(
-        alarms = alarms,
-        selectedAlarmIndex = selectedAlarmIndex,
-        // TODO: this always reschedules! Could be smarter!
-        updateAlarm = { viewModel.updateAlarmAndReschedule(it) },
-        closeAlarmDetails = { viewModel.closeAlarmDetails() }
-    )
 
     Scaffold(
         modifier = modifier,

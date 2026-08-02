@@ -156,6 +156,22 @@ fun getNextAlarmTime(alarm: Alarm): Long {
 fun getSystemPermissionsNeeded(): List<Pair<String, Int>> = PERMISSIONS
 
 /**
+ * choose the message to display for the given alarm
+ */
+fun chooseMessage(context: Context, alarm: Alarm): String {
+    try {
+        val db = AlarmDatabase.getDatabase(context)
+        if (alarm.messageListId == null) return ""
+        val messages = db.messageListDao().getMessagesInListRaw(alarm.messageListId)
+        if (messages.isEmpty()) return ""
+        val index = Random.nextInt(messages.size)
+        return messages[index].message
+    } catch (_: Exception) {
+        return ""
+    }
+}
+
+/**
  * SET SCHEDULEDAT BEFORE SENDING THE ALARM!
  * If the alarm is already scheduled, cancel it. Then schedule one based on the given Alarm and its scheduledAt field
  */
@@ -166,14 +182,14 @@ fun scheduleSystemAlarm(context: Context, alarm: Alarm) {
         Log.v("Bocus", "can't schedule")
         return
     }
-
+    val message = chooseMessage(context, alarm)
     val pendingIntent = PendingIntent.getBroadcast(
         context,
         alarm.id!!,
         Intent(context, AlarmReceiver::class.java).apply {
             action = AlarmReceiver.PLAY_ALARM_ACTION
             putExtra(AlarmReceiver.EXTRA_NAME_TITLE, alarm.name)
-            putExtra(AlarmReceiver.EXTRA_NAME_MESSAGE, alarm.message)
+            putExtra(AlarmReceiver.EXTRA_NAME_MESSAGE, message)
             putExtra(AlarmReceiver.EXTRA_NAME_ALARM_ID, alarm.id)
             putExtra(AlarmReceiver.EXTRA_NAME_ALARM_NOTIF_FX, alarm.notifMode)
         },

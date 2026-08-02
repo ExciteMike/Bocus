@@ -77,10 +77,13 @@ interface MessageListDao {
     fun getAllMessageLists(): Flow<List<MessageList>>
 
     @Query("SELECT * from message_lists WHERE id = :id")
-    fun getMessageList(id: Int): MessageList?
+    fun getMessageList(id: Int): Flow<MessageList?>
 
     @Query("SELECT * from messages WHERE message_list_id = :id")
-    fun getMessagesInList(id: Int): List<Message>
+    fun getMessagesInList(id: Int): Flow<List<Message>>
+
+    @Query("SELECT * from messages WHERE message_list_id = :id")
+    fun getMessagesInListRaw(id: Int): List<Message>
 }
 
 /**

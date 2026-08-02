@@ -32,39 +32,55 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
+import com.excitemike.bocus.data.AlarmDetailsMessages
 import com.excitemike.bocus.data.AlarmLimits
+import com.excitemike.bocus.data.MessageList
+import com.excitemike.bocus.ui.dialog.ChooseMessageListDialog
 import com.excitemike.bocus.ui.modifier.verticalScrollbar
 import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.ui.component.DaysOfWeek
 import com.excitemike.bocus.ui.component.MinMax
 import com.excitemike.bocus.ui.component.NotifMode
 import com.excitemike.bocus.ui.component.TimeAccordion
+import com.excitemike.bocus.ui.dialog.rememberBocusDialogState
 import com.excitemike.bocus.util.Fx
 import com.excitemike.bocus.util.FxType
 
+// TODO: use bocus dialog
 @Composable
 fun AlarmDetailDialog(
     alarms: List<Alarm>,
+    messageLists: List<MessageList>,
     selectedAlarmIndex: Int?,
+    getMessageListById: @Composable (Int) -> MessageList?,
     updateAlarm: (alarm: Alarm) -> Unit,
     closeAlarmDetails: () -> Unit,
 ) {
-    val context = LocalContext.current
     if (selectedAlarmIndex != null) {
         if (selectedAlarmIndex in alarms.indices) {
-            BackHandler {
-                Fx.buttonClickFx(context, FxType.BACK)
-                closeAlarmDetails()
-            }
+            val selectedAlarm = alarms[selectedAlarmIndex]
+
+            val chooseMsgDlgState = rememberBocusDialogState()
+            ChooseMessageListDialog(
+                messageLists = messageLists,
+                state = chooseMsgDlgState,
+                onChooseMessageList = { messageListId ->
+
+                }
+            )
+
+            val context = LocalContext.current
             AlarmDetailDialogInner(
-                alarm = alarms[selectedAlarmIndex],
+                alarm = selectedAlarm,
+                getMessageListById = getMessageListById,
                 updateAlarm = updateAlarm,
                 close = {
                     if (it) {
                         Fx.buttonClickFx(context, FxType.BACK)
                     }
                     closeAlarmDetails()
-                }
+                },
+                openChooseMessageList = { chooseMsgDlgState.isOpen = true }
             )
         } else {
             closeAlarmDetails()
@@ -73,11 +89,18 @@ fun AlarmDetailDialog(
 }
 
 @Composable
-fun AlarmDetailDialogInner(
+private fun AlarmDetailDialogInner(
     alarm: Alarm,
+    getMessageListById: @Composable (Int) -> MessageList?,
     updateAlarm: (Alarm) -> Unit,
-    close: (Boolean) -> Unit
+    close: (Boolean) -> Unit,
+    openChooseMessageList: () -> Unit
 ) {
+    val context = LocalContext.current
+    BackHandler {
+        Fx.buttonClickFx(context, FxType.BACK)
+        close(false)
+    }
     Dialog(
         onDismissRequest = { close(true) },
     ) {
@@ -93,7 +116,13 @@ fun AlarmDetailDialogInner(
                     style = MaterialTheme.typography.titleLarge
                 )
 
-                AlarmDetailControls(modifier = Modifier.weight(1f), alarm, updateAlarm)
+                AlarmDetailControls(
+                    modifier = Modifier.weight(1f),
+                    alarm = alarm,
+                    getMessageListById = getMessageListById,
+                    updateAlarm = updateAlarm,
+                    openChooseMessageList = openChooseMessageList
+                )
 
                 BocusButton(
                     onClick = { close(false) },
@@ -109,10 +138,12 @@ fun AlarmDetailDialogInner(
 @SuppressLint("FrequentlyChangingValue")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlarmDetailControls(
+private fun AlarmDetailControls(
     modifier: Modifier,
     alarm: Alarm,
+    getMessageListById: @Composable (Int) -> MessageList?,
     updateAlarm: (Alarm) -> Unit,
+    openChooseMessageList: () -> Unit
 ) {
     val context = LocalContext.current
     val fillMaxWidth = Modifier.fillMaxWidth()
@@ -166,17 +197,15 @@ fun AlarmDetailControls(
             lineLimits = TextFieldLineLimits.SingleLine
         )
 
-        TextField(
+        val currentMessageList = if (alarm.messageListId == null) {
+            null
+        } else {
+            getMessageListById(alarm.messageListId)
+        }
+        AlarmDetailsMessages(
+            currentMessageList = currentMessageList,
+            openChooseMessageList = openChooseMessageList,
             modifier = fillMaxWidth,
-            state = rememberTextFieldState(alarm.message),
-            inputTransformation = InputTransformation
-                .maxLength(AlarmLimits.MESSAGE_LEN_MAX)
-                .then {
-                    Fx.buttonClickFx(context, FxType.EDIT)
-                    updateAlarm(alarm.copy(message = this.toString()))
-                },
-            label = { Text(stringResource(R.string.alarm_message_label)) },
-            lineLimits = TextFieldLineLimits.SingleLine
         )
 
         // Frequencies

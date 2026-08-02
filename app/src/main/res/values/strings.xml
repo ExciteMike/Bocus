@@ -10,6 +10,7 @@
     <string name="app_name">Bocus</string>
     <string name="alarm_limit">Maximum number of alarms reached</string>
     <string name="cancel_button">Cancel</string>
+    <string name="choose_message_list">Choose Message List</string>
     <string name="close">Close</string>
     <string name="confirm_button">Confirm</string>
     <string name="confirm_delete_alarm">Delete alarm \"%1$s?\"</string>
@@ -37,11 +38,13 @@
     <string name="frequency">Frequency (minutes)</string>
     <string name="go_to_settings">Go to settings</string>
     <string name="maximum">Maximum</string>
+    <string name="message_list_label">Message List</string>
     <string name="message_list_limit">Maximum number of message lists reached</string>
     <string name="message_list_tab">Messages</string>
     <string name="minimum">Minimum</string>
     <string name="no_alarms">No alarms have been added yet. Use the button below to add one!</string>
     <string name="no_message_lists">No message lists have been added yet. Use the button below to add one!</string>
+    <string name="no_message_list_selected">&lt;none&gt;</string>
     <string name="notif_effects">Notification Effects</string>
     <string name="ok">OK</string>
     <string name="on">on</string>

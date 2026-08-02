@@ -64,7 +64,7 @@ fun <T> GridWithAddButton(
                         .padding(top = 8.dp, bottom = 8.dp, end = 4.dp)
                         .verticalScrollbar(gridState),
                     state = gridState,
-                    columns = GridCells.Adaptive(200.dp),
+                    columns = GridCells.Adaptive(216.dp),
                     verticalArrangement = Arrangement.Top,
                     horizontalArrangement = Arrangement.Center,
                 ) {

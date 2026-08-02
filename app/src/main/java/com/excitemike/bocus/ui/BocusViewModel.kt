@@ -8,10 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDatabase
+import com.excitemike.bocus.data.AlarmId
 import com.excitemike.bocus.data.Command
+import com.excitemike.bocus.data.Message
 import com.excitemike.bocus.data.MessageList
 import com.excitemike.bocus.data.MessageListId
-import com.excitemike.bocus.data.OfflineBocusRepository
 import com.excitemike.bocus.data.cancelSystemAlarm
 import com.excitemike.bocus.data.checkSystemPermission
 import com.excitemike.bocus.data.getNextAlarmTime
@@ -25,11 +26,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class BocusViewModel(application: Application) : AndroidViewModel(application) {
-    val repo = OfflineBocusRepository(
-        AlarmDatabase.getDatabase(application).alarmDao(),
-    )
-    val messageListDao = AlarmDatabase.getDatabase(application).messageListDao()
-    val alarmState: StateFlow<List<Alarm>> = repo.getAllAlarmsStream()
+    val alarmDao = AlarmDatabase.getDatabase(application).alarmDao()
+    private val messageListDao = AlarmDatabase.getDatabase(application).messageListDao()
+    private val messageDao = AlarmDatabase.getDatabase(application).messageDao()
+    val alarmState: StateFlow<List<Alarm>> = alarmDao.getAllAlarms()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
@@ -53,7 +53,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
             val tmpAlarm = Alarm(name = name)
             val alarm = tmpAlarm.copy(scheduledAt = getNextAlarmTime(tmpAlarm))
             viewModelScope.launch {
-                val id = repo.insertAlarm(alarm)
+                val id = alarmDao.insert(alarm).toInt()
                 val alarm = alarm.copy(id = id)
                 scheduleSystemAlarm(application, alarm)
             }
@@ -86,11 +86,6 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
         return checkSystemPermission(activity, permission)
     }
 
-    /** close the alarm details */
-    fun closeAlarmDetails() {
-        _uiState.update { it.copy(selectedAlarmIndex = null) }
-    }
-
     /** close and clean up after the confirmation dialog */
     private fun closeConfirmDlg() {
         _uiState.update {
@@ -103,10 +98,10 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /** delete an alarm by id */
-    fun deleteAlarmById(id: Int) {
-        cancelSystemAlarm(getApplication(), id)
+    fun deleteAlarmById(alarmId: Int) {
+        cancelSystemAlarm(getApplication(), alarmId)
         viewModelScope.launch {
-            repo.deleteAlarm(id)
+            alarmDao.delete(AlarmId(alarmId))
         }
     }
 
@@ -146,6 +141,30 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
+     * look up a MessageList by id
+     */
+    fun getMessageListById(messageListId: Int): StateFlow<MessageList?> {
+        return messageListDao.getMessageList(messageListId)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+                initialValue = null
+            )
+    }
+
+    /**
+     * get the Messages in a MessageList
+     */
+    fun getMessages(messageListId: Int): StateFlow<List<Message>> {
+        return messageListDao.getMessagesInList(messageListId)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+                initialValue = listOf()
+            )
+    }
+
+    /**
      * figure out what permissions the app needs
      */
     fun getSystemPermissionsNeeded(): List<Pair<String, Int>> {
@@ -157,26 +176,6 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
         val command = _uiState.value.onConfirm
         closeConfirmDlg()
         doCommand(command)
-    }
-
-    /** bring up the alarm details for editing  */
-    fun openAlarmDetails(selectedAlarmIndex: Int) {
-        _uiState.update { it.copy(selectedAlarmIndex = selectedAlarmIndex) }
-    }
-
-    /** bring up a confirmation dialog for deleting an alarm */
-    fun requestDeleteAlarm(
-        confirmMessage: String,
-        onConfirm: Command,
-        onCancel: Command
-    ) {
-        _uiState.update {
-            it.copy(
-                confirmMessage = confirmMessage,
-                onConfirm = onConfirm,
-                onConfirmCancel = onCancel
-            )
-        }
     }
 
     /** start showing the error message popup */
@@ -195,7 +194,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     fun updateAlarmAndReschedule(alarm: Alarm) {
         val application: Application = getApplication()
         viewModelScope.launch {
-            repo.updateAlarm(alarm)
+            alarmDao.update(alarm)
             val newAlarm = alarm.copy(scheduledAt = getNextAlarmTime(alarm))
             scheduleSystemAlarm(application, newAlarm)
         }
@@ -204,13 +203,16 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     /** update the values in an alarm */
     fun updateAlarmNoReschedule(alarm: Alarm) {
         viewModelScope.launch {
-            repo.updateAlarm(alarm)
+            alarmDao.update(alarm)
         }
     }
 
     companion object {
         const val MAX_ALARMS = 255
         const val MAX_MESSAGE_LISTS = 255
+        const val MAX_MESSAGES_PER_LIST = 255
+        const val MAX_NAME_LEN = 255
+        const val MAX_MESSAGE_LEN = 255
         const val TIMEOUT_MILLIS = 5_000L
     }
 }
@@ -225,6 +227,4 @@ data class BocusUiState(
     var onConfirm: Command = Command.None,
     /// Confirmation Popup Cancel Action
     var onConfirmCancel: Command = Command.None,
-    /// index of the selected alarm
-    var selectedAlarmIndex: Int? = null,
 )

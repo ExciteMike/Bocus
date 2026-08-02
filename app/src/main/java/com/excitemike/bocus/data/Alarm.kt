@@ -54,8 +54,8 @@ data class Alarm(
     val notifMode: Int = AlarmNotifMode.DEFAULT,
 
     /** what to say in the notification */
-    @ColumnInfo(name = "message")
-    val message: String = "",
+    @ColumnInfo(name = "message_list_id")
+    val messageListId: Int? = -1,
 
     /** repeat on which days of the week, (bitflags) */
     @ColumnInfo(name = "active_days")
@@ -98,7 +98,6 @@ object AlarmDefaults {
 /** limiting values associated with alarms */
 object AlarmLimits {
     const val NAME_LEN_MAX = 255
-    const val MESSAGE_LEN_MAX = 255
 }
 
 /** possibilities for alarm notification mode */
