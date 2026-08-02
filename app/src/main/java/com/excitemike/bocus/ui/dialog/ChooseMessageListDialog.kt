@@ -1,8 +1,20 @@
 package com.excitemike.bocus.ui.dialog
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.excitemike.bocus.R
 import com.excitemike.bocus.data.MessageList
+import com.excitemike.bocus.ui.component.BocusTextButton
+import com.excitemike.bocus.util.FxType
 
 
 /**
@@ -19,7 +31,29 @@ fun ChooseMessageListDialog(
     state: BocusDialogState = rememberBocusDialogState(false),
     onChooseMessageList: (Int) -> Unit,
 ) {
-    BocusDialog(state) {
-
+    BocusDialog(
+        title = stringResource(R.string.choose_message_list),
+        state
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .padding(start = 8.dp, end = 4.dp, top = 8.dp, bottom = 8.dp)
+                .imePadding(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            items(
+                count = messageLists.size,
+                key = { messageLists[it].id!! },
+            ) {
+                val messageList = messageLists[it]
+                BocusTextButton(
+                    text = messageList.name,
+                    onClick = {
+                        onChooseMessageList(messageList.id!!)
+                        state.isOpen = false
+                    },
+                    fx = FxType.NORMAL)
+            }
+        }
     }
 }

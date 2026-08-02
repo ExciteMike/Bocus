@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Button
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -60,5 +62,30 @@ fun BocusIconButton(
         shape = shape,
     ) {
         content()
+    }
+}
+
+/**
+ * custom button to add our style and click fx
+ */
+@Composable
+fun BocusTextButton(
+    text: String,
+    onClick: () -> Unit,
+    fx: FxType,
+    modifier: Modifier = Modifier,
+) {
+    val shape = MaterialTheme.shapes.medium
+    val context = LocalContext.current
+
+    TextButton(
+        modifier = modifier,
+        onClick = {
+            Fx.buttonClickFx(context, fx)
+            onClick()
+        },
+        shape = shape,
+    ) {
+        Text(text = text)
     }
 }

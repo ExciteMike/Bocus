@@ -2,6 +2,8 @@ package com.excitemike.bocus.ui.dialog
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
@@ -9,8 +11,13 @@ import androidx.compose.runtime.annotation.RememberInComposition
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
+import com.excitemike.bocus.R
+import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.util.Fx
 import com.excitemike.bocus.util.FxType
 
@@ -76,6 +83,7 @@ fun rememberBocusDialogState(
  */
 @Composable
 fun BocusDialog(
+    title: String,
     state: BocusDialogState = rememberBocusDialogState(false),
     content: @Composable () -> Unit
 ) {
@@ -91,7 +99,20 @@ fun BocusDialog(
         onDismissRequest = { state.isOpen = false },
     ) {
         Card {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge
+            )
+
             content()
+
+            BocusButton(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                onClick = { state.isOpen = false },
+                fx = FxType.CONFIRM
+            ) {
+                Text(text = stringResource(R.string.done))
+            }
         }
     }
 }
