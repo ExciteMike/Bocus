@@ -1,11 +1,8 @@
 package com.excitemike.bocus.ui.dialog
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +33,7 @@ fun ChooseMessageListDialog(
         state
     ) {
         LazyColumn(
-            modifier = Modifier
+            modifier = modifier
                 .padding(start = 8.dp, end = 4.dp, top = 8.dp, bottom = 8.dp)
                 .imePadding(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -52,7 +49,8 @@ fun ChooseMessageListDialog(
                         onChooseMessageList(messageList.id!!)
                         state.isOpen = false
                     },
-                    fx = FxType.NORMAL)
+                    fx = FxType.NORMAL
+                )
             }
         }
     }

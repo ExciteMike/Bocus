@@ -65,7 +65,7 @@ fun AlarmDetailDialog(
                 messageLists = messageLists,
                 state = chooseMsgDlgState,
                 onChooseMessageList = { messageListId ->
-
+                    updateAlarm(selectedAlarm.copy(messageListId = messageListId))
                 }
             )
 
