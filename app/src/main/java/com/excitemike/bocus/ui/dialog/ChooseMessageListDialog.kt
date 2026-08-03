@@ -18,19 +18,20 @@ import com.excitemike.bocus.util.FxType
  * Dialog for choosing a message list
  *
  * @param messageLists message lists to choose from
- * @param state [BocusDialogState] object that holds the internal state of this component
+ * @param modifier the Modifier for this Composable
+ * @param close Called to notify the caller to stop showing the dialog
  * @param onChooseMessageList callback sending the id when the user selects a [com.excitemike.bocus.data.MessageList]
  */
 @Composable
 fun ChooseMessageListDialog(
     messageLists: List<MessageList>,
     modifier: Modifier = Modifier,
-    state: BocusDialogState = rememberBocusDialogState(false),
+    close: () -> Unit,
     onChooseMessageList: (Long) -> Unit,
 ) {
     BocusDialog(
         title = stringResource(R.string.choose_message_list),
-        state
+        close = close
     ) {
         LazyColumn(
             modifier = modifier
@@ -47,7 +48,7 @@ fun ChooseMessageListDialog(
                     text = messageList.name,
                     onClick = {
                         onChooseMessageList(messageList.id!!)
-                        state.isOpen = false
+                        close()
                     },
                     fx = FxType.NORMAL
                 )

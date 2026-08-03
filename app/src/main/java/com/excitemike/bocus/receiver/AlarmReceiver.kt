@@ -12,6 +12,7 @@ import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.VibratorManager
 import android.provider.Settings
+import androidx.compose.runtime.collectAsState
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -145,7 +146,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val job = SupervisorJob()
         val scope = CoroutineScope(Dispatchers.IO + job)
         scope.launch {
-            val alarm = alarmDao.getAlarm(alarmId)
+            val alarm = alarmDao.getAlarmRaw(alarmId)
             if (alarm != null) {
                 val newAlarm = alarm.copy(scheduledAt = getNextAlarmTime(alarm))
                 scheduleSystemAlarm(context, newAlarm)

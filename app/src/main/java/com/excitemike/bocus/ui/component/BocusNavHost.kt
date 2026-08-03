@@ -16,12 +16,14 @@ import com.excitemike.bocus.ui.BocusViewModel
 import com.excitemike.bocus.ui.screen.AboutScreen
 import com.excitemike.bocus.ui.screen.AlarmScreen
 import com.excitemike.bocus.ui.screen.MessageListScreen
+import com.excitemike.bocus.ui.viewmodel.AlarmScreenViewModel
 import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
 
 @Composable
 fun BocusNavHost(
     navController: NavHostController,
-    viewModel: BocusViewModel,
+    viewModel: BocusViewModel, // TODO: other viewmodels should take this one's responsibilities here
+    alarmScreenViewModel: AlarmScreenViewModel,
     messageListScreenViewModel: MessageListScreenViewModel,
 ) {
     NavHost(
@@ -52,6 +54,7 @@ fun BocusNavHost(
                         val alarms = viewModel.alarmState.collectAsState().value
                         val messageLists = viewModel.messageListState.collectAsState().value
                         AlarmScreen(
+                            alarmScreenViewModel = alarmScreenViewModel,
                             alarms = alarms,
                             messageLists = messageLists,
                             addAlarm = addAlarm,

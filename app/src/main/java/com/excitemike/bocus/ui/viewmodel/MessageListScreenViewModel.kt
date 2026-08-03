@@ -64,14 +64,14 @@ class MessageListScreenViewModel(
     /**
      * clear out the message data
      */
-    fun clearScreenData() {
+    fun clearMessageList() {
         selectedMessageListId.value = null
     }
 
     /**
      * load a new set of messages
      */
-    fun loadScreenData(messageListId: Long) {
+    fun loadMessageList(messageListId: Long) {
         selectedMessageListId.value = messageListId
     }
 }

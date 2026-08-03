@@ -3,72 +3,17 @@ package com.excitemike.bocus.ui.screen
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.annotation.RememberInComposition
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.SaverScope
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.MessageList
-import com.excitemike.bocus.ui.AlarmDetailDialog
+import com.excitemike.bocus.ui.dialog.AlarmDetailDialog
 import com.excitemike.bocus.ui.component.AlarmGridItem
 import com.excitemike.bocus.ui.component.GridWithAddButton
-
-
-/**
- * AlarmScreenUiState
- */
-@Stable
-class AlarmScreenUiState {
-    @RememberInComposition
-    constructor(initialSelectedAlarmIndex: Int? = null) {
-        this.selectedAlarmBacking = mutableStateOf(initialSelectedAlarmIndex)
-    }
-
-    private var selectedAlarmBacking: MutableState<Int?>
-
-    /**
-     * index of the selected alarm, or null
-     */
-    var selectedAlarmIndex: Int?
-        get() = selectedAlarmBacking.value
-        set(value) {
-            selectedAlarmBacking.value = value
-        }
-
-    /**
-     * Saves and restores a [AlarmScreenUiState] for  [rememberSaveable]
-     */
-    @Suppress("RedundantNullableReturnType")
-    object Saver : androidx.compose.runtime.saveable.Saver<AlarmScreenUiState, Any> {
-
-        override fun SaverScope.save(value: AlarmScreenUiState): Any? {
-            return listOf(
-                value.selectedAlarmIndex,
-            )
-        }
-
-        override fun restore(value: Any): AlarmScreenUiState? {
-            val (selectedAlarmIndex) = value as List<*>
-            return AlarmScreenUiState(
-                initialSelectedAlarmIndex = selectedAlarmIndex as Int?,
-            )
-        }
-    }
-}
-
-/**
- * create and remember a [AlarmScreenUiState].
- * The state is remembered using [rememberSaveable] and so will be saved and restored with the composition.
- */
-@Composable
-fun rememberAlarmScreenUiState(): AlarmScreenUiState =
-    rememberSaveable(saver = AlarmScreenUiState.Saver) { AlarmScreenUiState() }
+import com.excitemike.bocus.ui.viewmodel.AlarmScreenViewModel
 
 @Composable
 fun AlarmScreen(
@@ -77,21 +22,22 @@ fun AlarmScreen(
     addAlarm: () -> Unit,
     updateAlarm: (Alarm) -> Unit,
     deleteAlarmById: (Long) -> Unit,
+    alarmScreenViewModel: AlarmScreenViewModel,
     modifier: Modifier = Modifier,
-    state: AlarmScreenUiState = rememberAlarmScreenUiState(),
 ) {
-    val selectedAlarmIndex = state.selectedAlarmIndex
+    val selectedAlarm = alarmScreenViewModel.selectedAlarmState.collectAsState().value
 
-    AlarmDetailDialog(
-        alarms = alarms,
-        messageLists = messageLists,
-        selectedAlarmIndex = selectedAlarmIndex,
-        // TODO: this always reschedules! Could be smarter!
-        updateAlarm = updateAlarm,
-        closeAlarmDetails = {
-            state.selectedAlarmIndex = null
-        }
-    )
+    if (selectedAlarm != null) {
+        AlarmDetailDialog(
+            selectedAlarm = selectedAlarm,
+            messageLists = messageLists,
+            // TODO: this always reschedules! Could be smarter!
+            updateAlarm = updateAlarm,
+            close = {
+                alarmScreenViewModel.clearSelectedAlarm()
+            }
+        )
+    }
 
     GridWithAddButton(
         data = alarms,
@@ -104,9 +50,10 @@ fun AlarmScreen(
         AlarmGridItem(
             modifier = Modifier.height(104.dp),
             alarm = alarm,
-            allAlarms = alarms,
-            openAlarmDetails = { selectedAlarmIndex ->
-                state.selectedAlarmIndex = selectedAlarmIndex
+            openAlarmDetails = {
+                if (alarm.id != null) {
+                    alarmScreenViewModel.loadSelectedAlarm(alarm.id)
+                }
             },
             deleteAlarmById = deleteAlarmById
         )

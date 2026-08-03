@@ -29,13 +29,13 @@ fun MessageListDialog(
     messages: List<Message>,
     addMessage: (Long) -> Unit,
     updateMessageList: (MessageList) -> Unit,
-    state: BocusDialogState,
+    close: () -> Unit,
 ) {
     val context = LocalContext.current
 
     BocusDialog(
         title = stringResource(R.string.edit_message_list),
-        state = state
+        close = close
     ) {
         TextField(
             modifier = Modifier.fillMaxWidth(),

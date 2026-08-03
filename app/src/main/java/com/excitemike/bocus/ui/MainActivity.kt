@@ -10,30 +10,32 @@ import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.receiver.AlarmReceiver
-import com.excitemike.bocus.receiver.BootCompletedReceiver
 import com.excitemike.bocus.ui.theme.BocusTheme
+import com.excitemike.bocus.ui.viewmodel.AlarmScreenViewModel
 import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
 import com.excitemike.bocus.util.Fx
 
 class MainActivity : ComponentActivity() {
-    lateinit var alarmReceiver: AlarmReceiver
-    lateinit var bootCompletedReceiver: BootCompletedReceiver
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         Fx.init(this)
 
-        // TODO: I'm not actually sure instantiating the receivers here accomplishes anything
-        alarmReceiver = AlarmReceiver()
-        bootCompletedReceiver = BootCompletedReceiver()
-
         createNotificationChannel(this)
 
         setContent {
             val bocusViewModel = viewModel { BocusViewModel(application) }
+            val alarmDao = AlarmDatabase.getDatabase(application).alarmDao()
             val messageListDao = AlarmDatabase.getDatabase(application).messageListDao()
             val messageDao = AlarmDatabase.getDatabase(application).messageDao()
+            val alarmScreenViewModel =
+                viewModel {
+                    AlarmScreenViewModel(
+                        alarmDao = alarmDao,
+                        messageListDao = messageListDao
+                    )
+                }
             val messageListsScreenViewModel =
                 viewModel { MessageListScreenViewModel(messageListDao, messageDao) }
 
@@ -41,6 +43,7 @@ class MainActivity : ComponentActivity() {
                 BocusApp(
                     activity = this,
                     viewModel = bocusViewModel,
+                    alarmScreenViewModel = alarmScreenViewModel,
                     messageListScreenViewModel = messageListsScreenViewModel
                 )
             }

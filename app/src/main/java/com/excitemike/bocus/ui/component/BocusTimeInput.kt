@@ -148,12 +148,12 @@ private fun TimeAccordionClosed(
         BocusIconButton(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .height(32.dp), // TODO: make configurable
+                .height(32.dp),
             onClick = open,
             fx = FxType.NORMAL
         ) {
             Icon(
-                modifier = Modifier.height(24.dp), // TODO: make configurable
+                modifier = Modifier.height(24.dp),
                 imageVector = Icons.Default.Edit,
                 contentDescription = stringResource(R.string.edit),
             )

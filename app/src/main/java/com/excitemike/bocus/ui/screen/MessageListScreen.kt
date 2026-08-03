@@ -18,7 +18,6 @@ import com.excitemike.bocus.ui.component.BocusSwipeToDismissBox
 import com.excitemike.bocus.ui.component.GridWithAddButton
 import com.excitemike.bocus.ui.component.MessageListListItem
 import com.excitemike.bocus.ui.dialog.MessageListDialog
-import com.excitemike.bocus.ui.dialog.rememberBocusDialogState
 import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
 
 @Composable
@@ -31,7 +30,6 @@ fun MessageListScreen(
     val defaultMessageListName = stringResource(R.string.default_message_list_name)
     val defaultMessage = stringResource(R.string.default_message)
 
-    val dlgState = rememberBocusDialogState()
     val addMessage =
         { messageListId: Long -> viewModel.addMessage(messageListId, defaultMessage) }
     val updateMessageList =
@@ -45,7 +43,7 @@ fun MessageListScreen(
             messages = messages,
             addMessage = addMessage,
             updateMessageList = updateMessageList,
-            state = dlgState
+            close = { messageListScreenViewModel.clearMessageList() }
         )
     }
 
@@ -73,8 +71,7 @@ fun MessageListScreen(
                 messageList = messageList,
                 messages = messages,
                 onEditClick = {
-                    messageListScreenViewModel.loadScreenData(messageList.id)
-                    dlgState.isOpen = true
+                    messageListScreenViewModel.loadMessageList(messageList.id)
                 },
                 onDeleteClick = { isConfirming.value = true },
                 modifier = Modifier

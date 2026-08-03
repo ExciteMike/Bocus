@@ -27,18 +27,17 @@ import com.excitemike.bocus.util.FxType
 fun AlarmGridItem(
     modifier: Modifier = Modifier,
     alarm: Alarm,
-    allAlarms: List<Alarm>,
-    openAlarmDetails: (Int) -> Unit,
+    openAlarmDetails: () -> Unit,
     deleteAlarmById: (Long) -> Unit
 ) {
     val context = LocalContext.current
-    val index = lazy { allAlarms.indexOfFirst { alarm.id == it.id } }
+    val alarmId = alarm.id ?: return
     val confirmFormat = stringResource(R.string.confirm_delete_alarm)
     val confirmPrompt = String.format(confirmFormat, alarm.name)
     val isConfirming = rememberSaveable { mutableStateOf(false) }
     BocusSwipeToDismissBox(
         dismissConfirmPrompt = confirmPrompt,
-        onConfirm = { deleteAlarmById(alarm.id!!) },
+        onConfirm = { deleteAlarmById(alarmId) },
         modifier = modifier.padding(end = 8.dp),
         state = isConfirming
     ) {
@@ -53,13 +52,13 @@ fun AlarmGridItem(
                         .weight(1f)
                         .clickable {
                             Fx.buttonClickFx(context, FxType.SWISH)
-                            openAlarmDetails(index.value)
+                            openAlarmDetails()
                         },
                     alarm = alarm
                 )
                 Column {
                     BocusIconButton(
-                        onClick = { openAlarmDetails(index.value) },
+                        onClick = { openAlarmDetails() },
                         fx = FxType.NORMAL
                     ) {
                         Icon(

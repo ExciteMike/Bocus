@@ -1,4 +1,4 @@
-package com.excitemike.bocus.ui
+package com.excitemike.bocus.ui.dialog
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
@@ -24,6 +24,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -34,57 +36,50 @@ import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDetailsMessages
 import com.excitemike.bocus.data.MessageList
-import com.excitemike.bocus.ui.dialog.ChooseMessageListDialog
+import com.excitemike.bocus.ui.BocusViewModel
 import com.excitemike.bocus.ui.modifier.verticalScrollbar
 import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.ui.component.DaysOfWeek
 import com.excitemike.bocus.ui.component.MinMax
 import com.excitemike.bocus.ui.component.NotifMode
 import com.excitemike.bocus.ui.component.TimeAccordion
-import com.excitemike.bocus.ui.dialog.rememberBocusDialogState
 import com.excitemike.bocus.util.Fx
 import com.excitemike.bocus.util.FxType
 
 // TODO: use bocus dialog
 @Composable
 fun AlarmDetailDialog(
-    alarms: List<Alarm>,
+    selectedAlarm: Alarm,
     messageLists: List<MessageList>,
-    selectedAlarmIndex: Int?,
     updateAlarm: (alarm: Alarm) -> Unit,
-    closeAlarmDetails: () -> Unit,
+    close: () -> Unit,
 ) {
-    if (selectedAlarmIndex != null) {
-        if (selectedAlarmIndex in alarms.indices) {
-            val selectedAlarm = alarms[selectedAlarmIndex]
+    val showChooseMessageListDialog = rememberSaveable { mutableStateOf(false) }
 
-            val chooseMsgDlgState = rememberBocusDialogState()
-            ChooseMessageListDialog(
-                messageLists = messageLists,
-                state = chooseMsgDlgState,
-                onChooseMessageList = { messageListId ->
-                    updateAlarm(selectedAlarm.copy(messageListId = messageListId))
-                }
-            )
-
-            val context = LocalContext.current
-            val messageList = findMessageListById(messageLists, selectedAlarm.messageListId)
-            AlarmDetailDialogInner(
-                alarm = selectedAlarm,
-                messageList = messageList,
-                updateAlarm = updateAlarm,
-                close = {
-                    if (it) {
-                        Fx.buttonClickFx(context, FxType.BACK)
-                    }
-                    closeAlarmDetails()
-                },
-                openChooseMessageList = { chooseMsgDlgState.isOpen = true }
-            )
-        } else {
-            closeAlarmDetails()
-        }
+    if (showChooseMessageListDialog.value) {
+        ChooseMessageListDialog(
+            messageLists = messageLists,
+            close = { showChooseMessageListDialog.value = false },
+            onChooseMessageList = { messageListId ->
+                updateAlarm(selectedAlarm.copy(messageListId = messageListId))
+            }
+        )
     }
+
+    val context = LocalContext.current
+    val messageList = findMessageListById(messageLists, selectedAlarm.messageListId)
+    AlarmDetailDialogInner(
+        alarm = selectedAlarm,
+        messageList = messageList,
+        updateAlarm = updateAlarm,
+        close = {
+            if (it) {
+                Fx.buttonClickFx(context, FxType.BACK)
+            }
+            close()
+        },
+        openChooseMessageList = { showChooseMessageListDialog.value = true }
+    )
 }
 
 @Composable
@@ -255,8 +250,6 @@ private fun AlarmDetailControls(
 
         DaysOfWeek(alarm, updateAlarm)
         NotifMode(alarm, updateAlarm)
-
-        // TODO: alarmlength
     }
 }
 
