@@ -221,10 +221,9 @@ private fun AlarmDetailControls(
         // Start Time
         //
         TimeAccordion(
-            modifier = Modifier.padding(start = 16.dp),
-            startTimeState,
-            stringResource(R.string.start_time_label),
-            stringResource(R.string.start_time_label_and_value),
+            timePickerState = startTimeState,
+            labelOpen = stringResource(R.string.start_time_label),
+            labelClosed = stringResource(R.string.start_time_label_and_value),
             onBlur = {
                 // bump the end up if earlier than start
                 val start = startTimeState.hour * 60 + startTimeState.minute
@@ -240,10 +239,9 @@ private fun AlarmDetailControls(
         // End Time
         //
         TimeAccordion(
-            modifier = Modifier.padding(start = 16.dp),
-            endTimeState,
-            stringResource(R.string.end_time_label),
-            stringResource(R.string.end_time_label_and_value),
+            timePickerState = endTimeState,
+            labelOpen = stringResource(R.string.end_time_label),
+            labelClosed = stringResource(R.string.end_time_label_and_value),
             onBlur = {
                 // bump the start down if later than end
                 val start = startTimeState.hour * 60 + startTimeState.minute

@@ -16,3 +16,4 @@ An alarm app with randomized reminders.
 - about screen message
 - upload to developer console
 - send to testers
+- "Support this app" button on notifications and main screen

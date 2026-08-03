@@ -1,5 +1,6 @@
 package com.excitemike.bocus.ui.component
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -31,87 +32,131 @@ import com.excitemike.bocus.R
 import com.excitemike.bocus.util.FxType
 import com.excitemike.bocus.util.timeString
 
+/**
+ * Bocus's collapsing time picker
+ * @param modifier the Compose Modifier for this composable
+ * @param timePickerState he state for the internal [TimeInput]
+ * @param labelOpen how to label the UI element when in the open state
+ * @param labelClosed how to label the UI element when in the closed state
+ * @param onBlur get notified when a part of the time picker loses focus
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimeAccordion(
-    modifier: Modifier = Modifier,
-    state: TimePickerState,
+    timePickerState: TimePickerState,
     labelOpen: String,
     labelClosed: String,
+    modifier: Modifier = Modifier,
     onBlur: () -> Unit = {}
 ) {
-    // TODO: use AnimatedContent
-    val timeFormatStr = stringResource(R.string.time_format)
     val isOpen = rememberSaveable { mutableStateOf(false) }
-    if (isOpen.value) {
-        Box(
-            modifier = Modifier.border(
-                1.dp,
-                shape = MaterialTheme.shapes.medium,
-                color = DividerDefaults.color
+
+    AnimatedContent(
+        targetState = isOpen.value,
+        modifier = modifier,
+        label = "time accordion state anim",
+    ) { state ->
+        if (state) {
+            TimeAccordionOpen(
+                labelOpen = labelOpen,
+                close = { isOpen.value = false },
+                onBlur = onBlur,
+                timePickerState = timePickerState,
             )
-        ) {
-            Column(Modifier.padding(horizontal = 8.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        modifier = Modifier.weight(1f),
-                        text = labelOpen,
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    BocusIconButton(
-                        onClick = { isOpen.value = false },
-                        fx = FxType.BACK
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = stringResource(R.string.close),
-                        )
-                    }
-                }
-                TimeInput(
-                    state = state,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .onFocusChanged {
-                            if (!it.isFocused) {
-                                onBlur()
-                            }
-                        },
-                )
-            }
+        } else {
+            TimeAccordionClosed(
+                labelClosed = labelClosed,
+                timePickerState = timePickerState,
+                open = { isOpen.value = true }
+            )
         }
-    } else {
-        Box(modifier.fillMaxWidth()) {
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .clickable(
-                        enabled = true,
-                        onClickLabel = stringResource(R.string.edit),
-                        role = Role.Button,
-                        onClick = { isOpen.value = true }
-                    ),
-                text = String.format(
-                    labelClosed,
-                    timeString(timeFormatStr, state.hour, state.minute)
-                ),
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            BocusIconButton(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .height(32.dp), // TODO: make configurable
-                onClick = { isOpen.value = true },
-                fx = FxType.NORMAL
-            ) {
-                Icon(
-                    modifier = Modifier.height(24.dp), // TODO: make configurable
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = stringResource(R.string.edit),
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TimeAccordionOpen(
+    labelOpen: String,
+    close: () -> Unit,
+    onBlur: () -> Unit = {},
+    timePickerState: TimePickerState
+) {
+    Box(
+        modifier = Modifier.border(
+            1.dp,
+            shape = MaterialTheme.shapes.medium,
+            color = DividerDefaults.color
+        )
+    ) {
+        Column(Modifier.padding(start = 8.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = labelOpen,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                BocusIconButton(
+                    onClick = close,
+                    fx = FxType.BACK
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = stringResource(R.string.close),
+                    )
+                }
             }
+            TimeInput(
+                state = timePickerState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged {
+                        if (!it.isFocused) {
+                            onBlur()
+                        }
+                    },
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TimeAccordionClosed(
+    labelClosed: String,
+    timePickerState: TimePickerState,
+    open: () -> Unit,
+) {
+    val timeFormatStr = stringResource(R.string.time_format)
+    Box(Modifier.fillMaxWidth().padding(start = 16.dp)) {
+        Text(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .clickable(
+                    enabled = true,
+                    onClickLabel = stringResource(R.string.edit),
+                    role = Role.Button,
+                    onClick = open
+                ),
+            text = String.format(
+                labelClosed,
+                timeString(timeFormatStr, timePickerState.hour, timePickerState.minute)
+            ),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        BocusIconButton(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .height(32.dp), // TODO: make configurable
+            onClick = open,
+            fx = FxType.NORMAL
+        ) {
+            Icon(
+                modifier = Modifier.height(24.dp), // TODO: make configurable
+                imageVector = Icons.Default.Edit,
+                contentDescription = stringResource(R.string.edit),
+            )
         }
     }
 }
