@@ -9,7 +9,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import com.excitemike.bocus.R
@@ -179,13 +178,12 @@ fun chooseMessage(context: Context, alarm: Alarm): String {
 fun scheduleSystemAlarm(context: Context, alarm: Alarm) {
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     if (!alarmManager.canScheduleExactAlarms()) {
-        Log.v("Bocus", "can't schedule")
         return
     }
     val message = chooseMessage(context, alarm)
     val pendingIntent = PendingIntent.getBroadcast(
         context,
-        alarm.id!!,
+        alarm.id!!.toInt(),
         Intent(context, AlarmReceiver::class.java).apply {
             action = AlarmReceiver.PLAY_ALARM_ACTION
             putExtra(AlarmReceiver.EXTRA_NAME_TITLE, alarm.name)
@@ -218,7 +216,6 @@ suspend fun rescheduleAllSystemAlarms(
 ) {
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     if (!alarmManager.canScheduleExactAlarms()) {
-        Log.v("Bocus", "can't schedule")
         return
     }
     for (alarm in alarms) {
@@ -240,12 +237,12 @@ suspend fun rescheduleAllSystemAlarms(
 /**
  * cancel an alarm potentially set by this app
  */
-fun cancelSystemAlarm(context: Context, alarmId: Int) {
+fun cancelSystemAlarm(context: Context, alarmId: Long) {
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     alarmManager.cancel(
         PendingIntent.getBroadcast(
             context,
-            alarmId,
+            alarmId.toInt(),
             Intent(context, AlarmReceiver::class.java).apply {
                 action = AlarmReceiver.PLAY_ALARM_ACTION
             },

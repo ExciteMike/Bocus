@@ -72,7 +72,8 @@ fun <T> GridWithAddButton(
                         data,
                         key = dataKey
                     ) {
-                        this@LazyVerticalGrid.content(it)
+                        val ctx = this@LazyVerticalGrid
+                        ctx.content(it)
                     }
                 }
             }

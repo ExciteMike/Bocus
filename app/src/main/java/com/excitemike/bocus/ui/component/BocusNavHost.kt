@@ -16,11 +16,13 @@ import com.excitemike.bocus.ui.BocusViewModel
 import com.excitemike.bocus.ui.screen.AboutScreen
 import com.excitemike.bocus.ui.screen.AlarmScreen
 import com.excitemike.bocus.ui.screen.MessageListScreen
+import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
 
 @Composable
 fun BocusNavHost(
     navController: NavHostController,
     viewModel: BocusViewModel,
+    messageListScreenViewModel: MessageListScreenViewModel,
 ) {
     NavHost(
         navController,
@@ -36,6 +38,7 @@ fun BocusNavHost(
                     AppScreens.MESSAGE_LISTS -> MessageListScreen(
                         modifier = Modifier.fillMaxSize(),
                         viewModel = viewModel,
+                        messageListScreenViewModel = messageListScreenViewModel,
                     )
 
                     AppScreens.ALARMS -> {
@@ -45,7 +48,7 @@ fun BocusNavHost(
                         val updateAlarm =
                             { alarm: Alarm -> viewModel.updateAlarmAndReschedule(alarm) }
                         val deleteAlarmById =
-                            { alarmId: Int -> viewModel.deleteAlarmById(alarmId) }
+                            { alarmId: Long -> viewModel.deleteAlarmById(alarmId) }
                         val alarms = viewModel.alarmState.collectAsState().value
                         val messageLists = viewModel.messageListState.collectAsState().value
                         AlarmScreen(

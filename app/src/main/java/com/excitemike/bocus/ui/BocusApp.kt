@@ -36,6 +36,7 @@ import com.excitemike.bocus.data.rescheduleAllSystemAlarms
 import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.ui.component.BocusNavHost
 import com.excitemike.bocus.ui.component.BocusTabRow
+import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
 import com.excitemike.bocus.util.FxType
 import kotlinx.coroutines.launch
 
@@ -46,6 +47,7 @@ fun BocusApp(
     modifier: Modifier = Modifier,
     activity: Activity,
     viewModel: BocusViewModel,
+    messageListScreenViewModel: MessageListScreenViewModel
 ) {
     val uiState = viewModel.uiState.collectAsState().value
 
@@ -117,7 +119,8 @@ fun BocusApp(
             )
             BocusNavHost(
                 navController = navController,
-                viewModel = viewModel
+                viewModel = viewModel,
+                messageListScreenViewModel = messageListScreenViewModel
             )
         }
 

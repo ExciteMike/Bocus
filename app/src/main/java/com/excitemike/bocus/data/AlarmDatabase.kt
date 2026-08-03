@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [Alarm::class, MessageList::class, Message::class],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 abstract class AlarmDatabase : RoomDatabase() {

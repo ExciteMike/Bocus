@@ -8,9 +8,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.receiver.AlarmReceiver
 import com.excitemike.bocus.receiver.BootCompletedReceiver
 import com.excitemike.bocus.ui.theme.BocusTheme
+import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
 import com.excitemike.bocus.util.Fx
 
 class MainActivity : ComponentActivity() {
@@ -29,10 +31,17 @@ class MainActivity : ComponentActivity() {
         createNotificationChannel(this)
 
         setContent {
+            val bocusViewModel = viewModel { BocusViewModel(application) }
+            val messageListDao = AlarmDatabase.getDatabase(application).messageListDao()
+            val messageDao = AlarmDatabase.getDatabase(application).messageDao()
+            val messageListsScreenViewModel =
+                viewModel { MessageListScreenViewModel(messageListDao, messageDao) }
+
             BocusTheme {
                 BocusApp(
                     activity = this,
-                    viewModel = viewModel { BocusViewModel(application) },
+                    viewModel = bocusViewModel,
+                    messageListScreenViewModel = messageListsScreenViewModel
                 )
             }
         }

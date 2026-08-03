@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 interface BocusRepository {
     fun getAllAlarmsStream(): Flow<List<Alarm>>
     suspend fun insertAlarm(alarm: Alarm): Int
-    suspend fun deleteAlarm(alarmId: Int)
+    suspend fun deleteAlarm(alarmId: Long)
     suspend fun updateAlarm(alarm: Alarm)
-    suspend fun getAlarm(id: Int): Alarm?
+    suspend fun getAlarm(id: Long): Alarm?
     suspend fun getAllAlarmsRaw(): List<Alarm>
 }

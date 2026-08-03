@@ -21,7 +21,7 @@ data class MessageList(
     /** uniquely identify each message lisst */
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Int? = null,
+    val id: Long? = null,
 
     /** label for this list */
     @ColumnInfo(name = "name")
@@ -46,10 +46,10 @@ data class Message(
      */
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Int? = null,
+    val id: Long? = null,
 
     @ColumnInfo(name = "message_list_id", index = true)
-    val messageListId: Int,
+    val messageListId: Long,
 
     /** message to display */
     @ColumnInfo(name = "message")
@@ -57,13 +57,17 @@ data class Message(
 )
 
 /** a little glue to help Room generate a delete by id function */
-data class MessageListId(val id: Int)
+data class MessageListId(val id: Long)
 
 /**
  * Data access interface for message lists
  */
 @Dao
 interface MessageListDao {
+
+    @Query("SELECT COUNT(*) from messages WHERE message_list_id = :id")
+    suspend fun countMessagesInList(id: Long): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(messageList: MessageList): Long
 
@@ -77,13 +81,13 @@ interface MessageListDao {
     fun getAllMessageLists(): Flow<List<MessageList>>
 
     @Query("SELECT * from message_lists WHERE id = :id")
-    fun getMessageList(id: Int): Flow<MessageList?>
+    fun getMessageList(id: Long): Flow<MessageList?>
 
     @Query("SELECT * from messages WHERE message_list_id = :id")
-    fun getMessagesInList(id: Int): Flow<List<Message>>
+    fun getMessagesInList(id: Long): Flow<List<Message>>
 
     @Query("SELECT * from messages WHERE message_list_id = :id")
-    fun getMessagesInListRaw(id: Int): List<Message>
+    fun getMessagesInListRaw(id: Long): List<Message>
 }
 
 /**
@@ -101,5 +105,11 @@ interface MessageDao {
     suspend fun delete(message: Message)
 
     @Query("SELECT * from messages WHERE id = :id")
-    fun getMessage(id: Int): Message?
+    fun getMessage(id: Long): Message?
+
+    /**
+     * Data flow for the messages associated with a particular list
+     */
+    @Query("SELECT * from messages WHERE message_list_id = :messageListId")
+    fun observeListMessages(messageListId: Long): Flow<List<Message>>
 }

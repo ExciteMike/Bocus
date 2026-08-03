@@ -21,7 +21,7 @@ data class Alarm(
     /** uniquely identify each alarm */
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Int? = null,
+    val id: Long? = null,
 
     /** how to label the alarm in the ui */
     @ColumnInfo(name = "name")
@@ -55,7 +55,7 @@ data class Alarm(
 
     /** what to say in the notification */
     @ColumnInfo(name = "message_list_id")
-    val messageListId: Int? = -1,
+    val messageListId: Long? = -1,
 
     /** repeat on which days of the week, (bitflags) */
     @ColumnInfo(name = "active_days")
@@ -69,7 +69,7 @@ data class Alarm(
 )
 
 /** a little glue to help Room generate a delete by id function */
-data class AlarmId(val id: Int)
+data class AlarmId(val id: Long)
 
 /** Bit flags for use with Alarm.ActiveDays */
 object AlarmDayOfWeekFlags {
@@ -95,11 +95,6 @@ object AlarmDefaults {
     const val DEFAULT_START_MINUTE = 0
 }
 
-/** limiting values associated with alarms */
-object AlarmLimits {
-    const val NAME_LEN_MAX = 255
-}
-
 /** possibilities for alarm notification mode */
 object AlarmNotifMode {
     const val RING = 0x1
@@ -120,7 +115,7 @@ interface AlarmDao {
     suspend fun delete(alarmId: AlarmId)
 
     @Query("SELECT * from alarms WHERE id = :id")
-    fun getAlarm(id: Int): Alarm?
+    fun getAlarm(id: Long): Alarm?
 
     @Query("SELECT * from alarms")
     fun getAllAlarms(): Flow<List<Alarm>>

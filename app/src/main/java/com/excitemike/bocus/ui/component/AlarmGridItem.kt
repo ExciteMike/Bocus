@@ -29,7 +29,7 @@ fun AlarmGridItem(
     alarm: Alarm,
     allAlarms: List<Alarm>,
     openAlarmDetails: (Int) -> Unit,
-    deleteAlarmById: (Int) -> Unit
+    deleteAlarmById: (Long) -> Unit
 ) {
     val context = LocalContext.current
     val index = lazy { allAlarms.indexOfFirst { alarm.id == it.id } }

@@ -12,18 +12,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
+import com.excitemike.bocus.data.MessageList
 import com.excitemike.bocus.ui.BocusViewModel
 import com.excitemike.bocus.ui.component.BocusSwipeToDismissBox
 import com.excitemike.bocus.ui.component.GridWithAddButton
 import com.excitemike.bocus.ui.component.MessageListListItem
+import com.excitemike.bocus.ui.dialog.MessageListDialog
+import com.excitemike.bocus.ui.dialog.rememberBocusDialogState
+import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
 
 @Composable
 fun MessageListScreen(
-    viewModel: BocusViewModel,
+    viewModel: BocusViewModel, // TODO: use just a messageList and messages viewmodel
+    messageListScreenViewModel: MessageListScreenViewModel,
     modifier: Modifier = Modifier,
 ) {
     val messageLists = viewModel.messageListState.collectAsState().value
     val defaultMessageListName = stringResource(R.string.default_message_list_name)
+    val defaultMessage = stringResource(R.string.default_message)
+
+    val dlgState = rememberBocusDialogState()
+    val addMessage =
+        { messageListId: Long -> viewModel.addMessage(messageListId, defaultMessage) }
+    val updateMessageList =
+        { messageList: MessageList -> viewModel.updateMessageList(messageList) }
+    val messageList = messageListScreenViewModel.messageListState.collectAsState().value
+    val messages = messageListScreenViewModel.messagesState.collectAsState().value
+
+    if (messageList != null) {
+        MessageListDialog(
+            messageList = messageList,
+            messages = messages,
+            addMessage = addMessage,
+            updateMessageList = updateMessageList,
+            state = dlgState
+        )
+    }
 
     GridWithAddButton(
         data = messageLists,
@@ -48,7 +72,10 @@ fun MessageListScreen(
             MessageListListItem(
                 messageList = messageList,
                 messages = messages,
-                onEditClick = { TODO("open editor") },
+                onEditClick = {
+                    messageListScreenViewModel.loadScreenData(messageList.id)
+                    dlgState.isOpen = true
+                },
                 onDeleteClick = { isConfirming.value = true },
                 modifier = Modifier
                     .fillMaxWidth()

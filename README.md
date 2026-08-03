@@ -4,6 +4,7 @@ An alarm app with randomized reminders.
 
 ## to-do list
 
+- TODOs in code
 - message lists
     - edit screen
     - choose from alarmdetails

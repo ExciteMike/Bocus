@@ -11,5 +11,5 @@ sealed class Command {
     data class Callback(val cb: suspend () -> Unit) : Command()
 
     /** delete an alarm */
-    data class DeleteAlarm(val alarmId: Int) : Command()
+    data class DeleteAlarm(val alarmId: Long) : Command()
 }

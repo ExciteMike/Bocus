@@ -76,7 +76,7 @@ fun AlarmScreen(
     messageLists: List<MessageList>,
     addAlarm: () -> Unit,
     updateAlarm: (Alarm) -> Unit,
-    deleteAlarmById: (Int) -> Unit,
+    deleteAlarmById: (Long) -> Unit,
     modifier: Modifier = Modifier,
     state: AlarmScreenUiState = rememberAlarmScreenUiState(),
 ) {

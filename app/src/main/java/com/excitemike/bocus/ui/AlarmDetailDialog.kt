@@ -33,7 +33,6 @@ import androidx.compose.ui.window.Dialog
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDetailsMessages
-import com.excitemike.bocus.data.AlarmLimits
 import com.excitemike.bocus.data.MessageList
 import com.excitemike.bocus.ui.dialog.ChooseMessageListDialog
 import com.excitemike.bocus.ui.modifier.verticalScrollbar
@@ -188,7 +187,7 @@ private fun AlarmDetailControls(
             modifier = fillMaxWidth,
             state = rememberTextFieldState(alarm.name),
             inputTransformation = InputTransformation
-                .maxLength(AlarmLimits.NAME_LEN_MAX)
+                .maxLength(BocusViewModel.MAX_NAME_LEN)
                 .then {
                     Fx.buttonClickFx(context, FxType.EDIT)
                     updateAlarm(alarm.copy(name = this.toString()))
@@ -266,7 +265,7 @@ private fun AlarmDetailControls(
 /**
  * Given a list of MessageLists, and an id, return the one with the matching id or null
  */
-private fun findMessageListById(messageLists: List<MessageList>, id: Int?): MessageList? {
+private fun findMessageListById(messageLists: List<MessageList>, id: Long?): MessageList? {
     if (id == null) return null
     for (messageList in messageLists) {
         if (messageList.id == id) {

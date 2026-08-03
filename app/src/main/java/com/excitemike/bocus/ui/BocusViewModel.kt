@@ -17,10 +17,12 @@ import com.excitemike.bocus.data.cancelSystemAlarm
 import com.excitemike.bocus.data.checkSystemPermission
 import com.excitemike.bocus.data.getNextAlarmTime
 import com.excitemike.bocus.data.scheduleSystemAlarm
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -41,6 +43,12 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
             initialValue = listOf()
         )
+
+    /**
+     * the [MessageList] currently being editted
+     */
+    private var currentMessages: Flow<List<Message>> = emptyFlow()
+
     private val _uiState = MutableStateFlow(BocusUiState())
     val uiState: StateFlow<BocusUiState> = _uiState.asStateFlow()
 
@@ -53,7 +61,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
             val tmpAlarm = Alarm(name = name)
             val alarm = tmpAlarm.copy(scheduledAt = getNextAlarmTime(tmpAlarm))
             viewModelScope.launch {
-                val id = alarmDao.insert(alarm).toInt()
+                val id = alarmDao.insert(alarm)
                 val alarm = alarm.copy(id = id)
                 scheduleSystemAlarm(application, alarm)
             }
@@ -63,16 +71,31 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
+     * insert a new message
+     */
+    fun addMessage(messageListId: Long, defaultMessage: String) {
+        val context: Application = getApplication()
+        viewModelScope.launch {
+            val count = messageListDao.countMessagesInList(messageListId)
+            if (count < MAX_MESSAGES_PER_LIST) {
+                val message = Message(messageListId = messageListId, message = defaultMessage)
+                messageDao.insert(message)
+            } else {
+                setErrorMessage(context.getString(R.string.messages_per_list_limit))
+            }
+        }
+    }
+
+    /**
      * insert a new message list
      */
     fun addMessageList(name: String) {
         val context: Application = getApplication()
-        val dao = AlarmDatabase.getDatabase(context).messageListDao()
         val size = messageListState.value.size
         if (size < MAX_MESSAGE_LISTS) {
             val messageList = MessageList(name = name)
             viewModelScope.launch {
-                dao.insert(messageList)
+                messageListDao.insert(messageList)
             }
         } else {
             setErrorMessage(context.getString(R.string.message_list_limit))
@@ -84,6 +107,13 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun checkPermission(activity: Activity, permission: String): Boolean {
         return checkSystemPermission(activity, permission)
+    }
+
+    /**
+     * clear the results of [loadMessages]
+     */
+    fun clearMessages() {
+        currentMessages = emptyFlow()
     }
 
     /** close and clean up after the confirmation dialog */
@@ -98,7 +128,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /** delete an alarm by id */
-    fun deleteAlarmById(alarmId: Int) {
+    fun deleteAlarmById(alarmId: Long) {
         cancelSystemAlarm(getApplication(), alarmId)
         viewModelScope.launch {
             alarmDao.delete(AlarmId(alarmId))
@@ -108,7 +138,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * remove a message list from the DB
      */
-    fun deleteMessageListById(id: Int) {
+    fun deleteMessageListById(id: Long) {
         viewModelScope.launch {
             messageListDao.delete(MessageListId(id))
         }
@@ -141,21 +171,14 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * look up a MessageList by id
+     * get the messages loaded by [loadMessages], or an empty list if clearMessages was called
      */
-    fun getMessageListById(messageListId: Int): StateFlow<MessageList?> {
-        return messageListDao.getMessageList(messageListId)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = null
-            )
-    }
+    fun getCurrentMessages(): Flow<List<Message>> = currentMessages
 
     /**
      * get the Messages in a MessageList
      */
-    fun getMessages(messageListId: Int): StateFlow<List<Message>> {
+    fun getMessages(messageListId: Long): StateFlow<List<Message>> {
         return messageListDao.getMessagesInList(messageListId)
             .stateIn(
                 scope = viewModelScope,
@@ -169,6 +192,13 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun getSystemPermissionsNeeded(): List<Pair<String, Int>> {
         return com.excitemike.bocus.data.getSystemPermissionsNeeded()
+    }
+
+    /**
+     * load messages for a particular message list
+     */
+    fun loadMessages(messageListId: Long) {
+        currentMessages = messageListDao.getMessagesInList(messageListId)
     }
 
     /** the user confirmed. do the thing */
@@ -204,6 +234,13 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     fun updateAlarmNoReschedule(alarm: Alarm) {
         viewModelScope.launch {
             alarmDao.update(alarm)
+        }
+    }
+
+    /** update the values in an [MessageList] */
+    fun updateMessageList(messageList: MessageList) {
+        viewModelScope.launch {
+            messageListDao.update(messageList)
         }
     }
 

@@ -1,6 +1,8 @@
 package com.excitemike.bocus.ui.dialog
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.excitemike.bocus.R
 import com.excitemike.bocus.ui.component.BocusButton
@@ -29,9 +32,9 @@ class BocusDialogState {
 
     @RememberInComposition
     constructor(
-        initialisOpen: Boolean = false
+        initialIsOpen: Boolean = false
     ) {
-        this.isOpenState = mutableStateOf(initialisOpen)
+        this.isOpenState = mutableStateOf(initialIsOpen)
     }
 
     private var isOpenState: MutableState<Boolean>
@@ -60,7 +63,7 @@ class BocusDialogState {
         override fun restore(value: Any): BocusDialogState? {
             val (isOpen) = value as List<*>
             return BocusDialogState(
-                initialisOpen = isOpen as Boolean,
+                initialIsOpen = isOpen as Boolean,
             )
         }
     }
@@ -99,19 +102,21 @@ fun BocusDialog(
         onDismissRequest = { state.isOpen = false },
     ) {
         Card {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge
-            )
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge
+                )
 
-            content()
+                content()
 
-            BocusButton(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                onClick = { state.isOpen = false },
-                fx = FxType.CONFIRM
-            ) {
-                Text(text = stringResource(R.string.done))
+                BocusButton(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    onClick = { state.isOpen = false },
+                    fx = FxType.CONFIRM
+                ) {
+                    Text(text = stringResource(R.string.done))
+                }
             }
         }
     }

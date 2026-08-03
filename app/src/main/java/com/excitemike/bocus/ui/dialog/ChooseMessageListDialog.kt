@@ -26,7 +26,7 @@ fun ChooseMessageListDialog(
     messageLists: List<MessageList>,
     modifier: Modifier = Modifier,
     state: BocusDialogState = rememberBocusDialogState(false),
-    onChooseMessageList: (Int) -> Unit,
+    onChooseMessageList: (Long) -> Unit,
 ) {
     BocusDialog(
         title = stringResource(R.string.choose_message_list),

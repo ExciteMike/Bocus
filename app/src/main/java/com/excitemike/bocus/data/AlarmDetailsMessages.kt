@@ -1,8 +1,6 @@
 package com.excitemike.bocus.data
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -50,11 +48,12 @@ private fun AlarmDetailsMessagesAfterLabel(
         val messageListName = currentMessageList.name
         AlarmDetailsMessagesAfterLabelNonEmpty(
             messageListName = messageListName,
+            openChooseMessageList = openChooseMessageList,
             modifier = modifier
         )
     } else {
         Empty(
-            openChooseMessageList,
+            openChooseMessageList = openChooseMessageList,
             modifier = modifier
         )
     }
@@ -63,10 +62,11 @@ private fun AlarmDetailsMessagesAfterLabel(
 @Composable
 private fun AlarmDetailsMessagesAfterLabelNonEmpty(
     messageListName: String,
+    openChooseMessageList: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier.padding(horizontal = 0.dp),
+        modifier.padding(start = 4.dp),
     ) {
         Text(
             modifier = Modifier.align(Alignment.CenterStart),
@@ -78,7 +78,7 @@ private fun AlarmDetailsMessagesAfterLabelNonEmpty(
             modifier = Modifier
                 .height(32.dp) // TODO: make configurable
                 .align(Alignment.CenterEnd),
-            onClick = {  },
+            onClick = openChooseMessageList,
             fx = FxType.NORMAL
         ) {
             Icon(

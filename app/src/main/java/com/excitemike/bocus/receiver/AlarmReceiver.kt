@@ -67,14 +67,14 @@ class AlarmReceiver : BroadcastReceiver() {
         if (intent == null) return
 
         if (intent.action == STOP_ALARM_ACTION) {
-            val alarmId = intent.getIntExtra(EXTRA_NAME_ALARM_ID, 0)
+            val alarmId = intent.getLongExtra(EXTRA_NAME_ALARM_ID, 0)
             stopAlarm(context, alarmId)
             return
         }
 
         val title = intent.getStringExtra(EXTRA_NAME_TITLE)
         val message = intent.getStringExtra(EXTRA_NAME_MESSAGE)
-        val alarmId = intent.getIntExtra(EXTRA_NAME_ALARM_ID, 0)
+        val alarmId = intent.getLongExtra(EXTRA_NAME_ALARM_ID, 0)
         val notifFx = intent.getIntExtra(EXTRA_NAME_ALARM_NOTIF_FX, AlarmNotifMode.RING_AND_VIBRATE)
         val stopIntent = Intent(context, AlarmReceiver::class.java).apply {
             action = STOP_ALARM_ACTION
@@ -83,7 +83,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
         val stopPendingIntent = PendingIntent.getBroadcast(
             context,
-            STOP_CODE + alarmId,
+            (STOP_CODE + alarmId).toInt(),
             stopIntent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -114,7 +114,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 android.Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            NotificationManagerCompat.from(context).notify(alarmId, builder.build())
+            NotificationManagerCompat.from(context).notify(alarmId.toInt(), builder.build())
         }
     }
 
@@ -135,9 +135,9 @@ class AlarmReceiver : BroadcastReceiver() {
     /**
      * stop an alarm, potentially restarting it
      */
-    private fun stopAlarm(context: Context, alarmId: Int) {
+    private fun stopAlarm(context: Context, alarmId: Long) {
         // cancel notification, sound, and vibration
-        NotificationManagerCompat.from(context).cancel(alarmId)
+        NotificationManagerCompat.from(context).cancel(alarmId.toInt())
         stopSound()
         stopVibration()
 
