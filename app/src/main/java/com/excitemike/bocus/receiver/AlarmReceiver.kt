@@ -18,7 +18,6 @@ import androidx.core.app.NotificationManagerCompat
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.data.AlarmNotifMode
-import com.excitemike.bocus.data.OfflineBocusRepository
 import com.excitemike.bocus.data.getNextAlarmTime
 import com.excitemike.bocus.data.scheduleSystemAlarm
 import com.excitemike.bocus.util.checkFlags
@@ -142,13 +141,11 @@ class AlarmReceiver : BroadcastReceiver() {
         stopVibration()
 
         // schedule the next occurrence, if it hasn't been deleted
-        val repo = OfflineBocusRepository(
-            AlarmDatabase.getDatabase(context).alarmDao(),
-        )
+        val alarmDao = AlarmDatabase.getDatabase(context).alarmDao()
         val job = SupervisorJob()
         val scope = CoroutineScope(Dispatchers.IO + job)
         scope.launch {
-            val alarm = repo.getAlarm(alarmId)
+            val alarm = alarmDao.getAlarm(alarmId)
             if (alarm != null) {
                 val newAlarm = alarm.copy(scheduledAt = getNextAlarmTime(alarm))
                 scheduleSystemAlarm(context, newAlarm)
