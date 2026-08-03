@@ -1,6 +1,8 @@
 package com.excitemike.bocus.ui.component
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -11,9 +13,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -96,15 +98,21 @@ private fun MessageListListItemInner(
         )
         FlowRow {
             for (message in messages) {
-                Surface(
-                    Modifier.padding(4.dp),
-                    color = MaterialTheme.colorScheme.primaryContainer,
+                Box(
+                    modifier = Modifier
+                        .border(
+                            width = 1.dp,
+                            shape = MaterialTheme.shapes.medium,
+                            color = DividerDefaults.color
+                        ),
                 ) {
                     Text(
-                        modifier = Modifier.sizeIn(
-                            minWidth = 32.dp,
-                            maxWidth = 160.dp
-                        ),
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .sizeIn(
+                                minWidth = 32.dp,
+                                maxWidth = 160.dp
+                            ),
                         text = message.message,
                         style = MaterialTheme.typography.bodyMedium,
                         maxLines = 1,
