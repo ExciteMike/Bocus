@@ -17,12 +17,10 @@ import com.excitemike.bocus.data.cancelSystemAlarm
 import com.excitemike.bocus.data.checkSystemPermission
 import com.excitemike.bocus.data.getNextAlarmTime
 import com.excitemike.bocus.data.scheduleSystemAlarm
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -43,11 +41,6 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
             initialValue = listOf()
         )
-
-    /**
-     * the [MessageList] currently being editted
-     */
-    private var currentMessages: Flow<List<Message>> = emptyFlow()
 
     private val _uiState = MutableStateFlow(BocusUiState())
     val uiState: StateFlow<BocusUiState> = _uiState.asStateFlow()
@@ -109,13 +102,6 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
         return checkSystemPermission(activity, permission)
     }
 
-    /**
-     * clear the results of [loadMessages]
-     */
-    fun clearMessages() {
-        currentMessages = emptyFlow()
-    }
-
     /** close and clean up after the confirmation dialog */
     private fun closeConfirmDlg() {
         _uiState.update {
@@ -171,34 +157,10 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * get the messages loaded by [loadMessages], or an empty list if clearMessages was called
-     */
-    fun getCurrentMessages(): Flow<List<Message>> = currentMessages
-
-    /**
-     * get the Messages in a MessageList
-     */
-    fun getMessages(messageListId: Long): StateFlow<List<Message>> {
-        return messageListDao.getMessagesInList(messageListId)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = listOf()
-            )
-    }
-
-    /**
      * figure out what permissions the app needs
      */
     fun getSystemPermissionsNeeded(): List<Pair<String, Int>> {
         return com.excitemike.bocus.data.getSystemPermissionsNeeded()
-    }
-
-    /**
-     * load messages for a particular message list
-     */
-    fun loadMessages(messageListId: Long) {
-        currentMessages = messageListDao.getMessagesInList(messageListId)
     }
 
     /** the user confirmed. do the thing */

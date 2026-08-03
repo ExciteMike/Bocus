@@ -8,12 +8,17 @@ import com.excitemike.bocus.data.MessageList
 import com.excitemike.bocus.data.MessageListDao
 import com.excitemike.bocus.ui.BocusViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlin.collections.plus
+import kotlin.collections.set
 
 /**
  * Glue to connect composables to DB
@@ -73,5 +78,44 @@ class MessageListScreenViewModel(
      */
     fun loadMessageList(messageListId: Long) {
         selectedMessageListId.value = messageListId
+    }
+
+    /**
+     * jobs for tracking each message lists's messages
+     */
+    private val jobs = mutableMapOf<Long, Job>()
+
+    /**
+     * messages tracked by list id
+     */
+    private val messagesByListIdMutable =
+        MutableStateFlow<Map<Long, List<Message>>>(emptyMap())
+
+    /**
+     * messages tracked by list id
+     */
+    val messagesByListId: StateFlow<Map<Long, List<Message>>> = messagesByListIdMutable
+
+    /**
+     * if not already doing so, start tracking messages by listid
+     * so that they can be accessed with the messagesBylistId property
+     */
+    fun observeMessages(messageListId: Long) {
+        if (jobs.containsKey(messageListId)) return
+
+        jobs[messageListId] = viewModelScope.launch {
+            messageListDao.getMessagesInList(messageListId)
+                .collect { messages ->
+                    messagesByListIdMutable.update { current -> current + (messageListId to messages) }
+                }
+        }
+    }
+
+    /**
+     * clean up
+     */
+    override fun onCleared() {
+        jobs.values.forEach { it.cancel() }
+        super.onCleared()
     }
 }
