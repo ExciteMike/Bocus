@@ -25,7 +25,7 @@
     <string name="day_short_saturday">Sa</string>
     <string name="days_of_week">Days of week</string>
     <string name="default_alarm_name">Alarm</string>
-    <string name="default_message">Message List</string>
+    <string name="default_message">Reminder</string>
     <string name="default_message_list_name">Message List</string>
     <string name="dismiss">Dismiss</string>
     <string name="done">Done</string>
