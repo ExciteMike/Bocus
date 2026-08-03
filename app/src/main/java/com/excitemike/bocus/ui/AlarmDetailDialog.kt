@@ -52,7 +52,6 @@ fun AlarmDetailDialog(
     alarms: List<Alarm>,
     messageLists: List<MessageList>,
     selectedAlarmIndex: Int?,
-    getMessageListById: @Composable (Int) -> MessageList?,
     updateAlarm: (alarm: Alarm) -> Unit,
     closeAlarmDetails: () -> Unit,
 ) {
@@ -70,9 +69,10 @@ fun AlarmDetailDialog(
             )
 
             val context = LocalContext.current
+            val messageList = findMessageListById(messageLists, selectedAlarm.messageListId)
             AlarmDetailDialogInner(
                 alarm = selectedAlarm,
-                getMessageListById = getMessageListById,
+                messageList = messageList,
                 updateAlarm = updateAlarm,
                 close = {
                     if (it) {
@@ -91,7 +91,7 @@ fun AlarmDetailDialog(
 @Composable
 private fun AlarmDetailDialogInner(
     alarm: Alarm,
-    getMessageListById: @Composable (Int) -> MessageList?,
+    messageList: MessageList?,
     updateAlarm: (Alarm) -> Unit,
     close: (Boolean) -> Unit,
     openChooseMessageList: () -> Unit
@@ -119,7 +119,7 @@ private fun AlarmDetailDialogInner(
                 AlarmDetailControls(
                     modifier = Modifier.weight(1f),
                     alarm = alarm,
-                    getMessageListById = getMessageListById,
+                    messageList = messageList,
                     updateAlarm = updateAlarm,
                     openChooseMessageList = openChooseMessageList
                 )
@@ -141,7 +141,7 @@ private fun AlarmDetailDialogInner(
 private fun AlarmDetailControls(
     modifier: Modifier,
     alarm: Alarm,
-    getMessageListById: @Composable (Int) -> MessageList?,
+    messageList: MessageList?,
     updateAlarm: (Alarm) -> Unit,
     openChooseMessageList: () -> Unit
 ) {
@@ -197,13 +197,8 @@ private fun AlarmDetailControls(
             lineLimits = TextFieldLineLimits.SingleLine
         )
 
-        val currentMessageList = if (alarm.messageListId == null) {
-            null
-        } else {
-            getMessageListById(alarm.messageListId)
-        }
         AlarmDetailsMessages(
-            currentMessageList = currentMessageList,
+            currentMessageList = messageList,
             openChooseMessageList = openChooseMessageList,
             modifier = fillMaxWidth,
         )
@@ -266,4 +261,17 @@ private fun AlarmDetailControls(
 
         // TODO: alarmlength
     }
+}
+
+/**
+ * Given a list of MessageLists, and an id, return the one with the matching id or null
+ */
+private fun findMessageListById(messageLists: List<MessageList>, id: Int?): MessageList? {
+    if (id == null) return null
+    for (messageList in messageLists) {
+        if (messageList.id == id) {
+            return messageList
+        }
+    }
+    return null
 }

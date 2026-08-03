@@ -48,19 +48,12 @@ fun BocusNavHost(
                             { alarmId: Int -> viewModel.deleteAlarmById(alarmId) }
                         val alarms = viewModel.alarmState.collectAsState().value
                         val messageLists = viewModel.messageListState.collectAsState().value
-                        val getMessageListById =
-                            @Composable { messageListId: Int ->
-                                viewModel.getMessageListById(
-                                    messageListId
-                                ).collectAsState().value
-                            }
                         AlarmScreen(
                             alarms = alarms,
                             messageLists = messageLists,
                             addAlarm = addAlarm,
                             updateAlarm = updateAlarm,
                             deleteAlarmById = deleteAlarmById,
-                            getMessageListById = getMessageListById,
                             modifier = Modifier.fillMaxSize(),
                         )
                     }

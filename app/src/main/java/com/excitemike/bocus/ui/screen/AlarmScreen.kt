@@ -77,7 +77,6 @@ fun AlarmScreen(
     addAlarm: () -> Unit,
     updateAlarm: (Alarm) -> Unit,
     deleteAlarmById: (Int) -> Unit,
-    getMessageListById: @Composable (Int) -> MessageList?,
     modifier: Modifier = Modifier,
     state: AlarmScreenUiState = rememberAlarmScreenUiState(),
 ) {
@@ -87,7 +86,6 @@ fun AlarmScreen(
         alarms = alarms,
         messageLists = messageLists,
         selectedAlarmIndex = selectedAlarmIndex,
-        getMessageListById = getMessageListById,
         // TODO: this always reschedules! Could be smarter!
         updateAlarm = updateAlarm,
         closeAlarmDetails = {
