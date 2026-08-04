@@ -48,12 +48,12 @@ fun BocusApp(
     alarmScreenViewModel: AlarmScreenViewModel,
     messageListScreenViewModel: MessageListScreenViewModel
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
+    val errorMessage = viewModel.errorMessage.collectAsState().value
 
-    if (uiState.errorMessage != null) {
+    if (errorMessage != null) {
         AlertDialog(
             title = @Composable { Text(text = stringResource(R.string.error)) },
-            text = @Composable { Text(text = uiState.errorMessage!!) },
+            text = @Composable { Text(text = errorMessage) },
             confirmButton = @Composable {
                 BocusButton(
                     onClick = {

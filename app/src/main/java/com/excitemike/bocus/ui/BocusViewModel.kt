@@ -41,8 +41,8 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
             initialValue = listOf()
         )
 
-    private val _uiState = MutableStateFlow(BocusUiState())
-    val uiState: StateFlow<BocusUiState> = _uiState.asStateFlow()
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
     /** add a new alarm */
     fun addAlarm(name: String) {
@@ -120,7 +120,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
 
     /** get rid of the error dlg without doing the thing */
     fun dismissErrorDlg() {
-        _uiState.update { it.copy(errorMessage = null) }
+        _errorMessage.update { null }
     }
 
     /**
@@ -132,7 +132,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
 
     /** start showing the error message popup */
     fun setErrorMessage(errorMessage: String) {
-        _uiState.update { it.copy(errorMessage = errorMessage) }
+        _errorMessage.update { errorMessage }
     }
 
     /**
@@ -175,9 +175,3 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
         const val TIMEOUT_MILLIS = 5_000L
     }
 }
-
-// TODO: split this up
-data class BocusUiState(
-    /// Error Message
-    var errorMessage: String? = null,
-)
