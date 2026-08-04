@@ -9,7 +9,6 @@ import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.data.AlarmId
-import com.excitemike.bocus.data.Command
 import com.excitemike.bocus.data.Message
 import com.excitemike.bocus.data.MessageList
 import com.excitemike.bocus.data.MessageListId
@@ -125,20 +124,6 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * execute the provided instruction
-     */
-    fun doCommand(command: Command) {
-        when (command) {
-            is Command.None -> Unit
-            is Command.DeleteAlarm -> deleteAlarmById(command.alarmId)
-            is Command.Callback ->
-                viewModelScope.launch {
-                    command.cb()
-                }
-        }
-    }
-
-    /**
      * figure out what permissions the app needs
      */
     fun getSystemPermissionsNeeded(): List<Pair<String, Int>> {
@@ -195,8 +180,4 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
 data class BocusUiState(
     /// Error Message
     var errorMessage: String? = null,
-    /// Confirmation Popup Action
-    var onConfirm: Command = Command.None,
-    /// Confirmation Popup Cancel Action
-    var onConfirmCancel: Command = Command.None,
 )
