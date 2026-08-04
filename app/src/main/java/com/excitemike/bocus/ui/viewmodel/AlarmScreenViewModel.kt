@@ -15,8 +15,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 
 class AlarmScreenViewModel(
-    private val alarmDao: AlarmDao,
-    private val messageListDao: MessageListDao
+    private val alarmDao: AlarmDao
 ) : ViewModel() {
     /**
      * Which alarm it is for if we are showing AlarmDetails

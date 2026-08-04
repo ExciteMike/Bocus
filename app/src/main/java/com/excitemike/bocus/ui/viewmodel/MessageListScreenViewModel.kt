@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Message
 import com.excitemike.bocus.data.MessageDao
+import com.excitemike.bocus.data.MessageId
 import com.excitemike.bocus.data.MessageList
 import com.excitemike.bocus.data.MessageListDao
 import com.excitemike.bocus.data.MessageListId
@@ -30,20 +31,20 @@ import kotlin.collections.set
 class MessageListScreenViewModel(
     private val messageListDao: MessageListDao,
     private val messageDao: MessageDao,
-) : ViewModel() {
+    private val defaultMessageName: String
+) : EditMessageListViewModel, ViewModel() {
 
     /**
      * asynchronously insert a new message
      */
-    fun addMessage(
+    override fun addMessage(
         messageListId: Long,
-        defaultMessage: String,
         onError: (Int) -> Unit
     ) {
         viewModelScope.launch {
             val count = messageListDao.countMessagesInList(messageListId)
             if (count < MAX_MESSAGES_PER_LIST) {
-                val message = Message(messageListId = messageListId, message = defaultMessage)
+                val message = Message(messageListId = messageListId, message = defaultMessageName)
                 messageDao.insert(message)
             } else {
                 onError(R.string.messages_per_list_limit)
@@ -80,11 +81,29 @@ class MessageListScreenViewModel(
         )
 
     /**
+     * remove a message from the DB
+     */
+    override fun deleteMessageById(id: Long) {
+        viewModelScope.launch {
+            messageDao.delete(MessageId(id))
+        }
+    }
+
+    /**
      * remove a message list from the DB
      */
     fun deleteMessageListById(id: Long) {
         viewModelScope.launch {
             messageListDao.delete(MessageListId(id))
+        }
+    }
+
+    /**
+     * update the values of a [Message]
+     */
+    override fun updateMessage(message: Message) {
+        viewModelScope.launch {
+            messageDao.update(message)
         }
     }
 
@@ -168,7 +187,7 @@ class MessageListScreenViewModel(
      * if not already doing so, start tracking messages by listid
      * so that they can be accessed with the messagesBylistId property
      */
-    fun observeMessages(messageListId: Long) {
+    override fun observeMessages(messageListId: Long) {
         if (jobs.containsKey(messageListId)) return
 
         jobs[messageListId] = viewModelScope.launch {

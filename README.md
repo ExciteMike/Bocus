@@ -5,11 +5,6 @@ An alarm app with randomized reminders.
 ## to-do list
 
 - TODOs in code
-- message lists
-    - edit screen
-    - choose from alarmdetails
-    - test them
-    - use when showing notification
 - unique default names on alarms and message lists
 - write this readme
 - about screen message

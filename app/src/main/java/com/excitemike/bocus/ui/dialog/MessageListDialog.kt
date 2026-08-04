@@ -1,21 +1,43 @@
 package com.excitemike.bocus.ui.dialog
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.maxLength
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.then
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Message
 import com.excitemike.bocus.data.MessageList
 import com.excitemike.bocus.ui.BocusViewModel
+import com.excitemike.bocus.ui.component.BocusIconButton
+import com.excitemike.bocus.ui.component.BocusSwipeToDismissBox
 import com.excitemike.bocus.ui.component.GridWithAddButton
+import com.excitemike.bocus.ui.viewmodel.EditMessageListViewModel
+
+private val ITEM_HEIGHT = 80.dp
+private val ICON_HEIGHT = 40.dp
 
 /**
  * Dialog for editing a MessageList
@@ -23,11 +45,17 @@ import com.excitemike.bocus.ui.component.GridWithAddButton
 @Composable
 fun MessageListDialog(
     messageList: MessageList,
+    viewModel: EditMessageListViewModel,
     messages: List<Message>,
-    addMessage: (Long) -> Unit,
     updateMessageList: (MessageList) -> Unit,
     close: () -> Unit,
+    onError: (Int) -> Unit
 ) {
+    val messageListId = messageList.id!!
+    LaunchedEffect(messageListId) {
+        viewModel.observeMessages(messageListId)
+    }
+
     BocusDialog(
         title = stringResource(R.string.edit_message_list),
         close = close
@@ -48,9 +76,118 @@ fun MessageListDialog(
             data = messages,
             dataKey = { message -> message.id!! },
             addButtonLabel = stringResource(R.string.add_message),
-            onAdd = { addMessage(messageList.id!!) }
+            onAdd = { viewModel.addMessage(messageListId, onError = onError) }
         ) { message ->
-            Text(text = message.message)
+            val messageId = message.id!!
+            val confirmFormat = stringResource(R.string.confirm_delete_message)
+            val confirmPrompt = String.format(confirmFormat, message.message)
+            val isConfirming = rememberSaveable { mutableStateOf(false) }
+            val isInlineEditing = rememberSaveable { mutableStateOf(false) }
+            val openInlineEdit = { isInlineEditing.value = true }
+            BocusSwipeToDismissBox(
+                dismissConfirmPrompt = confirmPrompt,
+                onConfirm = { viewModel.deleteMessageById(messageId) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(ITEM_HEIGHT),
+                state = isConfirming,
+            ) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp, vertical = 4.dp)
+                        .clickable(
+                            onClick = openInlineEdit,
+                            onClickLabel = stringResource(R.string.edit)
+                        )
+                ) {
+                    if (isInlineEditing.value) {
+                        InlineEdit(
+                            message = message,
+                            updateMessage = { viewModel.updateMessage(it) },
+                            closeInlineEdit = { isInlineEditing.value = false }
+                        )
+                    } else {
+                        MessageListItem(
+                            message = message,
+                            openInlineEdit = openInlineEdit,
+                            openInlineConfirm = { isConfirming.value = true },
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MessageListItem(
+    message: Message,
+    openInlineEdit: () -> Unit,
+    openInlineConfirm: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = message.message,
+            modifier = Modifier.weight(1f)
+        )
+
+        Column {
+            BocusIconButton(
+                onClick = openInlineEdit,
+                modifier = Modifier.height(ICON_HEIGHT)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = stringResource(R.string.edit),
+                )
+
+            }
+            BocusIconButton(
+                onClick = openInlineConfirm,
+                modifier = Modifier.height(ICON_HEIGHT)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = stringResource(R.string.edit)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun InlineEdit(
+    message: Message,
+    updateMessage: (Message) -> Unit,
+    closeInlineEdit: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().height(ITEM_HEIGHT),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TextField(
+            modifier = Modifier.weight(1f),
+            state = rememberTextFieldState(initialText = message.message),
+            inputTransformation = InputTransformation
+                .maxLength(BocusViewModel.MAX_MESSAGE_LEN)
+                .then {
+                    updateMessage(message.copy(message = this.toString()))
+                },
+            lineLimits = TextFieldLineLimits.SingleLine,
+        )
+
+        BocusIconButton(
+            onClick = closeInlineEdit,
+            modifier = Modifier.height(ICON_HEIGHT)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = stringResource(R.string.done),
+            )
         }
     }
 }

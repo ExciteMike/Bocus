@@ -35,11 +35,7 @@ fun MessageListScreen(
     val messageLists = messageListScreenViewModel.allMessageListsState.collectAsState().value
     val messagesByListId = messageListScreenViewModel.messagesByListId.collectAsState()
     val defaultMessageListName = stringResource(R.string.default_message_list_name)
-    val defaultMessage = stringResource(R.string.default_message)
 
-    val addMessage = { messageListId: Long ->
-        messageListScreenViewModel.addMessage(messageListId, defaultMessage, onError)
-    }
     val updateMessageList =
         { messageList: MessageList -> messageListScreenViewModel.updateMessageList(messageList) }
     val messageList = messageListScreenViewModel.messageListState.collectAsState().value
@@ -48,13 +44,13 @@ fun MessageListScreen(
     if (messageList != null) {
         MessageListDialog(
             messageList = messageList,
+            viewModel = messageListScreenViewModel,
             messages = messages,
-            addMessage = addMessage,
             updateMessageList = updateMessageList,
-            close = { messageListScreenViewModel.clearMessageList() }
+            close = { messageListScreenViewModel.clearMessageList() },
+            onError = onError
         )
     }
-
 
     GridWithAddButton(
         data = messageLists,

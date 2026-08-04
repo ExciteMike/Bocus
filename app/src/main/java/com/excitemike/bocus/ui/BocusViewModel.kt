@@ -86,6 +86,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * true when the system says we need to show the rationale
      */
+    @Suppress("unused")
     fun shouldShowPermissionRequestRationale(activity: Activity, permission: String): Boolean {
         return ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)
     }

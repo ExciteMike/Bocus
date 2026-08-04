@@ -14,6 +14,7 @@
     <string name="close">Close</string>
     <string name="confirm_button">Confirm</string>
     <string name="confirm_delete_alarm">Delete alarm \"%1$s?\"</string>
+    <string name="confirm_delete_message">Delete Message \"%1$s?\"</string>
     <string name="confirm_delete_message_list">Delete Message List\"%1$s?\"</string>
     <string name="day_short_all">Every day</string>
     <string name="day_short_sunday">Su</string>

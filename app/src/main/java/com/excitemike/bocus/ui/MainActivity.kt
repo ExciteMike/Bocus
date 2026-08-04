@@ -7,7 +7,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.excitemike.bocus.R
 import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.receiver.AlarmReceiver
 import com.excitemike.bocus.ui.theme.BocusTheme
@@ -27,14 +29,10 @@ class MainActivity : ComponentActivity() {
             val messageListDao = AlarmDatabase.getDatabase(application).messageListDao()
             val messageDao = AlarmDatabase.getDatabase(application).messageDao()
             val alarmScreenViewModel =
-                viewModel {
-                    AlarmScreenViewModel(
-                        alarmDao = alarmDao,
-                        messageListDao = messageListDao
-                    )
-                }
+                viewModel { AlarmScreenViewModel(alarmDao = alarmDao) }
+            val defaultMessage = stringResource(R.string.default_message)
             val messageListsScreenViewModel =
-                viewModel { MessageListScreenViewModel(messageListDao, messageDao) }
+                viewModel { MessageListScreenViewModel(messageListDao, messageDao, defaultMessage) }
 
             BocusTheme {
                 BocusApp(

@@ -59,6 +59,7 @@ fun BocusIconButton(
 /**
  * custom button to add our style and click fx
  */
+@Suppress("unused")
 @Composable
 fun BocusTextButton(
     text: String,

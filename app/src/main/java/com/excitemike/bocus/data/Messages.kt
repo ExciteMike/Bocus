@@ -57,6 +57,9 @@ data class Message(
 )
 
 /** a little glue to help Room generate a delete by id function */
+data class MessageId(val id: Long)
+
+/** a little glue to help Room generate a delete by id function */
 data class MessageListId(val id: Long)
 
 /**
@@ -102,7 +105,7 @@ interface MessageDao {
     suspend fun update(message: Message)
 
     @Delete(entity = Message::class)
-    suspend fun delete(message: Message)
+    suspend fun delete(messageId: MessageId)
 
     @Query("SELECT * from messages WHERE id = :id")
     fun getMessage(id: Long): Message?
