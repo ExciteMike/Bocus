@@ -1,18 +1,24 @@
 package com.excitemike.bocus.ui.dialog
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.MessageList
-import com.excitemike.bocus.ui.component.BocusTextButton
 import com.excitemike.bocus.ui.modifier.verticalScrollbar
 
 
@@ -37,20 +43,28 @@ fun ChooseMessageListDialog(
     ) {
         val scrollState = rememberScrollState()
         Column(
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier.fillMaxSize()
                 .verticalScroll(scrollState)
                 .verticalScrollbar(scrollState)
-                .padding(start = 8.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(start = 8.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             for (messageList in messageLists) {
-                BocusTextButton(
-                    text = messageList.name,
+                Surface(
                     onClick = {
                         onChooseMessageList(messageList.id!!)
                         close()
                     },
-                )
+                    modifier = Modifier.fillMaxWidth().height(48.dp)
+                ) {
+                    Box {
+                        Text(
+                            text = messageList.name,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                }
             }
         }
     }

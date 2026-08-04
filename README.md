@@ -10,6 +10,7 @@ An alarm app with randomized reminders.
     - choose from alarmdetails
     - test them
     - use when showing notification
+- unique default names on alarms and message lists
 - write this readme
 - about screen message
 - upload to developer console
