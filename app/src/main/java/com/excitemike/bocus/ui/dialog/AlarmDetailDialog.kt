@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -32,7 +31,6 @@ import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDetailsMessages
 import com.excitemike.bocus.data.MessageList
 import com.excitemike.bocus.ui.BocusViewModel
-import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.ui.component.DaysOfWeek
 import com.excitemike.bocus.ui.component.MinMax
 import com.excitemike.bocus.ui.component.NotifMode
@@ -64,22 +62,15 @@ fun AlarmDetailDialog(
         close = close
     ) {
         Column(
-            modifier = Modifier.imePadding(),
+            modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AlarmDetailControls(
-                modifier = Modifier.weight(1f),
                 alarm = selectedAlarm,
                 messageList = messageList,
                 updateAlarm = updateAlarm,
                 openChooseMessageList = { showChooseMessageListDialog.value = true }
             )
-
-            BocusButton(
-                onClick = close,
-            ) {
-                Text(text = stringResource(R.string.done))
-            }
         }
     }
 }
@@ -88,11 +79,11 @@ fun AlarmDetailDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AlarmDetailControls(
-    modifier: Modifier,
     alarm: Alarm,
     messageList: MessageList?,
     updateAlarm: (Alarm) -> Unit,
-    openChooseMessageList: () -> Unit
+    openChooseMessageList: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val fillMaxWidth = Modifier.fillMaxWidth()
 

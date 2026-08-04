@@ -2,7 +2,6 @@ package com.excitemike.bocus.ui.dialog
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -41,8 +40,7 @@ fun ChooseMessageListDialog(
             modifier = modifier.fillMaxWidth()
                 .verticalScroll(scrollState)
                 .verticalScrollbar(scrollState)
-                .padding(start = 8.dp, end = 4.dp, top = 8.dp, bottom = 8.dp)
-                .imePadding(),
+                .padding(start = 8.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             for (messageList in messageLists) {

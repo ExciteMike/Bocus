@@ -1,7 +1,10 @@
 package com.excitemike.bocus.ui.dialog
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +37,7 @@ fun BocusDialog(
     Dialog(
         onDismissRequest = close,
     ) {
-        Card {
+        Card(modifier = Modifier.imePadding()) {
             Column(
                 modifier = Modifier.padding(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -44,10 +47,14 @@ fun BocusDialog(
                     style = MaterialTheme.typography.titleLarge
                 )
 
-                content()
+                Box(Modifier.weight(1f)) {
+                    content()
+                }
 
                 BocusButton(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .defaultMinSize(minWidth = 0.dp),
                     onClick = close,
                 ) {
                     Text(text = stringResource(R.string.done))
