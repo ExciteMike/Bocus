@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
@@ -28,7 +27,6 @@ fun AlarmGridItem(
     openAlarmDetails: () -> Unit,
     deleteAlarmById: (Long) -> Unit
 ) {
-    val context = LocalContext.current
     val alarmId = alarm.id ?: return
     val confirmFormat = stringResource(R.string.confirm_delete_alarm)
     val confirmPrompt = String.format(confirmFormat, alarm.name)

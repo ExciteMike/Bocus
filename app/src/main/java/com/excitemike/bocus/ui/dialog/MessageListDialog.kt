@@ -10,7 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Message
@@ -29,8 +28,6 @@ fun MessageListDialog(
     updateMessageList: (MessageList) -> Unit,
     close: () -> Unit,
 ) {
-    val context = LocalContext.current
-
     BocusDialog(
         title = stringResource(R.string.edit_message_list),
         close = close

@@ -8,7 +8,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 
 /**
@@ -22,7 +21,6 @@ fun BocusButton(
     content: @Composable () -> Unit = {},
 ) {
     val shape = MaterialTheme.shapes.medium
-    val context = LocalContext.current
 
     Button(
         modifier = modifier,
@@ -46,7 +44,6 @@ fun BocusIconButton(
     content: @Composable () -> Unit = {},
 ) {
     val shape = MaterialTheme.shapes.medium
-    val context = LocalContext.current
 
     IconButton(
         modifier = modifier,
@@ -69,7 +66,6 @@ fun BocusTextButton(
     modifier: Modifier = Modifier,
 ) {
     val shape = MaterialTheme.shapes.medium
-    val context = LocalContext.current
 
     TextButton(
         modifier = modifier,

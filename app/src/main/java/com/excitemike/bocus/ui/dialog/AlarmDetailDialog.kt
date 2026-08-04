@@ -1,7 +1,6 @@
 package com.excitemike.bocus.ui.dialog
 
 import android.annotation.SuppressLint
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,9 +15,7 @@ import androidx.compose.foundation.text.input.maxLength
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.then
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberTimePickerState
@@ -28,23 +25,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDetailsMessages
 import com.excitemike.bocus.data.MessageList
 import com.excitemike.bocus.ui.BocusViewModel
-import com.excitemike.bocus.ui.modifier.verticalScrollbar
 import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.ui.component.DaysOfWeek
 import com.excitemike.bocus.ui.component.MinMax
 import com.excitemike.bocus.ui.component.NotifMode
 import com.excitemike.bocus.ui.component.TimeAccordion
+import com.excitemike.bocus.ui.modifier.verticalScrollbar
 
-// TODO: use bocus dialog
 @Composable
 fun AlarmDetailDialog(
     selectedAlarm: Alarm,
@@ -64,59 +58,27 @@ fun AlarmDetailDialog(
         )
     }
 
-    val context = LocalContext.current
     val messageList = findMessageListById(messageLists, selectedAlarm.messageListId)
-    AlarmDetailDialogInner(
-        alarm = selectedAlarm,
-        messageList = messageList,
-        updateAlarm = updateAlarm,
-        close = {
-            close()
-        },
-        openChooseMessageList = { showChooseMessageListDialog.value = true }
-    )
-}
-
-@Composable
-private fun AlarmDetailDialogInner(
-    alarm: Alarm,
-    messageList: MessageList?,
-    updateAlarm: (Alarm) -> Unit,
-    close: (Boolean) -> Unit,
-    openChooseMessageList: () -> Unit
-) {
-    val context = LocalContext.current
-    BackHandler {
-        close(false)
-    }
-    Dialog(
-        onDismissRequest = { close(true) },
+    BocusDialog(
+        title = stringResource(R.string.edit_alarm),
+        close = close
     ) {
-        Card {
-            Column(
-                modifier = Modifier
-                    .padding(start = 8.dp, end = 4.dp, top = 8.dp, bottom = 8.dp)
-                    .imePadding(),
-                horizontalAlignment = Alignment.CenterHorizontally
+        Column(
+            modifier = Modifier.imePadding(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AlarmDetailControls(
+                modifier = Modifier.weight(1f),
+                alarm = selectedAlarm,
+                messageList = messageList,
+                updateAlarm = updateAlarm,
+                openChooseMessageList = { showChooseMessageListDialog.value = true }
+            )
+
+            BocusButton(
+                onClick = close,
             ) {
-                Text(
-                    text = stringResource(R.string.edit_alarm),
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-                AlarmDetailControls(
-                    modifier = Modifier.weight(1f),
-                    alarm = alarm,
-                    messageList = messageList,
-                    updateAlarm = updateAlarm,
-                    openChooseMessageList = openChooseMessageList
-                )
-
-                BocusButton(
-                    onClick = { close(false) },
-                ) {
-                    Text(text = stringResource(R.string.done))
-                }
+                Text(text = stringResource(R.string.done))
             }
         }
     }
@@ -132,7 +94,6 @@ private fun AlarmDetailControls(
     updateAlarm: (Alarm) -> Unit,
     openChooseMessageList: () -> Unit
 ) {
-    val context = LocalContext.current
     val fillMaxWidth = Modifier.fillMaxWidth()
 
     val startTimeState = rememberTimePickerState(alarm.startHour, alarm.startMinute)

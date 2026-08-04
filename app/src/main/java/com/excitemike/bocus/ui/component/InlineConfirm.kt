@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 
 /**
  * A confirm/cancel prompt meant to be used inline rather than as a popup over everything
@@ -26,7 +25,6 @@ fun InlineConfirm(
     modifier: Modifier = Modifier,
     singleLine: Boolean = true
 ) {
-    val context = LocalContext.current
     BackHandler {
         onCancel()
     }
