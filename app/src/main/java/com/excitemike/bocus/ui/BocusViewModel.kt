@@ -102,17 +102,6 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
         return checkSystemPermission(activity, permission)
     }
 
-    /** close and clean up after the confirmation dialog */
-    private fun closeConfirmDlg() {
-        _uiState.update {
-            it.copy(
-                confirmMessage = null,
-                onConfirm = Command.None,
-                onConfirmCancel = Command.None
-            )
-        }
-    }
-
     /** delete an alarm by id */
     fun deleteAlarmById(alarmId: Long) {
         cancelSystemAlarm(getApplication(), alarmId)
@@ -128,13 +117,6 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             messageListDao.delete(MessageListId(id))
         }
-    }
-
-    /** get rid of the confirmation dlg without doing the thing */
-    fun dismissConfirmDlg() {
-        val command = _uiState.value.onConfirmCancel
-        closeConfirmDlg()
-        doCommand(command)
     }
 
     /** get rid of the error dlg without doing the thing */
@@ -161,13 +143,6 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun getSystemPermissionsNeeded(): List<Pair<String, Int>> {
         return com.excitemike.bocus.data.getSystemPermissionsNeeded()
-    }
-
-    /** the user confirmed. do the thing */
-    fun onConfirm() {
-        val command = _uiState.value.onConfirm
-        closeConfirmDlg()
-        doCommand(command)
     }
 
     /** start showing the error message popup */
@@ -220,8 +195,6 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
 data class BocusUiState(
     /// Error Message
     var errorMessage: String? = null,
-    /// Confirmation Popup Message
-    var confirmMessage: String? = null, // TODO: make these internal to the item that needs the confirmation
     /// Confirmation Popup Action
     var onConfirm: Command = Command.None,
     /// Confirmation Popup Cancel Action
