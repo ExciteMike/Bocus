@@ -29,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
-import com.excitemike.bocus.util.FxType
 import com.excitemike.bocus.util.timeString
 
 /**
@@ -98,7 +97,6 @@ private fun TimeAccordionOpen(
                 )
                 BocusIconButton(
                     onClick = close,
-                    fx = FxType.BACK
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
@@ -150,7 +148,6 @@ private fun TimeAccordionClosed(
                 .align(Alignment.CenterEnd)
                 .height(32.dp),
             onClick = open,
-            fx = FxType.NORMAL
         ) {
             Icon(
                 modifier = Modifier.height(24.dp),

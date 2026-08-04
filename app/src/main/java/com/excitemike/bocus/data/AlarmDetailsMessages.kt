@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.ui.component.BocusIconButton
-import com.excitemike.bocus.util.FxType
 
 @Composable
 fun AlarmDetailsMessages(
@@ -79,7 +78,6 @@ private fun AlarmDetailsMessagesAfterLabelNonEmpty(
                 .height(32.dp) // TODO: make configurable
                 .align(Alignment.CenterEnd),
             onClick = openChooseMessageList,
-            fx = FxType.NORMAL
         ) {
             Icon(
                 modifier = Modifier.height(24.dp), // TODO: make configurable
@@ -100,7 +98,6 @@ private fun Empty(
 ) {
     BocusButton(
         onClick = openChooseMessageList,
-        fx = FxType.NORMAL,
         modifier = modifier.fillMaxSize(),
     ) {
         Text(text = stringResource(R.string.choose_message_list))

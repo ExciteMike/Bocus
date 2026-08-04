@@ -10,8 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.excitemike.bocus.util.Fx
-import com.excitemike.bocus.util.FxType
 
 /**
  * custom button to add our style and click fx
@@ -19,7 +17,6 @@ import com.excitemike.bocus.util.FxType
 @Composable
 fun BocusButton(
     onClick: () -> Unit,
-    fx: FxType,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp),
     content: @Composable () -> Unit = {},
@@ -30,7 +27,6 @@ fun BocusButton(
     Button(
         modifier = modifier,
         onClick = {
-            Fx.buttonClickFx(context, fx)
             onClick()
         },
         contentPadding = contentPadding,
@@ -46,7 +42,6 @@ fun BocusButton(
 @Composable
 fun BocusIconButton(
     onClick: () -> Unit,
-    fx: FxType,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit = {},
 ) {
@@ -56,7 +51,6 @@ fun BocusIconButton(
     IconButton(
         modifier = modifier,
         onClick = {
-            Fx.buttonClickFx(context, fx)
             onClick()
         },
         shape = shape,
@@ -72,7 +66,6 @@ fun BocusIconButton(
 fun BocusTextButton(
     text: String,
     onClick: () -> Unit,
-    fx: FxType,
     modifier: Modifier = Modifier,
 ) {
     val shape = MaterialTheme.shapes.medium
@@ -81,7 +74,6 @@ fun BocusTextButton(
     TextButton(
         modifier = modifier,
         onClick = {
-            Fx.buttonClickFx(context, fx)
             onClick()
         },
         shape = shape,

@@ -38,7 +38,6 @@ import com.excitemike.bocus.ui.component.BocusNavHost
 import com.excitemike.bocus.ui.component.BocusTabRow
 import com.excitemike.bocus.ui.viewmodel.AlarmScreenViewModel
 import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
-import com.excitemike.bocus.util.FxType
 import kotlinx.coroutines.launch
 
 @SuppressLint("ScheduleExactAlarm")
@@ -62,7 +61,6 @@ fun BocusApp(
                     onClick = {
                         viewModel.dismissErrorDlg()
                     },
-                    fx = FxType.NORMAL
                 ) {
                     Text(text = stringResource(R.string.dismiss))
                 }
@@ -79,7 +77,6 @@ fun BocusApp(
                     onClick = {
                         viewModel.onConfirm()
                     },
-                    fx = FxType.CONFIRM
                 ) {
                     Text(text = stringResource(R.string.confirm_button))
                 }
@@ -87,7 +84,6 @@ fun BocusApp(
             dismissButton = {
                 BocusButton(
                     onClick = { viewModel.dismissConfirmDlg() },
-                    fx = FxType.CANCEL
                 ) {
                     Text(
                         text = stringResource(
@@ -204,7 +200,6 @@ fun PermissionPrompt(
         @Composable {
             BocusButton(
                 onClick = onDismissRequest,
-                fx = FxType.CANCEL
             ) {
                 Text(text = stringResource(R.string.cancel_button))
             }
@@ -229,7 +224,6 @@ fun PermissionPrompt(
         confirmButton = {
             BocusButton(
                 onClick = onConfirm,
-                fx = FxType.NORMAL
             ) {
                 Text(text = stringResource(R.string.ok))
             }
@@ -250,7 +244,6 @@ fun GoToSettingsButton(activity: Activity) {
             intent.data = Uri.fromParts("package", packageName, null)
             activity.startActivity(intent)
         },
-        fx = FxType.NORMAL
     ) {
         Text(stringResource(R.string.go_to_settings))
     }

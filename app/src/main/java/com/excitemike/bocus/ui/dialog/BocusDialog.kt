@@ -15,8 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.excitemike.bocus.R
 import com.excitemike.bocus.ui.component.BocusButton
-import com.excitemike.bocus.util.Fx
-import com.excitemike.bocus.util.FxType
 
 /**
  * Base Dialog for Bocus
@@ -33,14 +31,16 @@ fun BocusDialog(
 ) {
     val context = LocalContext.current
     BackHandler {
-        Fx.buttonClickFx(context, FxType.BACK)
         close()
     }
     Dialog(
         onDismissRequest = close,
     ) {
         Card {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(
+                modifier = Modifier.padding(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleLarge
@@ -51,7 +51,6 @@ fun BocusDialog(
                 BocusButton(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     onClick = close,
-                    fx = FxType.CONFIRM
                 ) {
                     Text(text = stringResource(R.string.done))
                 }

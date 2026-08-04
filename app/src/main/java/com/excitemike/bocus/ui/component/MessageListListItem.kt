@@ -26,8 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Message
 import com.excitemike.bocus.data.MessageList
-import com.excitemike.bocus.util.Fx
-import com.excitemike.bocus.util.FxType
 
 /**
  * Displays a MessageList for the grid of MessageLists
@@ -51,14 +49,12 @@ fun MessageListListItem(
                 modifier = Modifier
                     .weight(1f)
                     .clickable {
-                        Fx.buttonClickFx(context, FxType.SWISH)
                         onEditClick()
                     },
             )
             Column {
                 BocusIconButton(
                     onClick = onEditClick,
-                    fx = FxType.NORMAL
                 ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
@@ -68,7 +64,6 @@ fun MessageListListItem(
                 }
                 BocusIconButton(
                     onClick = onDeleteClick,
-                    fx = FxType.NORMAL
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,

@@ -17,8 +17,6 @@ import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmNotifMode
-import com.excitemike.bocus.util.Fx
-import com.excitemike.bocus.util.FxType
 import com.excitemike.bocus.util.checkFlags
 
 /**
@@ -53,7 +51,6 @@ fun NotifMode(
                         } else {
                             alarm.notifMode or mask
                         }
-                        Fx.buttonClickFx(context, FxType.EDIT)
                         updateAlarm(alarm.copy(notifMode = bits))
                     },
                     label = {

@@ -3,6 +3,7 @@ package com.excitemike.bocus.ui.dialog
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -11,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.MessageList
 import com.excitemike.bocus.ui.component.BocusTextButton
-import com.excitemike.bocus.util.FxType
 
 
 /**

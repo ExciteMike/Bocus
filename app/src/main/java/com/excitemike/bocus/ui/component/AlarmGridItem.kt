@@ -19,8 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
-import com.excitemike.bocus.util.Fx
-import com.excitemike.bocus.util.FxType
 
 
 @Composable
@@ -51,7 +49,6 @@ fun AlarmGridItem(
                     modifier = Modifier
                         .weight(1f)
                         .clickable {
-                            Fx.buttonClickFx(context, FxType.SWISH)
                             openAlarmDetails()
                         },
                     alarm = alarm
@@ -59,7 +56,6 @@ fun AlarmGridItem(
                 Column {
                     BocusIconButton(
                         onClick = { openAlarmDetails() },
-                        fx = FxType.NORMAL
                     ) {
                         Icon(
                             imageVector = Icons.Default.Edit,
@@ -69,7 +65,6 @@ fun AlarmGridItem(
                     }
                     BocusIconButton(
                         onClick = { isConfirming.value = true },
-                        fx = FxType.NORMAL
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,

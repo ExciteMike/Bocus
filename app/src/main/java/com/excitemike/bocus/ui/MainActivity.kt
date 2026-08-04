@@ -13,14 +13,11 @@ import com.excitemike.bocus.receiver.AlarmReceiver
 import com.excitemike.bocus.ui.theme.BocusTheme
 import com.excitemike.bocus.ui.viewmodel.AlarmScreenViewModel
 import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
-import com.excitemike.bocus.util.Fx
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        Fx.init(this)
 
         createNotificationChannel(this)
 

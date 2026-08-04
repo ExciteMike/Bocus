@@ -25,7 +25,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.ui.modifier.fadeTopAndBottom
 import com.excitemike.bocus.ui.modifier.verticalScrollbar
-import com.excitemike.bocus.util.FxType
 
 @Composable
 fun <T> GridWithAddButton(
@@ -84,7 +83,6 @@ fun <T> GridWithAddButton(
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),
             onClick = onAdd,
-            fx = FxType.CONFIRM
         ) {
             Row(
                 horizontalArrangement = Arrangement.Center,

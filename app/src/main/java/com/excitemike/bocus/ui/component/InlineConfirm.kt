@@ -12,8 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.excitemike.bocus.util.Fx
-import com.excitemike.bocus.util.FxType
 
 /**
  * A confirm/cancel prompt meant to be used inline rather than as a popup over everything
@@ -30,7 +28,6 @@ fun InlineConfirm(
 ) {
     val context = LocalContext.current
     BackHandler {
-        Fx.buttonClickFx(context, FxType.CANCEL)
         onCancel()
     }
 
@@ -93,7 +90,6 @@ private fun IcCancel(
 ) {
     BocusButton(
         onClick = onCancel,
-        fx = FxType.CANCEL,
         modifier = modifier,
     ) {
         Text(text = cancelText)
@@ -111,7 +107,6 @@ private fun IcConfirm(
 ) {
     BocusButton(
         onClick = onConfirm,
-        fx = FxType.CONFIRM,
         modifier = modifier,
     ) {
         Text(text = confirmText)

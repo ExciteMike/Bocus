@@ -43,8 +43,6 @@ import com.excitemike.bocus.ui.component.DaysOfWeek
 import com.excitemike.bocus.ui.component.MinMax
 import com.excitemike.bocus.ui.component.NotifMode
 import com.excitemike.bocus.ui.component.TimeAccordion
-import com.excitemike.bocus.util.Fx
-import com.excitemike.bocus.util.FxType
 
 // TODO: use bocus dialog
 @Composable
@@ -73,9 +71,6 @@ fun AlarmDetailDialog(
         messageList = messageList,
         updateAlarm = updateAlarm,
         close = {
-            if (it) {
-                Fx.buttonClickFx(context, FxType.BACK)
-            }
             close()
         },
         openChooseMessageList = { showChooseMessageListDialog.value = true }
@@ -92,7 +87,6 @@ private fun AlarmDetailDialogInner(
 ) {
     val context = LocalContext.current
     BackHandler {
-        Fx.buttonClickFx(context, FxType.BACK)
         close(false)
     }
     Dialog(
@@ -120,7 +114,6 @@ private fun AlarmDetailDialogInner(
 
                 BocusButton(
                     onClick = { close(false) },
-                    fx = FxType.CONFIRM
                 ) {
                     Text(text = stringResource(R.string.done))
                 }
@@ -145,13 +138,11 @@ private fun AlarmDetailControls(
     val startTimeState = rememberTimePickerState(alarm.startHour, alarm.startMinute)
     LaunchedEffect(startTimeState.hour) {
         if (alarm.startHour != startTimeState.hour) {
-            Fx.buttonClickFx(context, FxType.EDIT)
             updateAlarm(alarm.copy(startHour = startTimeState.hour))
         }
     }
     LaunchedEffect(startTimeState.minute) {
         if (alarm.startMinute != startTimeState.minute) {
-            Fx.buttonClickFx(context, FxType.EDIT)
             updateAlarm(alarm.copy(startMinute = startTimeState.minute))
         }
     }
@@ -159,13 +150,11 @@ private fun AlarmDetailControls(
     val endTimeState = rememberTimePickerState(alarm.endHour, alarm.endMinute)
     LaunchedEffect(endTimeState.hour) {
         if (alarm.endHour != endTimeState.hour) {
-            Fx.buttonClickFx(context, FxType.EDIT)
             updateAlarm(alarm.copy(endHour = endTimeState.hour))
         }
     }
     LaunchedEffect(endTimeState.minute) {
         if (alarm.endMinute != endTimeState.minute) {
-            Fx.buttonClickFx(context, FxType.EDIT)
             updateAlarm(alarm.copy(endMinute = endTimeState.minute))
         }
     }
@@ -184,7 +173,6 @@ private fun AlarmDetailControls(
             inputTransformation = InputTransformation
                 .maxLength(BocusViewModel.MAX_NAME_LEN)
                 .then {
-                    Fx.buttonClickFx(context, FxType.EDIT)
                     updateAlarm(alarm.copy(name = this.toString()))
                 },
             label = { Text(stringResource(R.string.alarm_name_label)) },
@@ -203,11 +191,9 @@ private fun AlarmDetailControls(
             alarm.frequencyMax,
             label = stringResource(R.string.frequency),
             onMinChanged = {
-                Fx.buttonClickFx(context, FxType.EDIT)
                 updateAlarm(alarm.copy(frequencyMin = it))
             },
             onMaxChanged = {
-                Fx.buttonClickFx(context, FxType.EDIT)
                 updateAlarm(alarm.copy(frequencyMax = it))
             },
         )

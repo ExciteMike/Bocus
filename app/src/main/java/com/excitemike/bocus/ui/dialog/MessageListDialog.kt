@@ -17,8 +17,6 @@ import com.excitemike.bocus.data.Message
 import com.excitemike.bocus.data.MessageList
 import com.excitemike.bocus.ui.BocusViewModel
 import com.excitemike.bocus.ui.component.GridWithAddButton
-import com.excitemike.bocus.util.Fx
-import com.excitemike.bocus.util.FxType
 
 /**
  * Dialog for editing a MessageList
@@ -43,7 +41,6 @@ fun MessageListDialog(
             inputTransformation = InputTransformation
                 .maxLength(BocusViewModel.MAX_NAME_LEN)
                 .then {
-                    Fx.buttonClickFx(context, FxType.EDIT)
                     updateMessageList(messageList.copy(name = this.toString()))
                 },
             label = { Text(stringResource(R.string.message_list_name_label)) },

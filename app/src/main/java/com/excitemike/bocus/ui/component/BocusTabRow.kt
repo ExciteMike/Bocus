@@ -10,9 +10,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.excitemike.bocus.data.AppScreens
-import com.excitemike.bocus.util.Fx
-import com.excitemike.bocus.util.FxType
-
 @Composable
 fun BocusTabRow(
     currentScreenIndex: Int,
@@ -28,7 +25,6 @@ fun BocusTabRow(
             Tab(
                 selected = currentScreenIndex == index,
                 onClick = {
-                    Fx.buttonClickFx(context, FxType.SWISH)
                     onNav(screen)
                 },
                 text = {

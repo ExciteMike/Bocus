@@ -26,8 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.excitemike.bocus.util.Fx
-import com.excitemike.bocus.util.FxType
 import com.excitemike.bocus.R
 import kotlinx.coroutines.launch
 
@@ -118,7 +116,6 @@ private fun BocusSwipeToDismissBoxInner(
             }
         },
         onDismiss = {
-            Fx.buttonClickFx(context, FxType.SWISH)
             onDismiss()
         }
     ) {

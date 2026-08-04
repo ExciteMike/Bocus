@@ -23,8 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDayOfWeekFlags
-import com.excitemike.bocus.util.Fx
-import com.excitemike.bocus.util.FxType
 import com.excitemike.bocus.util.checkFlags
 
 /**
@@ -75,7 +73,6 @@ fun DaysOfWeek(
                             } else {
                                 alarm.activeDays or mask
                             }
-                            Fx.buttonClickFx(context, FxType.EDIT)
                             updateAlarm(alarm.copy(activeDays = bits))
                         },
                         label = {},
