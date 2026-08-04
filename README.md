@@ -8,7 +8,7 @@ An alarm app with randomized reminders.
 - message list inline edit should end inline editting on unfocus
 - back button to end inline edit
 - edit alarm scrollbar should use full available height
-- divider between list and add button
+- toasts for error message and scheduling
 - unique default names on alarms and message lists
 - write this readme
 - about screen message
