@@ -3,6 +3,7 @@ package com.excitemike.bocus.ui.dialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,7 +38,6 @@ import com.excitemike.bocus.ui.component.GridWithAddButton
 import com.excitemike.bocus.ui.viewmodel.EditMessageListViewModel
 
 private val ITEM_HEIGHT = 80.dp
-private val ICON_HEIGHT = 40.dp
 
 /**
  * Dialog for editing a MessageList
@@ -95,7 +95,7 @@ fun MessageListDialog(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 4.dp, vertical = 4.dp)
+                        .padding(4.dp)
                         .clickable(
                             onClick = openInlineEdit,
                             onClickLabel = stringResource(R.string.edit)
@@ -127,7 +127,9 @@ private fun MessageListItem(
     openInlineConfirm: () -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .padding(4.dp)
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -138,7 +140,7 @@ private fun MessageListItem(
         Column {
             BocusIconButton(
                 onClick = openInlineEdit,
-                modifier = Modifier.height(ICON_HEIGHT)
+                modifier = Modifier.weight(1f)
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
@@ -148,7 +150,7 @@ private fun MessageListItem(
             }
             BocusIconButton(
                 onClick = openInlineConfirm,
-                modifier = Modifier.height(ICON_HEIGHT)
+                modifier = Modifier.weight(1f)
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -166,7 +168,9 @@ private fun InlineEdit(
     closeInlineEdit: () -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().height(ITEM_HEIGHT),
+        modifier = Modifier
+            .padding(4.dp)
+            .fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         TextField(
@@ -181,8 +185,7 @@ private fun InlineEdit(
         )
 
         BocusIconButton(
-            onClick = closeInlineEdit,
-            modifier = Modifier.height(ICON_HEIGHT)
+            onClick = closeInlineEdit
         ) {
             Icon(
                 imageVector = Icons.Default.Check,
