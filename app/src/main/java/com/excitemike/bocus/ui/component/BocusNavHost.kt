@@ -1,5 +1,6 @@
 package com.excitemike.bocus.ui.component
 
+import android.app.Application
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,8 +40,12 @@ fun BocusNavHost(
 
                     AppScreens.MESSAGE_LISTS -> MessageListScreen(
                         modifier = Modifier.fillMaxSize(),
-                        viewModel = viewModel,
                         messageListScreenViewModel = messageListScreenViewModel,
+                        onError = {
+                            viewModel.setErrorMessage(
+                                viewModel.getApplication<Application>().getString(it)
+                            )
+                        }
                     )
 
                     AppScreens.ALARMS -> {
@@ -52,7 +57,8 @@ fun BocusNavHost(
                         val deleteAlarmById =
                             { alarmId: Long -> viewModel.deleteAlarmById(alarmId) }
                         val alarms = viewModel.alarmState.collectAsState().value
-                        val messageLists = viewModel.messageListState.collectAsState().value
+                        val messageLists =
+                            messageListScreenViewModel.allMessageListsState.collectAsState().value
                         AlarmScreen(
                             alarmScreenViewModel = alarmScreenViewModel,
                             alarms = alarms,

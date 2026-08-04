@@ -2,11 +2,15 @@ package com.excitemike.bocus.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Message
 import com.excitemike.bocus.data.MessageDao
 import com.excitemike.bocus.data.MessageList
 import com.excitemike.bocus.data.MessageListDao
-import com.excitemike.bocus.ui.BocusViewModel
+import com.excitemike.bocus.data.MessageListId
+import com.excitemike.bocus.ui.BocusViewModel.Companion.MAX_MESSAGES_PER_LIST
+import com.excitemike.bocus.ui.BocusViewModel.Companion.MAX_MESSAGE_LISTS
+import com.excitemike.bocus.ui.BocusViewModel.Companion.TIMEOUT_MILLIS
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +31,70 @@ class MessageListScreenViewModel(
     private val messageListDao: MessageListDao,
     private val messageDao: MessageDao,
 ) : ViewModel() {
+
+    /**
+     * asynchronously insert a new message
+     */
+    fun addMessage(
+        messageListId: Long,
+        defaultMessage: String,
+        onError: (Int) -> Unit
+    ) {
+        viewModelScope.launch {
+            val count = messageListDao.countMessagesInList(messageListId)
+            if (count < MAX_MESSAGES_PER_LIST) {
+                val message = Message(messageListId = messageListId, message = defaultMessage)
+                messageDao.insert(message)
+            } else {
+                onError(R.string.messages_per_list_limit)
+            }
+        }
+    }
+
+    /**
+     * asynchronously insert a new message list
+     */
+    fun addMessageList(
+        name: String,
+        onError: (Int) -> Unit
+    ) {
+        if (allMessageListsState.value.size < MAX_MESSAGE_LISTS) {
+            val messageList = MessageList(name = name)
+            viewModelScope.launch {
+                messageListDao.insert(messageList)
+            }
+        } else {
+            onError(R.string.message_list_limit)
+        }
+    }
+
+    /**
+     * StateFlow for the full list of [MessageList]s
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val allMessageListsState: StateFlow<List<MessageList>> = messageListDao.getAllMessageLists()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = listOf()
+        )
+
+    /**
+     * remove a message list from the DB
+     */
+    fun deleteMessageListById(id: Long) {
+        viewModelScope.launch {
+            messageListDao.delete(MessageListId(id))
+        }
+    }
+
+    /** update the values in an [MessageList] */
+    fun updateMessageList(messageList: MessageList) {
+        viewModelScope.launch {
+            messageListDao.update(messageList)
+        }
+    }
+
     /**
      * identify which list these messages are for
      */
@@ -45,7 +113,7 @@ class MessageListScreenViewModel(
             }
         }.stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(BocusViewModel.TIMEOUT_MILLIS),
+            SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
             emptyList()
         )
 
@@ -62,7 +130,7 @@ class MessageListScreenViewModel(
             }
         }.stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(BocusViewModel.TIMEOUT_MILLIS),
+            SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
             null
         )
 

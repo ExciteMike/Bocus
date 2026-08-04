@@ -9,9 +9,6 @@ import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.data.AlarmId
-import com.excitemike.bocus.data.Message
-import com.excitemike.bocus.data.MessageList
-import com.excitemike.bocus.data.MessageListId
 import com.excitemike.bocus.data.cancelSystemAlarm
 import com.excitemike.bocus.data.checkSystemPermission
 import com.excitemike.bocus.data.getNextAlarmTime
@@ -26,15 +23,7 @@ import kotlinx.coroutines.launch
 
 class BocusViewModel(application: Application) : AndroidViewModel(application) {
     val alarmDao = AlarmDatabase.getDatabase(application).alarmDao()
-    private val messageListDao = AlarmDatabase.getDatabase(application).messageListDao()
-    private val messageDao = AlarmDatabase.getDatabase(application).messageDao()
     val alarmState: StateFlow<List<Alarm>> = alarmDao.getAllAlarms()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            initialValue = listOf()
-        )
-    val messageListState: StateFlow<List<MessageList>> = messageListDao.getAllMessageLists()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
@@ -63,38 +52,6 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * insert a new message
-     */
-    fun addMessage(messageListId: Long, defaultMessage: String) {
-        val context: Application = getApplication()
-        viewModelScope.launch {
-            val count = messageListDao.countMessagesInList(messageListId)
-            if (count < MAX_MESSAGES_PER_LIST) {
-                val message = Message(messageListId = messageListId, message = defaultMessage)
-                messageDao.insert(message)
-            } else {
-                setErrorMessage(context.getString(R.string.messages_per_list_limit))
-            }
-        }
-    }
-
-    /**
-     * insert a new message list
-     */
-    fun addMessageList(name: String) {
-        val context: Application = getApplication()
-        val size = messageListState.value.size
-        if (size < MAX_MESSAGE_LISTS) {
-            val messageList = MessageList(name = name)
-            viewModelScope.launch {
-                messageListDao.insert(messageList)
-            }
-        } else {
-            setErrorMessage(context.getString(R.string.message_list_limit))
-        }
-    }
-
-    /**
      * true when the given permission has been granted
      */
     fun checkPermission(activity: Activity, permission: String): Boolean {
@@ -106,15 +63,6 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
         cancelSystemAlarm(getApplication(), alarmId)
         viewModelScope.launch {
             alarmDao.delete(AlarmId(alarmId))
-        }
-    }
-
-    /**
-     * remove a message list from the DB
-     */
-    fun deleteMessageListById(id: Long) {
-        viewModelScope.launch {
-            messageListDao.delete(MessageListId(id))
         }
     }
 
@@ -156,13 +104,6 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
     fun updateAlarmNoReschedule(alarm: Alarm) {
         viewModelScope.launch {
             alarmDao.update(alarm)
-        }
-    }
-
-    /** update the values in an [MessageList] */
-    fun updateMessageList(messageList: MessageList) {
-        viewModelScope.launch {
-            messageListDao.update(messageList)
         }
     }
 

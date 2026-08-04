@@ -14,28 +14,34 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.MessageList
-import com.excitemike.bocus.ui.BocusViewModel
 import com.excitemike.bocus.ui.component.BocusSwipeToDismissBox
 import com.excitemike.bocus.ui.component.GridWithAddButton
 import com.excitemike.bocus.ui.component.MessageListListItem
 import com.excitemike.bocus.ui.dialog.MessageListDialog
 import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
 
+/**
+ * Composable for the message list screen.
+ * @param messageListScreenViewModel
+ * @param onError If something goes wrong that we need to tell the user about, it will call this to provide a resource id for the string to display
+ * @param modifier modifier for this composable
+ */
 @Composable
 fun MessageListScreen(
-    viewModel: BocusViewModel, // TODO: use just a messageList and messages viewmodel
     messageListScreenViewModel: MessageListScreenViewModel,
+    onError: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val messageLists = viewModel.messageListState.collectAsState().value
+    val messageLists = messageListScreenViewModel.allMessageListsState.collectAsState().value
     val messagesByListId = messageListScreenViewModel.messagesByListId.collectAsState()
     val defaultMessageListName = stringResource(R.string.default_message_list_name)
     val defaultMessage = stringResource(R.string.default_message)
 
-    val addMessage =
-        { messageListId: Long -> viewModel.addMessage(messageListId, defaultMessage) }
+    val addMessage = { messageListId: Long ->
+        messageListScreenViewModel.addMessage(messageListId, defaultMessage, onError)
+    }
     val updateMessageList =
-        { messageList: MessageList -> viewModel.updateMessageList(messageList) }
+        { messageList: MessageList -> messageListScreenViewModel.updateMessageList(messageList) }
     val messageList = messageListScreenViewModel.messageListState.collectAsState().value
     val messages = messageListScreenViewModel.messagesState.collectAsState().value
 
@@ -54,7 +60,7 @@ fun MessageListScreen(
         data = messageLists,
         dataKey = { it.id!! },
         addButtonLabel = stringResource(R.string.add_message_list),
-        onAdd = { viewModel.addMessageList(defaultMessageListName) },
+        onAdd = { messageListScreenViewModel.addMessageList(defaultMessageListName, onError) },
         modifier = modifier.fillMaxSize(),
         messageIfEmpty = stringResource(R.string.no_message_lists)
     ) { messageList ->
@@ -68,7 +74,7 @@ fun MessageListScreen(
         val isConfirming = rememberSaveable { mutableStateOf(false) }
         BocusSwipeToDismissBox(
             dismissConfirmPrompt = confirmPrompt,
-            onConfirm = { viewModel.deleteMessageListById(messageListId) },
+            onConfirm = { messageListScreenViewModel.deleteMessageListById(messageListId) },
             modifier = Modifier.padding(end = 8.dp)
                 .height(80.dp),
             state = isConfirming,
