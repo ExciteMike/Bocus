@@ -19,19 +19,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.excitemike.bocus.R
-import com.excitemike.bocus.data.INITIAL_APP_SCREEN
+import com.excitemike.bocus.data.AppScreens
 import com.excitemike.bocus.data.rescheduleAllSystemAlarms
 import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.ui.component.BocusNavHost
@@ -39,6 +36,7 @@ import com.excitemike.bocus.ui.component.BocusTabRow
 import com.excitemike.bocus.ui.viewmodel.AlarmScreenViewModel
 import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
 import kotlinx.coroutines.launch
+import kotlin.math.max
 
 @SuppressLint("ScheduleExactAlarm")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,12 +78,15 @@ fun BocusApp(
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             val navController = rememberNavController()
-            var currentScreenIndex by rememberSaveable { mutableIntStateOf(INITIAL_APP_SCREEN.ordinal) }
+            val backStackEntry = navController.currentBackStackEntryAsState()
+            val route = backStackEntry.value?.destination?.route
+            val currentScreenIndex = max(
+                0,
+                AppScreens.entries.indexOfFirst { it.name == route })
             BocusTabRow(
                 currentScreenIndex = currentScreenIndex,
                 onNav = {
                     navController.navigate(it.name)
-                    currentScreenIndex = it.ordinal
                 }
             )
             BocusNavHost(
