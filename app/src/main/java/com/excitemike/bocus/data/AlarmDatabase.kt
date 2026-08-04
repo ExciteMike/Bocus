@@ -26,7 +26,7 @@ abstract class AlarmDatabase : RoomDatabase() {
                     AlarmDatabase::class.java,
                     "alarm_database"
                 )
-                    .fallbackToDestructiveMigration(true) // TODO: I should be doing manual migration of database versions
+                    .fallbackToDestructiveMigration(true) // TODO: after initial release I should do manual migration of database versions
                     .build()
                 Instance = instance
                 instance

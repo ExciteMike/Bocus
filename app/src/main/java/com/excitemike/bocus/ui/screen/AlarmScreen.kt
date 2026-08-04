@@ -31,7 +31,6 @@ fun AlarmScreen(
         AlarmDetailDialog(
             selectedAlarm = selectedAlarm,
             messageLists = messageLists,
-            // TODO: this always reschedules! Could be smarter!
             updateAlarm = updateAlarm,
             close = {
                 alarmScreenViewModel.clearSelectedAlarm()

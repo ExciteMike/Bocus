@@ -78,12 +78,12 @@ private fun AlarmDetailsMessagesAfterLabelNonEmpty(
 
         BocusIconButton(
             modifier = Modifier
-                .height(32.dp) // TODO: make configurable
+                .height(32.dp)
                 .align(Alignment.CenterEnd),
             onClick = openChooseMessageList,
         ) {
             Icon(
-                modifier = Modifier.height(24.dp), // TODO: make configurable
+                modifier = Modifier.height(24.dp),
                 imageVector = Icons.Default.Edit,
                 contentDescription = stringResource(R.string.edit),
             )

@@ -11,13 +11,11 @@ An alarm app with randomized reminders.
     - test them
     - use when showing notification
 - write this readme
-- request permission - use datastore for isFirstTime
-- debounce alarm scheduling/db saves
 - about screen message
 - upload to developer console
 - send to testers
 - "Support this app" button on notifications and main screen
-- more pleasant sounds
+- bring back sounds but more subtle ones
     - categories
         - default - tick/click - softened snare
         - nav - rising whoosh or two rising tones or coin collect - 
