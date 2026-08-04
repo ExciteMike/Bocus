@@ -1,7 +1,6 @@
 package com.excitemike.bocus.ui.dialog
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.imePadding
@@ -47,7 +46,7 @@ fun BocusDialog(
                     style = MaterialTheme.typography.titleLarge
                 )
 
-                Box(Modifier.weight(1f)) {
+                Column(Modifier.weight(1f)) {
                     content()
                 }
 

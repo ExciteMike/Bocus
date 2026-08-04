@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -52,6 +54,7 @@ fun DaysOfWeek(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(start = 16.dp)
                 .horizontalScroll(rememberScrollState())
                 .height(50.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -63,7 +66,7 @@ fun DaysOfWeek(
                         modifier = Modifier
                             .align(Alignment.Center)
                             .height(40.dp)
-                            .width(42.dp),
+                            .width(38.dp),
                         selected = active,
                         onClick = {
                             val bits = if (active) {
@@ -74,6 +77,10 @@ fun DaysOfWeek(
                             updateAlarm(alarm.copy(activeDays = bits))
                         },
                         label = {},
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
                     )
                     Text(
                         modifier = Modifier.align(Alignment.Center),
@@ -84,6 +91,11 @@ fun DaysOfWeek(
                             FontWeight.Bold
                         } else {
                             FontWeight.Light
+                        },
+                        color = if (active) {
+                            MaterialTheme.colorScheme.onPrimaryContainer
+                        } else {
+                            Color.Unspecified
                         }
                     )
                 }

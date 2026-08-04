@@ -1,6 +1,7 @@
 package com.excitemike.bocus.data
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,14 +25,16 @@ fun AlarmDetailsMessages(
     openChooseMessageList: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Text(
-        modifier = modifier.padding(start = 16.dp),
-        text = stringResource(R.string.message_list_label),
-        maxLines = 1,
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
-    AlarmDetailsMessagesAfterLabel(currentMessageList, openChooseMessageList, modifier)
+    Column {
+        Text(
+            modifier = modifier.padding(start = 16.dp),
+            text = stringResource(R.string.message_list_label),
+            maxLines = 1,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        AlarmDetailsMessagesAfterLabel(currentMessageList, openChooseMessageList, modifier)
+    }
 }
 
 /**
@@ -65,7 +68,7 @@ private fun AlarmDetailsMessagesAfterLabelNonEmpty(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier.padding(start = 4.dp),
+        modifier.padding(start = 16.dp),
     ) {
         Text(
             modifier = Modifier.align(Alignment.CenterStart),
