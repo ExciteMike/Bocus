@@ -38,9 +38,13 @@ fun MessageListListItem(
     modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = modifier.padding(horizontal = 4.dp, vertical = 4.dp)
+        modifier = modifier.padding(4.dp)
     ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth()
+        ) {
             MessageListListItemInner(
                 messageList = messageList,
                 messages = messages,
@@ -53,6 +57,7 @@ fun MessageListListItem(
             Column {
                 BocusIconButton(
                     onClick = onEditClick,
+                    modifier = Modifier.weight(0.5f)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
@@ -62,6 +67,7 @@ fun MessageListListItem(
                 }
                 BocusIconButton(
                     onClick = onDeleteClick,
+                    modifier = Modifier.weight(0.5f)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
