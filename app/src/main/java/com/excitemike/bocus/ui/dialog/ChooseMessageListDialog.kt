@@ -15,10 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.MessageList
+import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.ui.modifier.verticalScrollbar
 
 
@@ -35,6 +35,7 @@ fun ChooseMessageListDialog(
     messageLists: List<MessageList>,
     modifier: Modifier = Modifier,
     close: () -> Unit,
+    addMessageList: () -> Unit,
     onChooseMessageList: (Long) -> Unit,
 ) {
     BocusDialog(
@@ -65,6 +66,11 @@ fun ChooseMessageListDialog(
                         )
                     }
                 }
+            }
+            BocusButton(
+                onClick = addMessageList
+            ) {
+                Text(stringResource(R.string.add_message_list))
             }
         }
     }

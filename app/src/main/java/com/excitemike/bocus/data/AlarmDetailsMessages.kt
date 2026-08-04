@@ -1,5 +1,6 @@
 package com.excitemike.bocus.data
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -68,7 +69,7 @@ private fun AlarmDetailsMessagesAfterLabelNonEmpty(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier.padding(start = 16.dp),
+        modifier.padding(start = 16.dp).clickable(onClick = openChooseMessageList),
     ) {
         Text(
             modifier = Modifier.align(Alignment.CenterStart),

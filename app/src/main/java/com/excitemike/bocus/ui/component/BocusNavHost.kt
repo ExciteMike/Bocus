@@ -27,6 +27,11 @@ fun BocusNavHost(
     alarmScreenViewModel: AlarmScreenViewModel,
     messageListScreenViewModel: MessageListScreenViewModel,
 ) {
+    val onError = { resId: Int ->
+        viewModel.setErrorMessage(
+            viewModel.getApplication<Application>().getString(resId)
+        )
+    }
     NavHost(
         navController,
         startDestination = INITIAL_APP_SCREEN.name
@@ -41,15 +46,13 @@ fun BocusNavHost(
                     AppScreens.MESSAGE_LISTS -> MessageListScreen(
                         modifier = Modifier.fillMaxSize(),
                         messageListScreenViewModel = messageListScreenViewModel,
-                        onError = {
-                            viewModel.setErrorMessage(
-                                viewModel.getApplication<Application>().getString(it)
-                            )
-                        }
+                        onError = onError
                     )
 
                     AppScreens.ALARMS -> {
                         val defaultAlarmName = stringResource(R.string.default_alarm_name)
+                        val defaultMessageListName =
+                            stringResource(R.string.default_message_list_name)
                         val addAlarm =
                             { viewModel.addAlarm(defaultAlarmName) }
                         val updateAlarm =
@@ -59,11 +62,18 @@ fun BocusNavHost(
                         val alarms = viewModel.alarmState.collectAsState().value
                         val messageLists =
                             messageListScreenViewModel.allMessageListsState.collectAsState().value
+                        val addMessageList = {
+                            messageListScreenViewModel.addMessageList(
+                                defaultMessageListName,
+                                onError = onError
+                            )
+                        }
                         AlarmScreen(
                             alarmScreenViewModel = alarmScreenViewModel,
                             alarms = alarms,
                             messageLists = messageLists,
                             addAlarm = addAlarm,
+                            addMessageList = addMessageList,
                             updateAlarm = updateAlarm,
                             deleteAlarmById = deleteAlarmById,
                             modifier = Modifier.fillMaxSize(),

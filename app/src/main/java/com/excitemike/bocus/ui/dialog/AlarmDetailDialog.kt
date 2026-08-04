@@ -42,6 +42,7 @@ import com.excitemike.bocus.ui.modifier.verticalScrollbar
 fun AlarmDetailDialog(
     selectedAlarm: Alarm,
     messageLists: List<MessageList>,
+    addMessageList: () -> Unit,
     updateAlarm: (alarm: Alarm) -> Unit,
     close: () -> Unit,
 ) {
@@ -51,6 +52,7 @@ fun AlarmDetailDialog(
         ChooseMessageListDialog(
             messageLists = messageLists,
             close = { showChooseMessageListDialog.value = false },
+            addMessageList = addMessageList,
             onChooseMessageList = { messageListId ->
                 updateAlarm(selectedAlarm.copy(messageListId = messageListId))
             }

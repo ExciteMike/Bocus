@@ -19,6 +19,7 @@ import com.excitemike.bocus.ui.viewmodel.AlarmScreenViewModel
 fun AlarmScreen(
     alarms: List<Alarm>,
     messageLists: List<MessageList>,
+    addMessageList: () -> Unit,
     addAlarm: () -> Unit,
     updateAlarm: (Alarm) -> Unit,
     deleteAlarmById: (Long) -> Unit,
@@ -31,6 +32,7 @@ fun AlarmScreen(
         AlarmDetailDialog(
             selectedAlarm = selectedAlarm,
             messageLists = messageLists,
+            addMessageList = addMessageList,
             updateAlarm = updateAlarm,
             close = {
                 alarmScreenViewModel.clearSelectedAlarm()
