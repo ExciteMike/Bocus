@@ -20,6 +20,8 @@ import com.excitemike.bocus.ui.component.MessageListListItem
 import com.excitemike.bocus.ui.dialog.MessageListDialog
 import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
 
+private val ITEM_HEIGHT = 80.dp
+
 /**
  * Composable for the message list screen.
  * @param messageListScreenViewModel
@@ -72,7 +74,7 @@ fun MessageListScreen(
             dismissConfirmPrompt = confirmPrompt,
             onConfirm = { messageListScreenViewModel.deleteMessageListById(messageListId) },
             modifier = Modifier.padding(end = 8.dp)
-                .height(80.dp),
+                .height(ITEM_HEIGHT),
             state = isConfirming,
         ) {
             MessageListListItem(
