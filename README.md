@@ -2,16 +2,19 @@
 
 An alarm app with randomized reminders.
 
-I know there are lots of alarm apps out there already, but as far as I'm aware this is the first one that lets you randomize both the times it appears and the reminder message itself.
+There are lots of alarm apps out there already, but as far as I'm aware this is the first one
+that lets you randomize both when it appears and the reminder message itself.
 
 ## to-do list
 
-- update the about screen message
+- Associate messages with the alarm, rather than the message list
+- truncate reminders in MessageListListItem based on how many there are
+    - AND truncate the list if there are many
 - "Support this app" button on notifications and main screen
 - bring back sounds but more subtle ones
     - categories
         - default - tick/click - softened snare
-        - nav - rising whoosh or two rising tones or coin collect - 
+        - nav - rising whoosh or two rising tones or coin collect
         - success/done - single but rising tone
         - error - thud or falling tone
         - minor edit - bongos? high note ~25% of the time

@@ -1,7 +1,7 @@
 <!--suppress LongLine -->
 <resources>
     <string name="about_tab_label">About</string>
-    <string name="about_message">This app isn\'t much, but it is built out of artisanal code hand-typed by the human fingers of Mike Meyer.</string>
+    <string name="about_message">This app is built out of artisanal code typed by my own human fingers. None of its code or assets come from generative AI or LLMs.</string>
     <string name="add_alarm">Add Alarm</string>
     <string name="add_message">Add Message</string>
     <string name="add_message_list">Add Message List</string>
@@ -45,6 +45,7 @@
     <string name="message_list_tab">Messages</string>
     <string name="messages_per_list_limit">Maximum number of messages in a list reached</string>
     <string name="minimum">Minimum</string>
+    <string name="no_ai">No AI</string>
     <string name="no_alarms">No alarms have been added yet. Use the button below to add one!</string>
     <string name="no_message_lists">No message lists have been added yet. Use the button below to add one!</string>
     <string name="ok">OK</string>

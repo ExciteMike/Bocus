@@ -1,6 +1,7 @@
 package com.excitemike.bocus.ui.component
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -29,7 +30,7 @@ fun BocusNavHost(
             composable(screen.name) {
                 when (screen) {
                     AppScreens.ABOUT -> AboutScreen(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxWidth()
                     )
 
                     AppScreens.MESSAGE_LISTS -> MessageListScreen(
