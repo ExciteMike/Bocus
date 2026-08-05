@@ -2,15 +2,10 @@ package com.excitemike.bocus.ui.component
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.excitemike.bocus.R
-import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AppScreens
 import com.excitemike.bocus.data.INITIAL_APP_SCREEN
 import com.excitemike.bocus.ui.screen.AboutScreen
@@ -26,7 +21,6 @@ fun BocusNavHost(
     messageListScreenViewModel: MessageListScreenViewModel,
     onError: (Int) -> Unit,
 ) {
-    val context = LocalContext.current
     NavHost(
         navController,
         startDestination = INITIAL_APP_SCREEN.name
@@ -45,36 +39,10 @@ fun BocusNavHost(
                     )
 
                     AppScreens.ALARMS -> {
-                        // TODO send the viewmodel(s) down instead of wrapping them here
-                        val defaultAlarmName = stringResource(R.string.default_alarm_name)
-                        val defaultMessageListName =
-                            stringResource(R.string.default_message_list_name)
-                        val addAlarm =
-                            { alarmScreenViewModel.addAlarm(context, defaultAlarmName, onError) }
-                        val updateAlarm = { alarm: Alarm ->
-                            alarmScreenViewModel.updateAlarmAndReschedule(context, alarm)
-                        }
-                        val deleteAlarmById = { alarmId: Long ->
-                            alarmScreenViewModel.deleteAlarmById(context, alarmId)
-                        }
-                        val alarms = alarmScreenViewModel.allAlarmsState.collectAsState().value
-                        val messageLists =
-                            messageListScreenViewModel.allMessageListsState.collectAsState().value
-                        val addMessageList = {
-                            messageListScreenViewModel.addMessageList(
-                                defaultMessageListName,
-                                onError = onError
-                            )
-                        }
                         AlarmScreen(
                             alarmScreenViewModel = alarmScreenViewModel,
-                            alarms = alarms,
-                            messageLists = messageLists,
-                            addAlarm = addAlarm,
-                            addMessageList = addMessageList,
-                            updateAlarm = updateAlarm,
-                            deleteAlarmById = deleteAlarmById,
-                            modifier = Modifier.fillMaxSize(),
+                            messageListScreenViewModel = messageListScreenViewModel,
+                            onError = onError,
                         )
                     }
                 }
