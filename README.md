@@ -5,8 +5,7 @@ An alarm app with randomized reminders.
 ## to-do list
 
 - TODOs in code
-- edit alarm scrollbar should use full available height
-- toasts for error message and scheduling
+- toast up the schedule time
 - unique default names on alarms and message lists
 - write this readme
 - about screen message

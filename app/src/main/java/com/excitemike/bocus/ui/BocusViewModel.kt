@@ -13,12 +13,9 @@ import com.excitemike.bocus.data.cancelSystemAlarm
 import com.excitemike.bocus.data.checkSystemPermission
 import com.excitemike.bocus.data.getNextAlarmTime
 import com.excitemike.bocus.data.scheduleSystemAlarm
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class BocusViewModel(application: Application) : AndroidViewModel(application) {
@@ -30,11 +27,11 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
             initialValue = listOf()
         )
 
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
-
     /** add a new alarm */
-    fun addAlarm(name: String) {
+    fun addAlarm(
+        name: String,
+        onError: (Int) -> Unit
+    ) {
         val application: Application = getApplication()
 
         val size = alarmState.value.size
@@ -47,7 +44,7 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
                 scheduleSystemAlarm(application, alarm)
             }
         } else {
-            setErrorMessage(application.getString(R.string.alarm_limit))
+            onError(R.string.alarm_limit)
         }
     }
 
@@ -66,21 +63,11 @@ class BocusViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    /** get rid of the error dlg without doing the thing */
-    fun dismissErrorDlg() {
-        _errorMessage.update { null }
-    }
-
     /**
      * figure out what permissions the app needs
      */
     fun getSystemPermissionsNeeded(): List<Pair<String, Int>> {
         return com.excitemike.bocus.data.getSystemPermissionsNeeded()
-    }
-
-    /** start showing the error message popup */
-    fun setErrorMessage(errorMessage: String) {
-        _errorMessage.update { errorMessage }
     }
 
     /**

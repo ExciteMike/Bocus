@@ -18,10 +18,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -33,6 +33,7 @@ import com.excitemike.bocus.data.rescheduleAllSystemAlarms
 import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.ui.component.BocusNavHost
 import com.excitemike.bocus.ui.component.BocusTabRow
+import com.excitemike.bocus.ui.component.ErrorToasts
 import com.excitemike.bocus.ui.viewmodel.AlarmScreenViewModel
 import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
 import kotlinx.coroutines.launch
@@ -48,24 +49,8 @@ fun BocusApp(
     alarmScreenViewModel: AlarmScreenViewModel,
     messageListScreenViewModel: MessageListScreenViewModel
 ) {
-    val errorMessage = viewModel.errorMessage.collectAsState().value
-
-    if (errorMessage != null) {
-        AlertDialog(
-            title = @Composable { Text(text = stringResource(R.string.error)) },
-            text = @Composable { Text(text = errorMessage) },
-            confirmButton = @Composable {
-                BocusButton(
-                    onClick = {
-                        viewModel.dismissErrorDlg()
-                    },
-                ) {
-                    Text(text = stringResource(R.string.dismiss))
-                }
-            },
-            onDismissRequest = { viewModel.dismissErrorDlg() }
-        )
-    }
+    val toastMessageState = rememberSaveable { mutableStateOf<Int?>(null) }
+    val onError = { resId: Int -> toastMessageState.value = resId }
 
     val allPermissions = remember { viewModel.getSystemPermissionsNeeded() }
     for ((permission, stringId) in allPermissions) {
@@ -93,11 +78,15 @@ fun BocusApp(
                 navController = navController,
                 viewModel = viewModel,
                 alarmScreenViewModel = alarmScreenViewModel,
-                messageListScreenViewModel = messageListScreenViewModel
+                messageListScreenViewModel = messageListScreenViewModel,
+                onError = onError
             )
         }
-
     }
+    ErrorToasts(
+        messageResId = toastMessageState.value,
+        onTimeout = { toastMessageState.value = null }
+    )
 }
 
 @Composable
