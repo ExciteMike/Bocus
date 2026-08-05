@@ -88,6 +88,7 @@ fun MessageListDialog(
                 dismissConfirmPrompt = confirmPrompt,
                 onConfirm = { viewModel.deleteMessageById(messageId) },
                 modifier = Modifier
+                    .padding(end = 8.dp)
                     .fillMaxWidth()
                     .height(ITEM_HEIGHT),
                 state = isConfirming,

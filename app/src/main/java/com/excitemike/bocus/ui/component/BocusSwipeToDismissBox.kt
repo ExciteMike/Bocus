@@ -55,7 +55,7 @@ fun BocusSwipeToDismissBox(
                 confirmPrompt = dismissConfirmPrompt,
                 confirmText = stringResource(R.string.confirm_button),
                 onConfirm = {
-                    state.value = false
+                    //state.value = false // TODO: commenting this out prevents the flicker. But do we need the inline confirm to go away sometimes?
                     scope.launch { swipeToDismissState.reset() }
                     onConfirm()
                 },
