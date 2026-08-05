@@ -28,14 +28,12 @@
     <string name="default_alarm_name">Alarm</string>
     <string name="default_message">Reminder</string>
     <string name="default_message_list_name">Message List</string>
-    <string name="dismiss">Dismiss</string>
     <string name="done">Done</string>
     <string name="edit">Edit</string>
     <string name="edit_alarm">Edit Alarm</string>
     <string name="edit_message_list">Edit Message List</string>
     <string name="end_time_label_and_value">End at time %1$s</string>
     <string name="end_time_label">End at time</string>
-    <string name="error">Error</string>
     <string name="every_x_to_y_minutes">every %1$s to %2$s minutes</string>
     <string name="explain_notification_permission">Bocus needs notification permissions to notify you when an alarm triggers</string>
     <string name="frequency">Frequency (minutes)</string>

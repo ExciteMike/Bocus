@@ -9,9 +9,6 @@ import com.excitemike.bocus.data.MessageId
 import com.excitemike.bocus.data.MessageList
 import com.excitemike.bocus.data.MessageListDao
 import com.excitemike.bocus.data.MessageListId
-import com.excitemike.bocus.ui.BocusViewModel.Companion.MAX_MESSAGES_PER_LIST
-import com.excitemike.bocus.ui.BocusViewModel.Companion.MAX_MESSAGE_LISTS
-import com.excitemike.bocus.ui.BocusViewModel.Companion.TIMEOUT_MILLIS
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +19,9 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+const val MAX_MESSAGE_LISTS = 255
+const val MAX_MESSAGES_PER_LIST = 255
 
 /**
  * Glue to connect composables to DB

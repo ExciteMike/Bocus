@@ -36,13 +36,14 @@ import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Message
 import com.excitemike.bocus.data.MessageList
-import com.excitemike.bocus.ui.BocusViewModel
 import com.excitemike.bocus.ui.component.BocusIconButton
 import com.excitemike.bocus.ui.component.BocusSwipeToDismissBox
 import com.excitemike.bocus.ui.component.GridWithAddButton
 import com.excitemike.bocus.ui.viewmodel.EditMessageListViewModel
 
 private val ITEM_HEIGHT = 80.dp
+private const val MAX_MESSAGE_LEN = 255
+private const val MAX_NAME_LEN = 255
 
 /**
  * Dialog for editing a MessageList
@@ -69,7 +70,7 @@ fun MessageListDialog(
             modifier = Modifier.fillMaxWidth(),
             state = rememberTextFieldState(messageList.name),
             inputTransformation = InputTransformation
-                .maxLength(BocusViewModel.MAX_NAME_LEN)
+                .maxLength(MAX_NAME_LEN)
                 .then {
                     updateMessageList(messageList.copy(name = this.toString()))
                 },
@@ -196,7 +197,7 @@ private fun InlineEdit(
                 },
             state = rememberTextFieldState(initialText = message.message),
             inputTransformation = InputTransformation
-                .maxLength(BocusViewModel.MAX_MESSAGE_LEN)
+                .maxLength(MAX_MESSAGE_LEN)
                 .then {
                     updateMessage(message.copy(message = this.toString()))
                 },

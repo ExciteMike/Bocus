@@ -29,6 +29,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.AppScreens
+import com.excitemike.bocus.data.checkSystemPermission
 import com.excitemike.bocus.data.rescheduleAllSystemAlarms
 import com.excitemike.bocus.ui.component.BocusButton
 import com.excitemike.bocus.ui.component.BocusNavHost
@@ -45,16 +46,15 @@ import kotlin.math.max
 fun BocusApp(
     modifier: Modifier = Modifier,
     activity: Activity,
-    viewModel: BocusViewModel,
     alarmScreenViewModel: AlarmScreenViewModel,
     messageListScreenViewModel: MessageListScreenViewModel
 ) {
     val toastMessageState = rememberSaveable { mutableStateOf<Int?>(null) }
     val onError = { resId: Int -> toastMessageState.value = resId }
 
-    val allPermissions = remember { viewModel.getSystemPermissionsNeeded() }
+    val allPermissions = remember { com.excitemike.bocus.data.getSystemPermissionsNeeded() }
     for ((permission, stringId) in allPermissions) {
-        PermissionRequestFlow(activity, viewModel, permission, stringId)
+        PermissionRequestFlow(activity, alarmScreenViewModel, permission, stringId)
     }
 
     Scaffold(
@@ -76,7 +76,6 @@ fun BocusApp(
             )
             BocusNavHost(
                 navController = navController,
-                viewModel = viewModel,
                 alarmScreenViewModel = alarmScreenViewModel,
                 messageListScreenViewModel = messageListScreenViewModel,
                 onError = onError
@@ -92,11 +91,11 @@ fun BocusApp(
 @Composable
 fun PermissionRequestFlow(
     activity: Activity,
-    viewModel: BocusViewModel,
+    viewModel: AlarmScreenViewModel,
     permission: String,
     rationaleStringId: Int
 ) {
-    val isGranted = remember { mutableStateOf(viewModel.checkPermission(activity, permission)) }
+    val isGranted = remember { mutableStateOf(checkSystemPermission(activity, permission)) }
     val isFirstTime = remember { mutableStateOf(true) }
     val showPermissionPrompt = remember { mutableStateOf(true) }
     val reschedScope = rememberCoroutineScope()
@@ -111,7 +110,7 @@ fun PermissionRequestFlow(
                 reschedScope.launch {
                     rescheduleAllSystemAlarms(
                         activity,
-                        viewModel.alarmState.value,
+                        viewModel.allAlarmsState.value,
                         updateAlarm = { alarm ->
                             updateScope.launch {
                                 viewModel.updateAlarmNoReschedule(

@@ -31,12 +31,13 @@ import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDetailsMessages
 import com.excitemike.bocus.data.MessageList
-import com.excitemike.bocus.ui.BocusViewModel
 import com.excitemike.bocus.ui.component.DaysOfWeek
 import com.excitemike.bocus.ui.component.MinMax
 import com.excitemike.bocus.ui.component.NotifMode
 import com.excitemike.bocus.ui.component.TimeAccordion
 import com.excitemike.bocus.ui.modifier.verticalScrollbar
+
+private const val MAX_NAME_LEN = 255
 
 @Composable
 fun AlarmDetailDialog(
@@ -126,7 +127,7 @@ private fun AlarmDetailControls(
             modifier = fillMaxWidth,
             state = rememberTextFieldState(initialText = alarm.name),
             inputTransformation = InputTransformation
-                .maxLength(BocusViewModel.MAX_NAME_LEN)
+                .maxLength(MAX_NAME_LEN)
                 .then {
                     updateAlarm(alarm.copy(name = this.toString()))
                 },

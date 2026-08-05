@@ -24,7 +24,6 @@ class MainActivity : ComponentActivity() {
         createNotificationChannel(this)
 
         setContent {
-            val bocusViewModel = viewModel { BocusViewModel(application) }
             val alarmDao = AlarmDatabase.getDatabase(application).alarmDao()
             val messageListDao = AlarmDatabase.getDatabase(application).messageListDao()
             val messageDao = AlarmDatabase.getDatabase(application).messageDao()
@@ -37,7 +36,6 @@ class MainActivity : ComponentActivity() {
             BocusTheme {
                 BocusApp(
                     activity = this,
-                    viewModel = bocusViewModel,
                     alarmScreenViewModel = alarmScreenViewModel,
                     messageListScreenViewModel = messageListsScreenViewModel
                 )
