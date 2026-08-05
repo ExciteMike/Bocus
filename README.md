@@ -5,8 +5,6 @@ An alarm app with randomized reminders.
 ## to-do list
 
 - TODOs in code
-- message list inline edit should end inline editting on unfocus
-- back button to end inline edit
 - edit alarm scrollbar should use full available height
 - toasts for error message and scheduling
 - unique default names on alarms and message lists

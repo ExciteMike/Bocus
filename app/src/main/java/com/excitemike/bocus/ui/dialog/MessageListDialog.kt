@@ -1,5 +1,6 @@
 package com.excitemike.bocus.ui.dialog
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,9 +24,13 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
@@ -168,14 +173,27 @@ private fun InlineEdit(
     updateMessage: (Message) -> Unit,
     closeInlineEdit: () -> Unit,
 ) {
+    BackHandler { closeInlineEdit() }
     Row(
         modifier = Modifier
             .padding(4.dp)
             .fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        val wasFocused = remember { mutableStateOf(false) }
+        val focusRequester = remember { FocusRequester() }
         TextField(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .focusRequester(focusRequester)
+                .onFocusChanged {
+                    if (wasFocused.value && !it.hasFocus) {
+                        closeInlineEdit()
+                    }
+                    if (it.hasFocus) {
+                        wasFocused.value = true
+                    }
+                },
             state = rememberTextFieldState(initialText = message.message),
             inputTransformation = InputTransformation
                 .maxLength(BocusViewModel.MAX_MESSAGE_LEN)
@@ -184,6 +202,11 @@ private fun InlineEdit(
                 },
             lineLimits = TextFieldLineLimits.SingleLine,
         )
+
+        // request focus on the textfield
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
 
         BocusIconButton(
             onClick = closeInlineEdit
