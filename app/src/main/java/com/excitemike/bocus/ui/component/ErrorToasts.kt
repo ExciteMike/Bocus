@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 const val TOAST_RESET_DELAY = 3_000L
 
@@ -31,7 +32,7 @@ fun ErrorToasts(
         if (toastMessage != null) {
             Toast.makeText(context, toastMessage, Toast.LENGTH_LONG).show()
             val job = coroutineScope.launch {
-                delay(TOAST_RESET_DELAY)
+                delay(TOAST_RESET_DELAY.milliseconds)
                 currentTimeout()
             }
             onDispose {
