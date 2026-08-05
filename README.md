@@ -4,13 +4,8 @@ An alarm app with randomized reminders.
 
 ## to-do list
 
-- TODOs in code
-- toast up the schedule time
-- unique default names on alarms and message lists
 - write this readme
-- about screen message
-- upload to developer console
-- send to testers
+- update the about screen message
 - "Support this app" button on notifications and main screen
 - bring back sounds but more subtle ones
     - categories
@@ -19,3 +14,6 @@ An alarm app with randomized reminders.
         - success/done - single but rising tone
         - error - thud or falling tone
         - minor edit - bongos? high note ~25% of the time
+- TODOs in code
+- upload to developer console
+- send to testers
