@@ -6,13 +6,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [Alarm::class, MessageList::class, Message::class],
-    version = 8,
+    entities = [Alarm::class, Message::class],
+    version = 9,
     exportSchema = false
 )
 abstract class AlarmDatabase : RoomDatabase() {
     abstract fun alarmDao(): AlarmDao
-    abstract fun messageListDao(): MessageListDao
     abstract fun messageDao(): MessageDao
 
     companion object {

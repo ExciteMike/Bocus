@@ -3,6 +3,7 @@ package com.excitemike.bocus.ui.screen
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -10,16 +11,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
+import com.excitemike.bocus.data.Message
 import com.excitemike.bocus.ui.dialog.AlarmDetailDialog
 import com.excitemike.bocus.ui.component.AlarmGridItem
 import com.excitemike.bocus.ui.component.GridWithAddButton
 import com.excitemike.bocus.ui.viewmodel.AlarmScreenViewModel
-import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
+import com.excitemike.bocus.ui.viewmodel.MessagesViewModel
 
 @Composable
 fun AlarmScreen(
     alarmScreenViewModel: AlarmScreenViewModel,
-    messageListScreenViewModel: MessageListScreenViewModel,
+    messagesViewModel: MessagesViewModel,
     onError: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -35,25 +37,29 @@ fun AlarmScreen(
     val deleteAlarmById = { alarmId: Long ->
         alarmScreenViewModel.deleteAlarmById(context, alarmId)
     }
-    val messageLists =
-        messageListScreenViewModel.allMessageListsState.collectAsState().value
-    val defaultMessageListName =
-        stringResource(R.string.default_message_list_name)
-    val addMessageList = {
-        messageListScreenViewModel.addMessageList(
-            defaultMessageListName,
-            onError = onError
-        )
-    }
 
     if (selectedAlarm != null) {
+        val alarmId = selectedAlarm.id!!
+        LaunchedEffect(alarmId) {
+            messagesViewModel.observeMessages(alarmId)
+        }
         AlarmDetailDialog(
             selectedAlarm = selectedAlarm,
-            messageLists = messageLists,
-            addMessageList = addMessageList,
+            messages =
+                messagesViewModel.messagesByAlarmId.collectAsState().value[alarmId] ?: emptyList(),
             updateAlarm = updateAlarm,
             close = {
                 alarmScreenViewModel.clearSelectedAlarm()
+            },
+            addMessage = {
+                messagesViewModel.addMessage(alarmId, onError = onError)
+            },
+            deleteMessageById =
+                { messageId: Long -> messagesViewModel.deleteMessageById(messageId) },
+            updateMessage =
+                { message: Message -> messagesViewModel.updateMessage(message) },
+            observeMessages = { alarmId: Long ->
+                messagesViewModel.observeMessages(alarmId)
             }
         )
     }

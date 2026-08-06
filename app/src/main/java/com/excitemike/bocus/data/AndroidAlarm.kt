@@ -9,6 +9,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import com.excitemike.bocus.R
@@ -161,11 +162,12 @@ fun chooseMessage(context: Context, alarm: Alarm): String {
     try {
         val db = AlarmDatabase.getDatabase(context)
         if (alarm.messageListId == null) return ""
-        val messages = db.messageListDao().getMessagesInListRaw(alarm.messageListId)
+        val messages = db.messageDao().getMessagesForAlarmRaw(alarm.messageListId)
         if (messages.isEmpty()) return ""
         val index = Random.nextInt(messages.size)
         return messages[index].message
-    } catch (_: Exception) {
+    } catch (e: Exception) {
+        Log.v("BocusTrace", "$e")
         return ""
     }
 }

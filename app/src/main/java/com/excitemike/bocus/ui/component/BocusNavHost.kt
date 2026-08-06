@@ -1,6 +1,5 @@
 package com.excitemike.bocus.ui.component
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,15 +10,14 @@ import com.excitemike.bocus.data.AppScreens
 import com.excitemike.bocus.data.INITIAL_APP_SCREEN
 import com.excitemike.bocus.ui.screen.AboutScreen
 import com.excitemike.bocus.ui.screen.AlarmScreen
-import com.excitemike.bocus.ui.screen.MessageListScreen
 import com.excitemike.bocus.ui.viewmodel.AlarmScreenViewModel
-import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
+import com.excitemike.bocus.ui.viewmodel.MessagesViewModel
 
 @Composable
 fun BocusNavHost(
     navController: NavHostController,
     alarmScreenViewModel: AlarmScreenViewModel,
-    messageListScreenViewModel: MessageListScreenViewModel,
+    messagesViewModel: MessagesViewModel,
     onError: (Int) -> Unit,
 ) {
     NavHost(
@@ -33,16 +31,10 @@ fun BocusNavHost(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    AppScreens.MESSAGE_LISTS -> MessageListScreen(
-                        modifier = Modifier.fillMaxSize(),
-                        messageListScreenViewModel = messageListScreenViewModel,
-                        onError = onError
-                    )
-
                     AppScreens.ALARMS -> {
                         AlarmScreen(
                             alarmScreenViewModel = alarmScreenViewModel,
-                            messageListScreenViewModel = messageListScreenViewModel,
+                            messagesViewModel = messagesViewModel,
                             onError = onError,
                         )
                     }

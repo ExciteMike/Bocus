@@ -39,11 +39,11 @@
     <string name="frequency">Frequency (minutes)</string>
     <string name="go_to_settings">Go to settings</string>
     <string name="maximum">Maximum</string>
-    <string name="message_list_label">Message List</string>
     <string name="message_list_limit">Maximum number of message lists reached</string>
     <string name="message_list_name_label">Name</string>
     <string name="message_list_tab">Messages</string>
-    <string name="messages_per_list_limit">Maximum number of messages in a list reached</string>
+    <string name="messages_label">Messasges</string>
+    <string name="messages_per_alarm_limit">Maximum number of messages for an alarm reached</string>
     <string name="minimum">Minimum</string>
     <string name="no_ai">No AI</string>
     <string name="no_alarms">No alarms have been added yet. Use the button below to add one!</string>

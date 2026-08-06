@@ -36,7 +36,7 @@ import com.excitemike.bocus.ui.component.BocusNavHost
 import com.excitemike.bocus.ui.component.BocusTabRow
 import com.excitemike.bocus.ui.component.ErrorToasts
 import com.excitemike.bocus.ui.viewmodel.AlarmScreenViewModel
-import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
+import com.excitemike.bocus.ui.viewmodel.MessagesViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.max
 
@@ -47,7 +47,7 @@ fun BocusApp(
     modifier: Modifier = Modifier,
     activity: Activity,
     alarmScreenViewModel: AlarmScreenViewModel,
-    messageListScreenViewModel: MessageListScreenViewModel
+    messagesViewModel: MessagesViewModel
 ) {
     val toastMessageState = rememberSaveable { mutableStateOf<Int?>(null) }
     val onError = { resId: Int -> toastMessageState.value = resId }
@@ -77,7 +77,7 @@ fun BocusApp(
             BocusNavHost(
                 navController = navController,
                 alarmScreenViewModel = alarmScreenViewModel,
-                messageListScreenViewModel = messageListScreenViewModel,
+                messagesViewModel = messagesViewModel,
                 onError = onError
             )
         }

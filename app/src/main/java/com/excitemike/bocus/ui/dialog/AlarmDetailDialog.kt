@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDetailsMessages
-import com.excitemike.bocus.data.MessageList
+import com.excitemike.bocus.data.Message
 import com.excitemike.bocus.ui.component.DaysOfWeek
 import com.excitemike.bocus.ui.component.MinMax
 import com.excitemike.bocus.ui.component.NotifMode
@@ -42,40 +42,41 @@ private const val MAX_NAME_LEN = 255
 @Composable
 fun AlarmDetailDialog(
     selectedAlarm: Alarm,
-    messageLists: List<MessageList>,
-    addMessageList: () -> Unit,
+    messages: List<Message>,
     updateAlarm: (alarm: Alarm) -> Unit,
     close: () -> Unit,
+    addMessage: () -> Unit,
+    deleteMessageById: (Long) -> Unit,
+    updateMessage: (Message) -> Unit,
+    observeMessages: (Long) -> Unit,
 ) {
-    val showChooseMessageListDialog = rememberSaveable { mutableStateOf(false) }
+    val showMessagesDialog = rememberSaveable { mutableStateOf(false) }
 
-    if (showChooseMessageListDialog.value) {
-        ChooseMessageListDialog(
-            messageLists = messageLists,
-            close = { showChooseMessageListDialog.value = false },
-            addMessageList = addMessageList,
-            onChooseMessageList = { messageListId ->
-                updateAlarm(selectedAlarm.copy(messageListId = messageListId))
-            }
-        )
+    if (showMessagesDialog.value) {
+        val alarmId: Long? = selectedAlarm.id
+        if (alarmId != null) {
+            MessagesDialog(
+                alarmId = alarmId,
+                messages = messages,
+                close = { showMessagesDialog.value = false },
+                addMessage = addMessage,
+                deleteMessageById = deleteMessageById,
+                updateMessage = updateMessage,
+                observeMessages = observeMessages
+            )
+        }
     }
 
-    val messageList = findMessageListById(messageLists, selectedAlarm.messageListId)
     BocusDialog(
         title = stringResource(R.string.edit_alarm),
         close = close
     ) {
-        Column(
-            modifier = Modifier,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            AlarmDetailControls(
-                alarm = selectedAlarm,
-                messageList = messageList,
-                updateAlarm = updateAlarm,
-                openChooseMessageList = { showChooseMessageListDialog.value = true }
-            )
-        }
+        AlarmDetailControls(
+            alarm = selectedAlarm,
+            messages = messages,
+            updateAlarm = updateAlarm,
+            openMessagesDialog = { showMessagesDialog.value = true }
+        )
     }
 }
 
@@ -84,9 +85,9 @@ fun AlarmDetailDialog(
 @Composable
 private fun AlarmDetailControls(
     alarm: Alarm,
-    messageList: MessageList?,
+    messages: List<Message>,
     updateAlarm: (Alarm) -> Unit,
-    openChooseMessageList: () -> Unit,
+    openMessagesDialog: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val fillMaxWidth = Modifier.fillMaxWidth()
@@ -141,8 +142,8 @@ private fun AlarmDetailControls(
         HorizontalDivider()
 
         AlarmDetailsMessages(
-            currentMessageList = messageList,
-            openChooseMessageList = openChooseMessageList,
+            messages = messages,
+            openMessagesDialog = openMessagesDialog,
             modifier = fillMaxWidth,
         )
         HorizontalDivider()
@@ -203,17 +204,4 @@ private fun AlarmDetailControls(
 
         NotifMode(alarm, updateAlarm)
     }
-}
-
-/**
- * Given a list of MessageLists, and an id, return the one with the matching id or null
- */
-private fun findMessageListById(messageLists: List<MessageList>, id: Long?): MessageList? {
-    if (id == null) return null
-    for (messageList in messageLists) {
-        if (messageList.id == id) {
-            return messageList
-        }
-    }
-    return null
 }

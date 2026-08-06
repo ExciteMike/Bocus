@@ -8,6 +8,7 @@ that lets you randomize both when it appears and the reminder message itself.
 ## to-do list
 
 - Associate messages with the alarm, rather than the message list
+    - BUGFIX: accessing DB from main thread, so can't get the message
 - "Support this app" button on notifications and main screen
 - bring back sounds but more subtle ones
     - categories

@@ -35,54 +35,39 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Message
-import com.excitemike.bocus.data.MessageList
 import com.excitemike.bocus.ui.component.BocusIconButton
 import com.excitemike.bocus.ui.component.BocusSwipeToDismissBox
 import com.excitemike.bocus.ui.component.GridWithAddButton
-import com.excitemike.bocus.ui.viewmodel.EditMessageListViewModel
 
 private val ITEM_HEIGHT = 80.dp
 private const val MAX_MESSAGE_LEN = 255
-private const val MAX_NAME_LEN = 255
 
 /**
  * Dialog for editing a MessageList
  */
 @Composable
-fun MessageListDialog(
-    messageList: MessageList,
-    viewModel: EditMessageListViewModel,
+fun MessagesDialog(
+    alarmId: Long,
     messages: List<Message>,
-    updateMessageList: (MessageList) -> Unit,
     close: () -> Unit,
-    onError: (Int) -> Unit
+    addMessage: () -> Unit,
+    deleteMessageById: (Long) -> Unit,
+    updateMessage: (Message) -> Unit,
+    observeMessages: (Long) -> Unit,
 ) {
-    val messageListId = messageList.id!!
-    LaunchedEffect(messageListId) {
-        viewModel.observeMessages(messageListId)
+    LaunchedEffect(alarmId) {
+        observeMessages(alarmId)
     }
 
     BocusDialog(
         title = stringResource(R.string.edit_message_list),
         close = close
     ) {
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            state = rememberTextFieldState(messageList.name),
-            inputTransformation = InputTransformation
-                .maxLength(MAX_NAME_LEN)
-                .then {
-                    updateMessageList(messageList.copy(name = this.toString()))
-                },
-            label = { Text(stringResource(R.string.message_list_name_label)) },
-            lineLimits = TextFieldLineLimits.SingleLine
-        )
-
         GridWithAddButton(
             data = messages,
             dataKey = { message -> message.id!! },
             addButtonLabel = stringResource(R.string.add_message),
-            onAdd = { viewModel.addMessage(messageListId, onError = onError) }
+            onAdd = addMessage
         ) { message ->
             val messageId = message.id!!
             val confirmFormat = stringResource(R.string.confirm_delete_message)
@@ -92,7 +77,7 @@ fun MessageListDialog(
             val openInlineEdit = { isInlineEditing.value = true }
             BocusSwipeToDismissBox(
                 dismissConfirmPrompt = confirmPrompt,
-                onConfirm = { viewModel.deleteMessageById(messageId) },
+                onConfirm = { deleteMessageById(messageId) },
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .fillMaxWidth()
@@ -111,7 +96,7 @@ fun MessageListDialog(
                     if (isInlineEditing.value) {
                         InlineEdit(
                             message = message,
-                            updateMessage = { viewModel.updateMessage(it) },
+                            updateMessage = updateMessage,
                             closeInlineEdit = { isInlineEditing.value = false }
                         )
                     } else {

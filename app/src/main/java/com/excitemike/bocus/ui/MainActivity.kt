@@ -14,7 +14,7 @@ import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.receiver.AlarmReceiver
 import com.excitemike.bocus.ui.theme.BocusTheme
 import com.excitemike.bocus.ui.viewmodel.AlarmScreenViewModel
-import com.excitemike.bocus.ui.viewmodel.MessageListScreenViewModel
+import com.excitemike.bocus.ui.viewmodel.MessagesViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,19 +25,18 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val alarmDao = AlarmDatabase.getDatabase(application).alarmDao()
-            val messageListDao = AlarmDatabase.getDatabase(application).messageListDao()
             val messageDao = AlarmDatabase.getDatabase(application).messageDao()
             val alarmScreenViewModel =
                 viewModel { AlarmScreenViewModel(alarmDao = alarmDao) }
             val defaultMessage = stringResource(R.string.default_message)
             val messageListsScreenViewModel =
-                viewModel { MessageListScreenViewModel(messageListDao, messageDao, defaultMessage) }
+                viewModel { MessagesViewModel(messageDao, defaultMessage) }
 
             BocusTheme {
                 BocusApp(
                     activity = this,
                     alarmScreenViewModel = alarmScreenViewModel,
-                    messageListScreenViewModel = messageListsScreenViewModel
+                    messagesViewModel = messageListsScreenViewModel
                 )
             }
         }
