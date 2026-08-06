@@ -40,6 +40,8 @@ android {
 }
 
 dependencies {
+    implementation("com.android.billingclient:billing:9.1.0")
+    implementation ("com.android.billingclient:billing-ktx:9.1.0")
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)

@@ -7,6 +7,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.excitemike.bocus.R
@@ -14,6 +16,7 @@ import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.receiver.AlarmReceiver
 import com.excitemike.bocus.ui.theme.BocusTheme
 import com.excitemike.bocus.ui.viewmodel.AlarmScreenViewModel
+import com.excitemike.bocus.ui.viewmodel.BillingViewModel
 import com.excitemike.bocus.ui.viewmodel.MessagesViewModel
 
 class MainActivity : ComponentActivity() {
@@ -31,6 +34,10 @@ class MainActivity : ComponentActivity() {
             val defaultMessage = stringResource(R.string.default_message)
             val messageListsScreenViewModel =
                 viewModel { MessagesViewModel(messageDao, defaultMessage) }
+            val billingViewModel = viewModel { BillingViewModel(this@MainActivity) }
+            LaunchedEffect(true) {
+                billingViewModel.init()
+            }
 
             BocusTheme {
                 BocusApp(

@@ -116,6 +116,19 @@ class AlarmReceiver : BroadcastReceiver() {
         ) {
             NotificationManagerCompat.from(context).notify(alarmId.toInt(), builder.build())
         }
+
+        // schedule the next occurrence, if it hasn't been deleted
+        val alarmDao = AlarmDatabase.getDatabase(context).alarmDao()
+        val job = SupervisorJob()
+        val scope = CoroutineScope(Dispatchers.IO + job)
+        scope.launch {
+            val alarm = alarmDao.getAlarmRaw(alarmId)
+            if (alarm != null) {
+                val newAlarm = alarm.copy(scheduledAt = getNextAlarmTime(alarm))
+                val message = chooseMessage(context, newAlarm)
+                scheduleSystemAlarm(context, newAlarm, message)
+            }
+        }
     }
 
     /**
@@ -140,19 +153,6 @@ class AlarmReceiver : BroadcastReceiver() {
         NotificationManagerCompat.from(context).cancel(alarmId.toInt())
         stopSound()
         stopVibration()
-
-        // schedule the next occurrence, if it hasn't been deleted
-        val alarmDao = AlarmDatabase.getDatabase(context).alarmDao()
-        val job = SupervisorJob()
-        val scope = CoroutineScope(Dispatchers.IO + job)
-        scope.launch {
-            val alarm = alarmDao.getAlarmRaw(alarmId)
-            if (alarm != null) {
-                val newAlarm = alarm.copy(scheduledAt = getNextAlarmTime(alarm))
-                val message = chooseMessage(context, newAlarm)
-                scheduleSystemAlarm(context, newAlarm, message)
-            }
-        }
     }
 
     /**
