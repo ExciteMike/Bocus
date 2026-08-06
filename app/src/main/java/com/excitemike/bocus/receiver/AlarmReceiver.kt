@@ -18,6 +18,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.AlarmDatabase
 import com.excitemike.bocus.data.AlarmNotifMode
+import com.excitemike.bocus.data.chooseMessage
 import com.excitemike.bocus.data.getNextAlarmTime
 import com.excitemike.bocus.data.scheduleSystemAlarm
 import com.excitemike.bocus.util.checkFlags
@@ -148,7 +149,8 @@ class AlarmReceiver : BroadcastReceiver() {
             val alarm = alarmDao.getAlarmRaw(alarmId)
             if (alarm != null) {
                 val newAlarm = alarm.copy(scheduledAt = getNextAlarmTime(alarm))
-                scheduleSystemAlarm(context, newAlarm)
+                val message = chooseMessage(context, newAlarm)
+                scheduleSystemAlarm(context, newAlarm, message)
             }
         }
     }

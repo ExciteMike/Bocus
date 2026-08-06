@@ -9,7 +9,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import com.excitemike.bocus.R
@@ -158,16 +157,15 @@ fun getSystemPermissionsNeeded(): List<Pair<String, Int>> = PERMISSIONS
 /**
  * choose the message to display for the given alarm
  */
-fun chooseMessage(context: Context, alarm: Alarm): String {
+suspend fun chooseMessage(context: Context, alarm: Alarm): String {
     try {
         val db = AlarmDatabase.getDatabase(context)
-        if (alarm.messageListId == null) return ""
-        val messages = db.messageDao().getMessagesForAlarmRaw(alarm.messageListId)
+        val alarmId = alarm.id ?: return ""
+        val messages = db.messageDao().getMessagesForAlarmRaw(alarmId)
         if (messages.isEmpty()) return ""
         val index = Random.nextInt(messages.size)
         return messages[index].message
-    } catch (e: Exception) {
-        Log.v("BocusTrace", "$e")
+    } catch (_: Exception) {
         return ""
     }
 }
@@ -177,12 +175,11 @@ fun chooseMessage(context: Context, alarm: Alarm): String {
  * If the alarm is already scheduled, cancel it. Then schedule one based on the given Alarm and its scheduledAt field
  */
 @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
-fun scheduleSystemAlarm(context: Context, alarm: Alarm) {
+fun scheduleSystemAlarm(context: Context, alarm: Alarm, message: String) {
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     if (!alarmManager.canScheduleExactAlarms()) {
         return
     }
-    val message = chooseMessage(context, alarm)
     val pendingIntent = PendingIntent.getBroadcast(
         context,
         alarm.id!!.toInt(),
@@ -232,7 +229,8 @@ suspend fun rescheduleAllSystemAlarms(
         if (!useAlreadyScheduled) {
             updateAlarm(newAlarm)
         }
-        scheduleSystemAlarm(context, newAlarm)
+        val message = chooseMessage(context, newAlarm)
+        scheduleSystemAlarm(context, newAlarm, message)
     }
 }
 

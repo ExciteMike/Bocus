@@ -17,7 +17,6 @@ that lets you randomize both when it appears and the reminder message itself.
         - success/done - single but rising tone
         - error - thud or falling tone
         - minor edit - bongos? high note ~25% of the time
-- TODOs in code
 - upload to developer console
 - do the screenshots with text thing
     - one with the 1-sentence pitch

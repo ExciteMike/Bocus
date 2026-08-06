@@ -43,7 +43,7 @@ private val ITEM_HEIGHT = 80.dp
 private const val MAX_MESSAGE_LEN = 255
 
 /**
- * Dialog for editing a MessageList
+ * Dialog for editing an [Alarm]'s [Message]s
  */
 @Composable
 fun MessagesDialog(
@@ -60,7 +60,7 @@ fun MessagesDialog(
     }
 
     BocusDialog(
-        title = stringResource(R.string.edit_message_list),
+        title = stringResource(R.string.edit_messages),
         close = close
     ) {
         GridWithAddButton(

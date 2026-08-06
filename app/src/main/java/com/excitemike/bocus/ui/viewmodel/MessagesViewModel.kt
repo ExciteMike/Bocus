@@ -6,14 +6,9 @@ import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Message
 import com.excitemike.bocus.data.MessageDao
 import com.excitemike.bocus.data.MessageId
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -62,28 +57,6 @@ class MessagesViewModel(
             messageDao.update(message)
         }
     }
-
-    /**
-     * identify which alarm these messages are for
-     */
-    private val selectedAlarmId = MutableStateFlow<Long?>(null)
-
-    /**
-     * StateFlow for our messages
-     */
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val messagesState: StateFlow<List<Message>> =
-        selectedAlarmId.flatMapLatest { messageListId ->
-            if (messageListId == null) {
-                flowOf(emptyList())
-            } else {
-                messageDao.observeMessagesForAlarm(messageListId)
-            }
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            emptyList()
-        )
 
     /**
      * jobs for tracking each message lists's messages

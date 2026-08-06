@@ -53,10 +53,6 @@ data class Alarm(
     @ColumnInfo(name = "notif_mode")
     val notifMode: Int = AlarmNotifMode.DEFAULT,
 
-    /** what to say in the notification */
-    @ColumnInfo(name = "message_list_id")
-    val messageListId: Long? = -1,
-
     /** repeat on which days of the week, (bitflags) */
     @ColumnInfo(name = "active_days")
     val activeDays: Int = AlarmDayOfWeekFlags.DEFAULT_ACTIVE_DAYS,

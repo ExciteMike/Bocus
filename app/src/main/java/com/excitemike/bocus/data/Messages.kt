@@ -68,7 +68,7 @@ interface MessageDao {
     fun getMessagesForAlarm(id: Long): Flow<List<Message>>
 
     @Query("SELECT * from messages WHERE alarm_id = :id")
-    fun getMessagesForAlarmRaw(id: Long): List<Message>
+    suspend fun getMessagesForAlarmRaw(id: Long): List<Message>
 
     /**
      * Data flow for the messages associated with a particular list

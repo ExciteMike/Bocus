@@ -8,6 +8,7 @@ import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.AlarmDao
 import com.excitemike.bocus.data.AlarmId
 import com.excitemike.bocus.data.cancelSystemAlarm
+import com.excitemike.bocus.data.chooseMessage
 import com.excitemike.bocus.data.getNextAlarmTime
 import com.excitemike.bocus.data.scheduleSystemAlarm
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -49,7 +50,8 @@ class AlarmScreenViewModel(
             viewModelScope.launch {
                 val id = alarmDao.insert(alarm)
                 val alarm = alarm.copy(id = id)
-                scheduleSystemAlarm(context, alarm)
+                val message = chooseMessage(context, alarm)
+                scheduleSystemAlarm(context, alarm, message)
             }
         } else {
             onError(R.string.alarm_limit)
@@ -75,7 +77,8 @@ class AlarmScreenViewModel(
         viewModelScope.launch {
             alarmDao.update(alarm)
             val newAlarm = alarm.copy(scheduledAt = getNextAlarmTime(alarm))
-            scheduleSystemAlarm(context, newAlarm)
+            val message = chooseMessage(context, alarm)
+            scheduleSystemAlarm(context, newAlarm, message)
         }
     }
 
