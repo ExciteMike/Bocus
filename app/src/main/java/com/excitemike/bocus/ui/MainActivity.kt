@@ -42,6 +42,7 @@ class MainActivity : ComponentActivity() {
                 BocusApp(
                     activity = this,
                     alarmScreenViewModel = alarmScreenViewModel,
+                    billingViewModel = billingViewModel,
                     messagesViewModel = messageListsScreenViewModel
                 )
             }

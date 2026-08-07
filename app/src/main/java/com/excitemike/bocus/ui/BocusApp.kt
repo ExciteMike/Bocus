@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
@@ -36,6 +37,8 @@ import com.excitemike.bocus.ui.component.BocusNavHost
 import com.excitemike.bocus.ui.component.BocusTabRow
 import com.excitemike.bocus.ui.component.ErrorToasts
 import com.excitemike.bocus.ui.viewmodel.AlarmScreenViewModel
+import com.excitemike.bocus.ui.viewmodel.AppPurchasedState
+import com.excitemike.bocus.ui.viewmodel.BillingViewModel
 import com.excitemike.bocus.ui.viewmodel.MessagesViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.max
@@ -47,6 +50,7 @@ fun BocusApp(
     modifier: Modifier = Modifier,
     activity: Activity,
     alarmScreenViewModel: AlarmScreenViewModel,
+    billingViewModel: BillingViewModel,
     messagesViewModel: MessagesViewModel
 ) {
     val toastMessageState = rememberSaveable { mutableStateOf<Int?>(null) }
@@ -80,6 +84,18 @@ fun BocusApp(
                 messagesViewModel = messagesViewModel,
                 onError = onError
             )
+            val showSupportButton =
+                rememberSaveable(billingViewModel.purchasedState) { billingViewModel.purchasedState.value != AppPurchasedState.PURCHASED }
+            if (showSupportButton) {
+                BocusButton(
+                    modifier = Modifier.height(32.dp),
+                    onClick = {
+                        billingViewModel.beginPurchaseFlow(activity, BillingViewModel.PRODUCT_ID)
+                    },
+                ) {
+                    Text(stringResource(R.string.support_this_app))
+                }
+            }
         }
     }
     ErrorToasts(
