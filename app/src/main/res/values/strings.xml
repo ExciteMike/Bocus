@@ -30,6 +30,9 @@
     <string name="edit_messages">Edit Messages</string>
     <string name="end_time_label_and_value">End at time %1$s</string>
     <string name="end_time_label">End at time</string>
+    <string name="err_could_not_launch_billing_flow">Could not launch billing flow</string>
+    <string name="err_no_offers_for_product">No offers found for this product</string>
+    <string name="err_no_such_product">No products matching that product ID</string>
     <string name="every_x_to_y_minutes">every %1$s to %2$s minutes</string>
     <string name="explain_notification_permission">Bocus needs notification permissions to notify you when an alarm triggers</string>
     <string name="frequency">Frequency (minutes)</string>

@@ -16,6 +16,7 @@ import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.acknowledgePurchase
 import com.android.billingclient.api.queryProductDetails
+import com.excitemike.bocus.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -130,19 +131,19 @@ class BillingViewModel(context: Context) : PurchasesUpdatedListener, ViewModel()
 
     /**
      * start the purchasing flow
+     * @return a resource id for the error message or null if successful
      */
-    fun beginPurchaseFlow(activity: Activity, productId: String) {
-        // TODO: error handling
+    fun beginPurchaseFlow(activity: Activity, productId: String): Int? {
         if (!allProductDetails.containsKey(productId)) {
-            return
+            return R.string.err_no_such_product
         }
         val productDetails = allProductDetails[productId]!!
         val offers = productDetails.oneTimePurchaseOfferDetailsList!!
         if (offers.isEmpty()) {
-            return
+            return R.string.err_no_offers_for_product
         }
-        val offer = offers.first() ?: return
-        val offerToken = offer.offerToken ?: return
+        val offer = offers.first() ?: return R.string.err_no_offers_for_product
+        val offerToken = offer.offerToken ?: return R.string.err_no_offers_for_product
         val productDetailsParamList = listOf(
             BillingFlowParams.ProductDetailsParams.newBuilder()
                 .setProductDetails(productDetails)
@@ -153,10 +154,10 @@ class BillingViewModel(context: Context) : PurchasesUpdatedListener, ViewModel()
             .setProductDetailsParamsList(productDetailsParamList)
             .build()
         val billingResult = billingClient.launchBillingFlow(activity, billingFlowParams)
-        @Suppress("ControlFlowWithEmptyBody")
-        if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-            // purchase screen launched
+        if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
+            return R.string.err_could_not_launch_billing_flow
         }
+        return null
     }
 
     /**

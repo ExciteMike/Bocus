@@ -85,7 +85,7 @@ fun BocusApp(
                 onError = onError
             )
 
-            SupportButton(activity, billingViewModel)
+            SupportButton(activity, billingViewModel, onError = onError)
         }
     }
     ErrorToasts(
