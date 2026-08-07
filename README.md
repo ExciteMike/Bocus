@@ -8,6 +8,8 @@ that lets you randomize both when it appears and the reminder message itself.
 ## to-do list
 
 - "Support this app" button on notifications and main screen
+    - TODO: make it bypassable
+    - TODO: store whether it is bought so we don't even need to ping the play store in the future
 - bring back sounds but more subtle ones
     - categories
         - default - tick/click - softened snare
