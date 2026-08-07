@@ -1,6 +1,5 @@
 package com.excitemike.bocus.ui.screen
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,9 +11,9 @@ import androidx.compose.ui.unit.dp
 import com.excitemike.bocus.R
 import com.excitemike.bocus.data.Alarm
 import com.excitemike.bocus.data.Message
-import com.excitemike.bocus.ui.dialog.AlarmDetailDialog
 import com.excitemike.bocus.ui.component.AlarmGridItem
 import com.excitemike.bocus.ui.component.GridWithAddButton
+import com.excitemike.bocus.ui.dialog.AlarmDetailDialog
 import com.excitemike.bocus.ui.viewmodel.AlarmScreenViewModel
 import com.excitemike.bocus.ui.viewmodel.MessagesViewModel
 
@@ -69,7 +68,7 @@ fun AlarmScreen(
         dataKey = { it.id!! },
         addButtonLabel = stringResource(R.string.add_alarm),
         onAdd = addAlarm,
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
         messageIfEmpty = stringResource(R.string.no_alarms)
     ) { alarm ->
         AlarmGridItem(

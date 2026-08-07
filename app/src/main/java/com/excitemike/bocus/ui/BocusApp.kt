@@ -7,15 +7,21 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -79,21 +86,37 @@ fun BocusApp(
                 }
             )
             BocusNavHost(
+                modifier = Modifier.weight(1f),
                 navController = navController,
                 alarmScreenViewModel = alarmScreenViewModel,
                 messagesViewModel = messagesViewModel,
                 onError = onError
             )
+
             val showSupportButton =
                 rememberSaveable(billingViewModel.purchasedState) { billingViewModel.purchasedState.value != AppPurchasedState.PURCHASED }
             if (showSupportButton) {
                 BocusButton(
-                    modifier = Modifier.height(32.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
                     onClick = {
                         billingViewModel.beginPurchaseFlow(activity, BillingViewModel.PRODUCT_ID)
                     },
                 ) {
-                    Text(stringResource(R.string.support_this_app))
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val supportText = stringResource(R.string.support_this_app)
+                        Icon(
+                            modifier = Modifier.size(32.dp),
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = supportText,
+                        )
+                        Spacer(Modifier.size(8.dp))
+                        Text(text = supportText)
+                    }
                 }
             }
         }

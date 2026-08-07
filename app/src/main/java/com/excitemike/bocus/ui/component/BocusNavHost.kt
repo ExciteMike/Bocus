@@ -15,13 +15,15 @@ import com.excitemike.bocus.ui.viewmodel.MessagesViewModel
 
 @Composable
 fun BocusNavHost(
+    modifier: Modifier = Modifier,
     navController: NavHostController,
     alarmScreenViewModel: AlarmScreenViewModel,
     messagesViewModel: MessagesViewModel,
     onError: (Int) -> Unit,
 ) {
     NavHost(
-        navController,
+        navController = navController,
+        modifier = modifier,
         startDestination = INITIAL_APP_SCREEN.name
     ) {
         AppScreens.entries.forEach { screen ->
